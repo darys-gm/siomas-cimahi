@@ -9,610 +9,635 @@ use App\Models\Kelurahan;
 use App\Models\JenisOrmas;
 use App\Models\BidangKegiatan;
 use App\Models\User;
-use App\Models\Pengurus;
 use App\Models\LogAktivitas;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class OrmasController extends Controller
 {
-    /**
-     * Menampilkan daftar ORMAS untuk halaman Organisasi
-     */
+    // ============================================================
+    // KONSTANTA STATUS
+    // ============================================================
+    private const STATUSES = [
+        'draft',
+        'menunggu_verifikasi',
+        'revisi',
+        'disetujui',
+        'ditolak',
+    ];
+
+    // ============================================================
+    // INDEX — Daftar ORMAS dengan Filter
+    // ============================================================
     public function index(Request $request)
     {
-        $search = $request->search;
-        $bentuk = $request->bentuk;
-        $bidang = $request->bidang;
-        $kecamatan = $request->kecamatan;
-        $kelurahan = $request->kelurahan;
-        $status = $request->status;
+        $validated = $request->validate([
+            'search'    => 'nullable|string|max:100',
+            'bentuk'    => 'nullable|string|max:100',
+            'bidang'    => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|integer|exists:kecamatan,id',
+            'kelurahan' => 'nullable|integer|exists:kelurahan,id',
+            'status'    => 'nullable|in:' . implode(',', self::STATUSES),
+        ]);
+
+        $search    = $validated['search'] ?? null;
+        $bentuk    = $validated['bentuk'] ?? null;
+        $bidang    = $validated['bidang'] ?? null;
+        $kecamatan = $validated['kecamatan'] ?? null;
+        $kelurahan = $validated['kelurahan'] ?? null;
+        $status    = $validated['status'] ?? null;
 
         $query = Ormas::with(['jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan', 'pengurus', 'user']);
 
-        // Filter search berdasarkan nama
         if ($search) {
-            $query->where('nama', 'like', '%' . $search . '%');
+            $searchEscaped = str_replace(['%', '_'], ['\%', '\_'], $search);
+            $query->where('nama', 'like', '%' . $searchEscaped . '%');
         }
 
-        // Filter berdasarkan Status
-        if ($status) {
-            $query->where('status', $status);
-        }
+        if ($status)    $query->where('status', $status);
+        if ($kecamatan) $query->where('kecamatan_id', $kecamatan);
+        if ($kelurahan) $query->where('kelurahan_id', $kelurahan);
 
-        // Filter berdasarkan Kecamatan
-        if ($kecamatan) {
-            $query->where('kecamatan_id', $kecamatan);
-        }
-
-        // Filter berdasarkan Kelurahan
-        if ($kelurahan) {
-            $query->where('kelurahan_id', $kelurahan);
-        }
-
-        // Filter berdasarkan Bentuk Ormas (Jenis ORMAS)
         if ($bentuk) {
-            $query->whereHas('jenisOrmas', function($q) use ($bentuk) {
-                $q->where('nama', $bentuk);
-            });
+            $query->whereHas('jenisOrmas', fn($q) => $q->where('nama', $bentuk));
         }
 
-        // Filter berdasarkan Bidang Kegiatan
         if ($bidang) {
-            $query->whereHas('bidangKegiatan', function($q) use ($bidang) {
-                $q->where('nama', $bidang);
-            });
+            $query->whereHas('bidangKegiatan', fn($q) => $q->where('nama', $bidang));
         }
 
-        $ormas = $query->orderBy('created_at', 'desc')->paginate(10);
-        
-        // Pertahankan parameter filter di pagination
-        $ormas->appends([
-            'search' => $search,
-            'bentuk' => $bentuk,
-            'bidang' => $bidang,
-            'kecamatan' => $kecamatan,
-            'kelurahan' => $kelurahan,
-            'status' => $status,
-        ]);
+        $ormas = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
-        // Hitung jumlah ORMAS berdasarkan status
-        $totalMenunggu = Ormas::where('status', 'menunggu_verifikasi')->count();
-        $totalRevisi = Ormas::where('status', 'revisi')->count();
-        $totalDitolak = Ormas::where('status', 'ditolak')->count();
-        $totalDisetujui = Ormas::where('status', 'disetujui')->count();
+        // 🔥 Counter status — 1 query, bukan 4
+        $counters = $this->getStatusCounters();
 
-        return view('admin.ormas.index', compact(
-            'ormas', 
-            'search', 
-            'bentuk', 
-            'bidang', 
-            'kecamatan', 
-            'kelurahan', 
-            'status',
-            'totalMenunggu',
-            'totalRevisi',
-            'totalDitolak',
-            'totalDisetujui'
+        return view('admin.ormas.index', array_merge(
+            compact('ormas', 'search', 'bentuk', 'bidang', 'kecamatan', 'kelurahan', 'status'),
+            [
+                'totalMenunggu'  => $counters['menunggu_verifikasi'],
+                'totalRevisi'    => $counters['revisi'],
+                'totalDitolak'   => $counters['ditolak'],
+                'totalDisetujui' => $counters['disetujui'],
+            ]
         ));
     }
 
-    /**
-     * Menampilkan form tambah ORMAS
-     */
+    // ============================================================
+    // CREATE — Form Tambah ORMAS
+    // ============================================================
     public function create()
     {
-        $jenisOrmas = JenisOrmas::all();
+        $jenisOrmas     = JenisOrmas::all();
         $bidangKegiatan = BidangKegiatan::all();
-        $kecamatan = Kecamatan::all();
-        $kelurahan = Kelurahan::all();
-        $users = User::where('role', 'user')->get();
-        
-        return view('admin.ormas.create', compact('jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan', 'users'));
+        $kecamatan      = Kecamatan::all();
+        $kelurahan      = Kelurahan::all();
+        $users          = User::where('role', 'user')->get();
+
+        return view('admin.ormas.create', compact(
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan',
+            'users'
+        ));
     }
 
-    /**
-     * Menyimpan data ORMAS baru
-     */
+    // ============================================================
+    // STORE — Simpan ORMAS Baru
+    // ============================================================
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
-                'nama' => 'required|string|max:255',
-                'singkatan' => 'nullable|string|max:50',
-                'nomor_registrasi' => 'nullable|string|max:100',
-                'jenis_ormas_id' => 'nullable|string|max:255',
-                'bidang_kegiatan_id' => 'nullable|string|max:255',
-                'alamat_kesekretariatan' => 'nullable|string',
-                'jumlah_anggota' => 'nullable|integer|min:0',
-                'jumlah_anggota_perempuan' => 'nullable|integer|min:0',
-                'anggota_perempuan_rentang_16_30' => 'nullable|integer|min:0',
-                'jumlah_anggota_laki_laki' => 'nullable|integer|min:0',
-                'anggota_laki_laki_rentang_16_30' => 'nullable|integer|min:0',
-                'latitude' => 'nullable|numeric|between:-90,90',
-                'longitude' => 'nullable|numeric|between:-180,180',
-                'kecamatan_id' => 'nullable|exists:kecamatan,id',
-                'kelurahan_id' => 'nullable|exists:kelurahan,id', // PERBAIKAN: validasi exists
-                'no_telepon' => 'nullable|string|max:20',
-                'email' => 'nullable|string|max:255',
-                'status' => 'nullable|in:draft,menunggu_verifikasi,revisi,disetujui,ditolak',
-                'user_id' => 'nullable|exists:users,id',
-                'ketua_nama' => 'required|string|max:255',
-                'ketua_alamat' => 'nullable|string',
-                'ketua_no_hp' => 'nullable|string|max:20',
-                'sekretaris_nama' => 'nullable|string|max:255',
-                'sekretaris_alamat' => 'nullable|string',
-                'sekretaris_no_hp' => 'nullable|string|max:20',
-                'bendahara_nama' => 'nullable|string|max:255',
-                'bendahara_alamat' => 'nullable|string',
-                'bendahara_no_hp' => 'nullable|string|max:20',
+                'nama'                             => 'required|string|max:255',
+                'singkatan'                        => 'nullable|string|max:50',
+                'nomor_registrasi'                 => 'nullable|string|max:100',
+                'jenis_ormas_id'                   => 'nullable|string|max:255',
+                'bidang_kegiatan_id'               => 'nullable|string|max:255',
+                'alamat_kesekretariatan'           => 'nullable|string|max:2000',
+                'jumlah_anggota'                   => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_perempuan'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_perempuan_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_laki_laki'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'latitude'                         => 'nullable|numeric|between:-90,90',
+                'longitude'                        => 'nullable|numeric|between:-180,180',
+                'kecamatan_id'                     => 'nullable|integer|exists:kecamatan,id',
+                'kelurahan_id'                     => 'nullable|integer|exists:kelurahan,id',
+                'no_telepon'                       => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+                'email'                            => 'nullable|email|max:255',
+                'status'                           => 'nullable|in:' . implode(',', self::STATUSES),
+                'user_id'                          => 'nullable|integer|exists:users,id',
+                'ketua_nama'                       => 'required|string|max:255',
+                'ketua_alamat'                     => 'nullable|string|max:1000',
+                'ketua_no_hp'                      => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+                'sekretaris_nama'                  => 'nullable|string|max:255',
+                'sekretaris_alamat'                => 'nullable|string|max:1000',
+                'sekretaris_no_hp'                 => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+                'bendahara_nama'                   => 'nullable|string|max:255',
+                'bendahara_alamat'                 => 'nullable|string|max:1000',
+                'bendahara_no_hp'                  => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             ]);
-
-            // Proses email: jika kosong atau '-' maka set null
-            $email = $validated['email'] ?? null;
-            if (empty($email) || trim($email) === '-') {
-                $email = null;
-            }
-
-            // Proses Jenis ORMAS
-            $jenisOrmasId = null;
-            if (!empty($validated['jenis_ormas_id'])) {
-                $jenis = JenisOrmas::firstOrCreate(
-                    ['nama' => $validated['jenis_ormas_id']],
-                    ['nama' => $validated['jenis_ormas_id']]
-                );
-                $jenisOrmasId = $jenis->id;
-            }
-
-            // Proses Bidang Kegiatan
-            $bidangKegiatanId = null;
-            if (!empty($validated['bidang_kegiatan_id'])) {
-                $bidang = BidangKegiatan::firstOrCreate(
-                    ['nama' => $validated['bidang_kegiatan_id']],
-                    ['nama' => $validated['bidang_kegiatan_id']]
-                );
-                $bidangKegiatanId = $bidang->id;
-            }
-
-            // Proses Kecamatan
-            $kecamatanId = null;
-            if (!empty($validated['kecamatan_id'])) {
-                $kecamatan = Kecamatan::find($validated['kecamatan_id']);
-                if ($kecamatan) {
-                    $kecamatanId = $kecamatan->id;
-                }
-            }
-
-            // ===== PERBAIKAN: PROSES KELURAHAN - LANGSUNG MENGGUNAKAN ID =====
-            $kelurahanId = null;
-            if (!empty($validated['kelurahan_id'])) {
-                // Langsung cari berdasarkan ID, bukan nama
-                $kelurahan = Kelurahan::find($validated['kelurahan_id']);
-                if ($kelurahan) {
-                    $kelurahanId = $kelurahan->id;
-                }
-            }
 
             $status = $validated['status'] ?? 'disetujui';
 
-            // Proses koordinat: jika 0 atau kosong maka set null
-            $latitude = $validated['latitude'] ?? null;
-            $longitude = $validated['longitude'] ?? null;
-            if ($latitude === null || $latitude === '' || $latitude === '0' || $latitude === 0) {
-                $latitude = null;
-            }
-            if ($longitude === null || $longitude === '' || $longitude === '0' || $longitude === 0) {
-                $longitude = null;
-            }
+            // 🔒 Resolve relasi
+            $jenisOrmasId     = $this->resolveJenisOrmas($validated['jenis_ormas_id'] ?? null);
+            $bidangKegiatanId = $this->resolveBidangKegiatan($validated['bidang_kegiatan_id'] ?? null);
+            $kelurahanId      = $validated['kelurahan_id'] ?? null;
 
-            // Simpan data ORMAS
-            $ormas = Ormas::create([
-                'nama' => $validated['nama'],
-                'singkatan' => $validated['singkatan'] ?? null,
-                'nomor_registrasi' => $validated['nomor_registrasi'] ?? null,
-                'jenis_ormas_id' => $jenisOrmasId,
-                'bidang_kegiatan_id' => $bidangKegiatanId,
-                'alamat_kesekretariatan' => $validated['alamat_kesekretariatan'] ?? null,
-                'jumlah_anggota' => $validated['jumlah_anggota'] ?? 0,
-                'jumlah_anggota_perempuan' => $validated['jumlah_anggota_perempuan'] ?? 0,
-                'anggota_perempuan_rentang_16_30' => $validated['anggota_perempuan_rentang_16_30'] ?? 0,
-                'jumlah_anggota_laki_laki' => $validated['jumlah_anggota_laki_laki'] ?? 0,
-                'anggota_laki_laki_rentang_16_30' => $validated['anggota_laki_laki_rentang_16_30'] ?? 0,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'kecamatan_id' => $kecamatanId,
-                'kelurahan_id' => $kelurahanId,
-                'no_telepon' => $validated['no_telepon'] ?? null,
-                'email' => $email,
-                'status' => $status,
-                'user_id' => $validated['user_id'] ?? null,
-                'is_active' => $status === 'disetujui' ? 1 : 0,
-            ]);
+            // 🔒 Sanitasi email & koordinat
+            $email     = $this->sanitizeEmail($validated['email'] ?? null);
+            $latitude  = $this->sanitizeCoordinate($validated['latitude'] ?? null);
+            $longitude = $this->sanitizeCoordinate($validated['longitude'] ?? null);
 
-            // Simpan data pengurus
-            $pengurusData = [
-                ['jabatan' => 'Ketua', 'nama' => $validated['ketua_nama'] ?? null, 'alamat' => $validated['ketua_alamat'] ?? null, 'no_hp' => $validated['ketua_no_hp'] ?? null],
-                ['jabatan' => 'Sekretaris', 'nama' => $validated['sekretaris_nama'] ?? null, 'alamat' => $validated['sekretaris_alamat'] ?? null, 'no_hp' => $validated['sekretaris_no_hp'] ?? null],
-                ['jabatan' => 'Bendahara', 'nama' => $validated['bendahara_nama'] ?? null, 'alamat' => $validated['bendahara_alamat'] ?? null, 'no_hp' => $validated['bendahara_no_hp'] ?? null],
-            ];
+            // 🔒 Explicit assign (bukan mass assignment)
+            $ormas = new Ormas();
+            $ormas->nama                    = $validated['nama'];
+            $ormas->singkatan               = $validated['singkatan'] ?? null;
+            $ormas->nomor_registrasi        = $validated['nomor_registrasi'] ?? null;
+            $ormas->jenis_ormas_id          = $jenisOrmasId;
+            $ormas->bidang_kegiatan_id      = $bidangKegiatanId;
+            $ormas->alamat_kesekretariatan  = $validated['alamat_kesekretariatan'] ?? null;
+            $ormas->jumlah_anggota          = $validated['jumlah_anggota'] ?? 0;
+            $ormas->jumlah_anggota_perempuan = $validated['jumlah_anggota_perempuan'] ?? 0;
+            $ormas->anggota_perempuan_rentang_16_30 = $validated['anggota_perempuan_rentang_16_30'] ?? 0;
+            $ormas->jumlah_anggota_laki_laki = $validated['jumlah_anggota_laki_laki'] ?? 0;
+            $ormas->anggota_laki_laki_rentang_16_30 = $validated['anggota_laki_laki_rentang_16_30'] ?? 0;
+            $ormas->latitude                = $latitude;
+            $ormas->longitude               = $longitude;
+            $ormas->kecamatan_id            = $validated['kecamatan_id'] ?? null;
+            $ormas->kelurahan_id            = $kelurahanId;
+            $ormas->no_telepon              = $validated['no_telepon'] ?? null;
+            $ormas->email                   = $email;
+            $ormas->status                  = $status;
+            $ormas->user_id                 = $validated['user_id'] ?? null;
+            $ormas->is_active               = ($status === 'disetujui') ? 1 : 0;
+            $ormas->save();
 
-            foreach ($pengurusData as $data) {
-                if (!empty($data['nama'])) {
-                    $ormas->pengurus()->create($data);
-                }
-            }
+            // Simpan pengurus
+            $this->savePengurusFromRequest($ormas, $validated);
 
-            LogAktivitas::create([
-                'user_id' => auth()->id(),
-                'aktivitas' => 'Tambah ORMAS',
-                'deskripsi' => "Menambahkan ORMAS {$ormas->nama} (status: {$status})",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
+            $this->logAktivitas(
+                $request,
+                'Tambah ORMAS',
+                "Menambahkan ORMAS {$ormas->nama} (status: {$status})"
+            );
 
-            return redirect()->route('admin.ormas.index')
+            return redirect()
+                ->route('admin.ormas.index')
                 ->with('success', 'ORMAS berhasil ditambahkan.');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
+
         } catch (\Exception $e) {
-            \Log::error('Error saving ORMAS: ' . $e->getMessage());
-            return back()->with('error', 'Gagal menyimpan data ORMAS: ' . $e->getMessage())->withInput();
+            Log::error('Store ORMAS error', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
+            return back()->with('error', 'Gagal menyimpan data ORMAS. Silakan coba lagi.')->withInput();
         }
     }
 
-    /**
-     * Menampilkan detail ORMAS
-     */
+    // ============================================================
+    // SHOW — Detail ORMAS
+    // ============================================================
     public function show($id)
     {
+        if (!$this->isValidId($id)) {
+            abort(404);
+        }
+
         $ormas = Ormas::with([
-            'jenisOrmas', 
-            'bidangKegiatan', 
-            'kecamatan', 
-            'kelurahan', 
-            'pengurus', 
-            'user'
-        ])->findOrFail($id);
-            
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan',
+            'pengurus',
+            'user',
+        ])->findOrFail((int) $id);
+
         return view('admin.ormas.show', compact('ormas'));
     }
 
-    /**
-     * Menampilkan form edit ORMAS
-     */
+    // ============================================================
+    // EDIT — Form Edit ORMAS
+    // ============================================================
     public function edit($id)
     {
-        $ormas = Ormas::with('pengurus')->findOrFail($id);
-        $jenisOrmas = JenisOrmas::all();
+        if (!$this->isValidId($id)) {
+            abort(404);
+        }
+
+        $ormas          = Ormas::with('pengurus')->findOrFail((int) $id);
+        $jenisOrmas     = JenisOrmas::all();
         $bidangKegiatan = BidangKegiatan::all();
-        $kecamatan = Kecamatan::all();
-        $kelurahan = Kelurahan::all();
-        
-        return view('admin.ormas.edit', compact('ormas', 'jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan'));
+        $kecamatan      = Kecamatan::all();
+        $kelurahan      = Kelurahan::all();
+
+        return view('admin.ormas.edit', compact(
+            'ormas',
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan'
+        ));
     }
 
-    /**
-     * Update data ORMAS
-     */
+    // ============================================================
+    // UPDATE — Update ORMAS (form biasa)
+    // ============================================================
     public function update(Request $request, $id)
     {
         try {
             $ormas = Ormas::findOrFail($id);
-            
+
             $validated = $request->validate([
-                'nama' => 'required|string|max:255',
-                'singkatan' => 'nullable|string|max:50',
-                'nomor_registrasi' => 'nullable|string|max:100',
-                'jenis_ormas_id' => 'nullable|string|max:255',
-                'bidang_kegiatan_id' => 'nullable|string|max:255',
-                'alamat_kesekretariatan' => 'nullable|string',
-                'jumlah_anggota' => 'nullable|integer|min:0',
-                'jumlah_anggota_perempuan' => 'nullable|integer|min:0',
-                'anggota_perempuan_rentang_16_30' => 'nullable|integer|min:0',
-                'jumlah_anggota_laki_laki' => 'nullable|integer|min:0',
-                'anggota_laki_laki_rentang_16_30' => 'nullable|integer|min:0',
-                'latitude' => 'nullable|numeric|between:-90,90',
-                'longitude' => 'nullable|numeric|between:-180,180',
-                'kecamatan_id' => 'nullable|exists:kecamatan,id',
-                'kelurahan_id' => 'nullable|exists:kelurahan,id', // PERBAIKAN: validasi exists
-                'no_telepon' => 'nullable|string|max:20',
-                'email' => 'nullable|string|max:255',
-                'status' => 'nullable|in:draft,menunggu_verifikasi,revisi,disetujui,ditolak'
+                'nama'                             => 'required|string|max:255',
+                'singkatan'                        => 'nullable|string|max:50',
+                'nomor_registrasi'                 => 'nullable|string|max:100',
+                'jenis_ormas_id'                   => 'nullable|string|max:255',
+                'bidang_kegiatan_id'               => 'nullable|string|max:255',
+                'alamat_kesekretariatan'           => 'nullable|string|max:2000',
+                'jumlah_anggota'                   => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_perempuan'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_perempuan_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_laki_laki'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'latitude'                         => 'nullable|numeric|between:-90,90',
+                'longitude'                        => 'nullable|numeric|between:-180,180',
+                'kecamatan_id'                     => 'nullable|integer|exists:kecamatan,id',
+                'kelurahan_id'                     => 'nullable|integer|exists:kelurahan,id',
+                'no_telepon'                       => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+                'email'                            => 'nullable|email|max:255',
+                'status'                           => 'nullable|in:' . implode(',', self::STATUSES),
             ]);
 
-            // Proses email: jika kosong atau '-' maka set null
-            $email = $validated['email'] ?? null;
-            if (empty($email) || trim($email) === '-') {
-                $email = null;
-            }
+            $this->applyOrmasUpdate($ormas, $validated);
 
-            // Proses Jenis ORMAS
-            $jenisOrmasId = null;
-            if (!empty($validated['jenis_ormas_id'])) {
-                $jenis = JenisOrmas::firstOrCreate(
-                    ['nama' => $validated['jenis_ormas_id']],
-                    ['nama' => $validated['jenis_ormas_id']]
-                );
-                $jenisOrmasId = $jenis->id;
-            }
+            $this->logAktivitas($request, 'Update ORMAS', "Mengupdate ORMAS {$ormas->nama}");
 
-            // Proses Bidang Kegiatan
-            $bidangKegiatanId = null;
-            if (!empty($validated['bidang_kegiatan_id'])) {
-                $bidang = BidangKegiatan::firstOrCreate(
-                    ['nama' => $validated['bidang_kegiatan_id']],
-                    ['nama' => $validated['bidang_kegiatan_id']]
-                );
-                $bidangKegiatanId = $bidang->id;
-            }
-
-            // Proses koordinat
-            $latitude = $validated['latitude'] ?? null;
-            $longitude = $validated['longitude'] ?? null;
-            if ($latitude === null || $latitude === '' || $latitude === '0' || $latitude === 0) {
-                $latitude = null;
-            }
-            if ($longitude === null || $longitude === '' || $longitude === '0' || $longitude === 0) {
-                $longitude = null;
-            }
-
-            // ===== PERBAIKAN: PROSES KELURAHAN - LANGSUNG MENGGUNAKAN ID =====
-            $kelurahanId = $validated['kelurahan_id'] ?? null;
-
-            $ormas->update([
-                'nama' => $validated['nama'],
-                'singkatan' => $validated['singkatan'] ?? null,
-                'nomor_registrasi' => $validated['nomor_registrasi'] ?? null,
-                'jenis_ormas_id' => $jenisOrmasId,
-                'bidang_kegiatan_id' => $bidangKegiatanId,
-                'alamat_kesekretariatan' => $validated['alamat_kesekretariatan'] ?? null,
-                'jumlah_anggota' => $validated['jumlah_anggota'] ?? 0,
-                'jumlah_anggota_perempuan' => $validated['jumlah_anggota_perempuan'] ?? 0,
-                'anggota_perempuan_rentang_16_30' => $validated['anggota_perempuan_rentang_16_30'] ?? 0,
-                'jumlah_anggota_laki_laki' => $validated['jumlah_anggota_laki_laki'] ?? 0,
-                'anggota_laki_laki_rentang_16_30' => $validated['anggota_laki_laki_rentang_16_30'] ?? 0,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'kecamatan_id' => $validated['kecamatan_id'] ?? null,
-                'kelurahan_id' => $kelurahanId,
-                'no_telepon' => $validated['no_telepon'] ?? null,
-                'email' => $email,
-                'status' => $validated['status'] ?? $ormas->status,
-                'is_active' => ($validated['status'] ?? $ormas->status) === 'disetujui' ? 1 : 0,
-            ]);
-
-            LogAktivitas::create([
-                'user_id' => auth()->id(),
-                'aktivitas' => 'Update ORMAS',
-                'deskripsi' => "Mengupdate ORMAS {$ormas->nama}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
-
-            return redirect()->route('admin.ormas.index')
+            return redirect()
+                ->route('admin.ormas.index')
                 ->with('success', 'ORMAS berhasil diupdate.');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
+            Log::error('Update ORMAS error', [
+                'message'  => $e->getMessage(),
+                'ormas_id' => $id,
+            ]);
+
+            return back()->with('error', 'Gagal mengupdate data. Silakan coba lagi.');
         }
     }
 
-    /**
-     * Hapus data ORMAS
-     */
+    // ============================================================
+    // DESTROY — Hapus ORMAS
+    // ============================================================
     public function destroy($id)
     {
         try {
-            $ormas = Ormas::findOrFail($id);
-            $nama = $ormas->nama;
-            
+            if (!$this->isValidId($id)) {
+                abort(404);
+            }
+
+            $ormas = Ormas::findOrFail((int) $id);
+            $nama  = $ormas->nama;
+
+            // Hapus pengurus dulu, baru ORMAS (untuk hindari orphan)
             $ormas->pengurus()->delete();
             $ormas->delete();
 
-            LogAktivitas::create([
-                'user_id' => auth()->id(),
-                'aktivitas' => 'Hapus ORMAS',
-                'deskripsi' => "Menghapus ORMAS {$nama}",
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent()
-            ]);
+            $this->logAktivitas(request(), 'Hapus ORMAS', "Menghapus ORMAS {$nama}");
 
-            return redirect()->route('admin.ormas.index')
+            return redirect()
+                ->route('admin.ormas.index')
                 ->with('success', 'ORMAS berhasil dihapus.');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            Log::error('Hapus ORMAS error', [
+                'message'  => $e->getMessage(),
+                'ormas_id' => $id,
+            ]);
+
+            return back()->with('error', 'Gagal menghapus data. Silakan coba lagi.');
         }
     }
 
-    /**
-     * Hapus ORMAS yang ditolak secara otomatis setelah 10 hari
-     * (Dijalankan oleh scheduler atau cron job)
-     */
-    public function autoDeleteRejected()
+    // ============================================================
+    // AUTO DELETE REJECTED — Hapus ORMAS rejected > 10 hari
+    // ============================================================
+    public function autoDeleteRejected(): JsonResponse
     {
         try {
             $tenDaysAgo = now()->subDays(10);
-            
-            $rejectedOrmas = Ormas::where('status', 'ditolak')
-                ->where('updated_at', '<=', $tenDaysAgo)
-                ->get();
 
-            $count = 0;
-            foreach ($rejectedOrmas as $ormas) {
-                $ormas->pengurus()->delete();
-                $ormas->delete();
-                $count++;
-            }
+            // 🔥 Bulk delete untuk performa
+            $ormasIds = Ormas::where('status', 'ditolak')
+                ->where('updated_at', '<=', $tenDaysAgo)
+                ->pluck('id');
+
+            $count = $ormasIds->count();
 
             if ($count > 0) {
-                LogAktivitas::create([
-                    'user_id' => auth()->id() ?? 1,
-                    'aktivitas' => 'Auto Delete',
-                    'deskripsi' => "Menghapus {$count} ORMAS yang ditolak secara otomatis (lebih dari 10 hari)",
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent()
-                ]);
+                DB::transaction(function () use ($ormasIds) {
+                    // Hapus semua pengurus terkait dalam 1 query
+                    DB::table('pengurus')->whereIn('ormas_id', $ormasIds)->delete();
+                    // Hapus semua ORMAS dalam 1 query
+                    DB::table('ormas')->whereIn('id', $ormasIds)->delete();
+                });
+
+                $this->logAktivitas(
+                    request(),
+                    'Auto Delete',
+                    "Menghapus {$count} ORMAS yang ditolak secara otomatis (lebih dari 10 hari)"
+                );
             }
 
             return response()->json([
                 'success' => true,
                 'message' => "Berhasil menghapus {$count} ORMAS yang ditolak.",
-                'count' => $count
+                'count'   => $count,
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error auto deleting rejected ORMAS: ' . $e->getMessage());
+            Log::error('Auto delete rejected ORMAS error', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data: ' . $e->getMessage()
+                'message' => 'Gagal menghapus data. Silakan coba lagi.',
             ], 500);
         }
     }
 
-    /**
-     * Mendapatkan data ORMAS untuk AJAX (AJAX untuk edit)
-     */
-    public function getOrmasData($id)
+    // ============================================================
+    // GET ORMAS DATA — JSON
+    // ============================================================
+    public function getOrmasData($id): JsonResponse
     {
+        if (!$this->isValidId($id)) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+        }
+
         $ormas = Ormas::with([
-            'jenisOrmas', 
-            'bidangKegiatan', 
-            'kecamatan', 
-            'kelurahan', 
-            'pengurus'
-        ])->findOrFail($id);
-            
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan',
+            'pengurus',
+        ])->find((int) $id);
+
+        if (!$ormas) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+        }
+
         return response()->json($ormas);
     }
 
-    /**
-     * Mendapatkan data ORMAS untuk edit JSON (AJAX)
-     */
-    public function editJson($id)
+    // ============================================================
+    // EDIT JSON — Ambil data untuk modal edit
+    // ============================================================
+    public function editJson($id): JsonResponse
     {
-        try {
-            $ormas = Ormas::with(['jenisOrmas', 'bidangKegiatan'])->findOrFail($id);
-            return response()->json($ormas);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan'
-            ], 404);
+        if (!$this->isValidId($id)) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
         }
+
+        $ormas = Ormas::with(['jenisOrmas', 'bidangKegiatan'])->find((int) $id);
+
+        if (!$ormas) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+        }
+
+        return response()->json($ormas);
     }
 
-    /**
-     * Update ORMAS via AJAX JSON
-     */
-    public function updateJson(Request $request, $id)
+    // ============================================================
+    // UPDATE JSON — Update via AJAX
+    // ============================================================
+    public function updateJson(Request $request, $id): JsonResponse
     {
         try {
             $ormas = Ormas::findOrFail($id);
 
             $validated = $request->validate([
-                'nama' => 'required|string|max:255',
-                'singkatan' => 'nullable|string|max:50',
-                'nomor_registrasi' => 'nullable|string|max:100',
-                'jenis_ormas_id' => 'nullable|string|max:255',
-                'bidang_kegiatan_id' => 'nullable|string|max:255',
-                'alamat_kesekretariatan' => 'nullable|string',
-                'jumlah_anggota' => 'nullable|integer|min:0',
-                'jumlah_anggota_perempuan' => 'nullable|integer|min:0',
-                'anggota_perempuan_rentang_16_30' => 'nullable|integer|min:0',
-                'jumlah_anggota_laki_laki' => 'nullable|integer|min:0',
-                'anggota_laki_laki_rentang_16_30' => 'nullable|integer|min:0',
-                'latitude' => 'nullable|numeric|between:-90,90',
-                'longitude' => 'nullable|numeric|between:-180,180',
-                'kecamatan_id' => 'nullable|exists:kecamatan,id',
-                'kelurahan_id' => 'nullable|exists:kelurahan,id', // PERBAIKAN: validasi exists
-                'no_telepon' => 'nullable|string|max:20',
-                'email' => 'nullable|string|max:255',
+                'nama'                             => 'required|string|max:255',
+                'singkatan'                        => 'nullable|string|max:50',
+                'nomor_registrasi'                 => 'nullable|string|max:100',
+                'jenis_ormas_id'                   => 'nullable|string|max:255',
+                'bidang_kegiatan_id'               => 'nullable|string|max:255',
+                'alamat_kesekretariatan'           => 'nullable|string|max:2000',
+                'jumlah_anggota'                   => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_perempuan'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_perempuan_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'jumlah_anggota_laki_laki'         => 'nullable|integer|min:0|max:1000000',
+                'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
+                'latitude'                         => 'nullable|numeric|between:-90,90',
+                'longitude'                        => 'nullable|numeric|between:-180,180',
+                'kecamatan_id'                     => 'nullable|integer|exists:kecamatan,id',
+                'kelurahan_id'                     => 'nullable|integer|exists:kelurahan,id',
+                'no_telepon'                       => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+                'email'                            => 'nullable|email|max:255',
             ]);
 
-            // Proses email
-            $email = $validated['email'] ?? null;
-            if (empty($email) || trim($email) === '-') {
-                $email = null;
-            }
+            $this->applyOrmasUpdate($ormas, $validated);
 
-            // Proses Jenis ORMAS
-            $jenisOrmasId = null;
-            if (!empty($validated['jenis_ormas_id'])) {
-                $jenis = JenisOrmas::firstOrCreate(
-                    ['nama' => $validated['jenis_ormas_id']],
-                    ['nama' => $validated['jenis_ormas_id']]
-                );
-                $jenisOrmasId = $jenis->id;
-            }
-
-            // Proses Bidang Kegiatan
-            $bidangKegiatanId = null;
-            if (!empty($validated['bidang_kegiatan_id'])) {
-                $bidang = BidangKegiatan::firstOrCreate(
-                    ['nama' => $validated['bidang_kegiatan_id']],
-                    ['nama' => $validated['bidang_kegiatan_id']]
-                );
-                $bidangKegiatanId = $bidang->id;
-            }
-
-            // Proses koordinat
-            $latitude = $validated['latitude'] ?? null;
-            $longitude = $validated['longitude'] ?? null;
-            if ($latitude === null || $latitude === '' || $latitude === '0' || $latitude === 0) {
-                $latitude = null;
-            }
-            if ($longitude === null || $longitude === '' || $longitude === '0' || $longitude === 0) {
-                $longitude = null;
-            }
-
-            // ===== PERBAIKAN: PROSES KELURAHAN - LANGSUNG MENGGUNAKAN ID =====
-            $kelurahanId = $validated['kelurahan_id'] ?? null;
-
-            $ormas->update([
-                'nama' => $validated['nama'],
-                'singkatan' => $validated['singkatan'] ?? null,
-                'nomor_registrasi' => $validated['nomor_registrasi'] ?? null,
-                'jenis_ormas_id' => $jenisOrmasId,
-                'bidang_kegiatan_id' => $bidangKegiatanId,
-                'alamat_kesekretariatan' => $validated['alamat_kesekretariatan'] ?? null,
-                'jumlah_anggota' => $validated['jumlah_anggota'] ?? 0,
-                'jumlah_anggota_perempuan' => $validated['jumlah_anggota_perempuan'] ?? 0,
-                'anggota_perempuan_rentang_16_30' => $validated['anggota_perempuan_rentang_16_30'] ?? 0,
-                'jumlah_anggota_laki_laki' => $validated['jumlah_anggota_laki_laki'] ?? 0,
-                'anggota_laki_laki_rentang_16_30' => $validated['anggota_laki_laki_rentang_16_30'] ?? 0,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'kecamatan_id' => $validated['kecamatan_id'] ?? null,
-                'kelurahan_id' => $kelurahanId,
-                'no_telepon' => $validated['no_telepon'] ?? null,
-                'email' => $email,
-            ]);
-
-            LogAktivitas::create([
-                'user_id' => auth()->id(),
-                'aktivitas' => 'Update ORMAS (AJAX)',
-                'deskripsi' => "Mengupdate ORMAS {$ormas->nama}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
+            $this->logAktivitas($request, 'Update ORMAS (AJAX)', "Mengupdate ORMAS {$ormas->nama}");
 
             return response()->json([
                 'success' => true,
                 'message' => 'ORMAS berhasil diupdate.',
-                'data' => $ormas->fresh()
+                'data'    => $ormas,
             ]);
 
-        } catch (\Exception $e) {
-            \Log::error('Error updating ORMAS AJAX: ' . $e->getMessage());
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengupdate data: ' . $e->getMessage()
+                'message' => 'Validasi gagal.',
+                'errors'  => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Update ORMAS AJAX error', [
+                'message'  => $e->getMessage(),
+                'ormas_id' => $id,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate data. Silakan coba lagi.',
             ], 500);
         }
+    }
+
+    // ============================================================
+    // PRIVATE HELPERS
+    // ============================================================
+
+    /**
+     * Validasi format ID (angka positif).
+     */
+    private function isValidId($id): bool
+    {
+        return is_numeric($id) && (int) $id > 0;
+    }
+
+    /**
+     * Helper log aktivitas.
+     */
+    private function logAktivitas(Request $request, string $aktivitas, string $deskripsi): void
+    {
+        LogAktivitas::create([
+            'user_id'    => (int) Auth::id(),
+            'aktivitas'  => $aktivitas,
+            'deskripsi'  => $deskripsi,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+    }
+
+    /**
+     * 🔥 Counter status — 1 query untuk semua status.
+     */
+    private function getStatusCounters(): array
+    {
+        $result = Ormas::selectRaw('
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS menunggu_verifikasi,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS revisi,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS ditolak,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS disetujui
+        ', ['menunggu_verifikasi', 'revisi', 'ditolak', 'disetujui'])->first();
+
+        return [
+            'menunggu_verifikasi' => (int) ($result->menunggu_verifikasi ?? 0),
+            'revisi'              => (int) ($result->revisi ?? 0),
+            'ditolak'             => (int) ($result->ditolak ?? 0),
+            'disetujui'           => (int) ($result->disetujui ?? 0),
+        ];
+    }
+
+    /**
+     * Resolve jenis ormas (firstOrCreate).
+     */
+    private function resolveJenisOrmas(?string $nama): ?int
+    {
+        if (empty($nama)) {
+            return null;
+        }
+
+        return JenisOrmas::firstOrCreate(['nama' => $nama], ['nama' => $nama])->id;
+    }
+
+    /**
+     * Resolve bidang kegiatan (firstOrCreate).
+     */
+    private function resolveBidangKegiatan(?string $nama): ?int
+    {
+        if (empty($nama)) {
+            return null;
+        }
+
+        return BidangKegiatan::firstOrCreate(['nama' => $nama], ['nama' => $nama])->id;
+    }
+
+    /**
+     * Sanitasi email — kosong atau '-' jadi null.
+     */
+    private function sanitizeEmail(?string $email): ?string
+    {
+        if (empty($email) || trim($email) === '-') {
+            return null;
+        }
+
+        return $email;
+    }
+
+    /**
+     * Sanitasi koordinat — 0 atau kosong jadi null.
+     */
+    private function sanitizeCoordinate($value)
+    {
+        if ($value === null || $value === '' || $value === '0' || $value === 0) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Simpan data pengurus dari request (untuk store).
+     */
+    private function savePengurusFromRequest(Ormas $ormas, array $data): void
+    {
+        $pengurusData = [
+            ['nama' => $data['ketua_nama'] ?? null, 'alamat' => $data['ketua_alamat'] ?? null, 'no_hp' => $data['ketua_no_hp'] ?? null],
+            ['nama' => $data['sekretaris_nama'] ?? null, 'alamat' => $data['sekretaris_alamat'] ?? null, 'no_hp' => $data['sekretaris_no_hp'] ?? null],
+            ['nama' => $data['bendahara_nama'] ?? null, 'alamat' => $data['bendahara_alamat'] ?? null, 'no_hp' => $data['bendahara_no_hp'] ?? null],
+        ];
+
+        foreach ($pengurusData as $pengurus) {
+            if (!empty($pengurus['nama'])) {
+                $ormas->pengurus()->create($pengurus);
+            }
+        }
+    }
+
+    /**
+     * Apply update ORMAS — dipakai oleh update() dan updateJson().
+     */
+    private function applyOrmasUpdate(Ormas $ormas, array $validated): void
+    {
+        // Resolve relasi
+        $jenisOrmasId     = $this->resolveJenisOrmas($validated['jenis_ormas_id'] ?? null);
+        $bidangKegiatanId = $this->resolveBidangKegiatan($validated['bidang_kegiatan_id'] ?? null);
+        $kelurahanId      = $validated['kelurahan_id'] ?? null;
+
+        // Sanitasi
+        $email     = $this->sanitizeEmail($validated['email'] ?? null);
+        $latitude  = $this->sanitizeCoordinate($validated['latitude'] ?? null);
+        $longitude = $this->sanitizeCoordinate($validated['longitude'] ?? null);
+
+        // Explicit assign
+        $ormas->nama                    = $validated['nama'];
+        $ormas->singkatan               = $validated['singkatan'] ?? null;
+        $ormas->nomor_registrasi        = $validated['nomor_registrasi'] ?? null;
+        $ormas->jenis_ormas_id          = $jenisOrmasId;
+        $ormas->bidang_kegiatan_id      = $bidangKegiatanId;
+        $ormas->alamat_kesekretariatan  = $validated['alamat_kesekretariatan'] ?? null;
+        $ormas->jumlah_anggota          = $validated['jumlah_anggota'] ?? 0;
+        $ormas->jumlah_anggota_perempuan = $validated['jumlah_anggota_perempuan'] ?? 0;
+        $ormas->anggota_perempuan_rentang_16_30 = $validated['anggota_perempuan_rentang_16_30'] ?? 0;
+        $ormas->jumlah_anggota_laki_laki = $validated['jumlah_anggota_laki_laki'] ?? 0;
+        $ormas->anggota_laki_laki_rentang_16_30 = $validated['anggota_laki_laki_rentang_16_30'] ?? 0;
+        $ormas->latitude                = $latitude;
+        $ormas->longitude               = $longitude;
+        $ormas->kecamatan_id            = $validated['kecamatan_id'] ?? null;
+        $ormas->kelurahan_id            = $kelurahanId;
+        $ormas->no_telepon              = $validated['no_telepon'] ?? null;
+        $ormas->email                   = $email;
+
+        // Status — kalau ada di request, update juga is_active
+        if (!empty($validated['status'])) {
+            $ormas->status    = $validated['status'];
+            $ormas->is_active = ($validated['status'] === 'disetujui') ? 1 : 0;
+        }
+
+        $ormas->save();
     }
 }

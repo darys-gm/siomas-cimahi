@@ -7,53 +7,94 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AdminSettingController extends Controller
 {
     /**
-     * Menampilkan halaman manajemen home
+     * Default value running text
      */
+    private const DEFAULT_RUNNING_TEXT  = 'Selamat datang di SIOMAS Kota Cimahi - Sistem Informasi Organisasi Masyarakat';
+    private const DEFAULT_RUNNING_SPEED = '20';
+
+    // ============================================================
+    // INDEX — Halaman Manajemen Home
+    // ============================================================
     public function index()
     {
-        $runningText = Setting::get('running_text', 'Selamat datang di SIOMAS Kota Cimahi - Sistem Informasi Organisasi Masyarakat');
-        $runningSpeed = Setting::get('running_speed', '20');
-        
+        $runningText  = Setting::get('running_text', self::DEFAULT_RUNNING_TEXT);
+        $runningSpeed = Setting::get('running_speed', self::DEFAULT_RUNNING_SPEED);
+
         return view('admin.setting.home', compact('runningText', 'runningSpeed'));
     }
 
-    /**
-     * Update running text
-     */
+    // ============================================================
+    // UPDATE RUNNING TEXT
+    // ============================================================
     public function updateRunningText(Request $request)
     {
         try {
-            $request->validate([
-                'running_text' => 'required|string|max:1000',
+            $validated = $request->validate([
+                'running_text'  => 'required|string|max:1000',
                 'running_speed' => 'required|integer|min:5|max:60',
             ]);
 
-            // Pisahkan kalimat dengan newline atau titik
-            $texts = array_filter(array_map('trim', explode("\n", $request->running_text)));
-            
-            // Gabungkan dengan pemisah bullet atau separator
+            // Pisahkan per baris, trim, buang yang kosong
+            $texts = array_filter(array_map('trim', explode("\n", $validated['running_text'])));
+
+            // Gabungkan dengan separator bullet
             $formattedText = implode(' • ', $texts);
-            
-            Setting::set('running_text', $formattedText);
-            Setting::set('running_speed', $request->running_speed);
 
-            LogAktivitas::create([
-                'user_id' => auth()->id(),
-                'aktivitas' => 'Update Running Text',
-                'deskripsi' => "Mengupdate running text dan kecepatan menjadi: {$request->running_speed}s",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
+            // Simpan ke database dalam 1 transaksi (atomic)
+            DB::transaction(function () use ($formattedText, $validated) {
+                Setting::set('running_text', $formattedText);
+                Setting::set('running_speed', $validated['running_speed']);
+            });
 
-            return redirect()->route('admin.setting.home')
+            $this->logAktivitas(
+                $request,
+                'Update Running Text',
+                "Mengupdate running text dan kecepatan menjadi: {$validated['running_speed']}s"
+            );
+
+            return redirect()
+                ->route('admin.setting.home')
                 ->with('success', 'Running text berhasil diperbarui.');
 
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal mengupdate running text: ' . $e->getMessage());
+            Log::error('Update running text error', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
+            return back()
+                ->with('error', 'Gagal mengupdate running text. Silakan coba lagi.')
+                ->withInput();
         }
+    }
+
+    // ============================================================
+    // PRIVATE HELPERS
+    // ============================================================
+
+    /**
+     * Helper log aktivitas — konsisten dengan controller lain.
+     */
+    private function logAktivitas(Request $request, string $aktivitas, string $deskripsi): void
+    {
+        LogAktivitas::create([
+            'user_id'    => (int) Auth::id(),
+            'aktivitas'  => $aktivitas,
+            'deskripsi'  => $deskripsi,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
     }
 }

@@ -3,23 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Ormas;
 use App\Models\Pengurus;
 use App\Models\JenisOrmas;
 use App\Models\BidangKegiatan;
-use App\Models\Kecamatan;
 use App\Models\Kelurahan;
 use App\Models\LogAktivitas;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class UserManagementController extends Controller
 {
+    // ============================================================
+    // INDEX — Daftar ORMAS dengan Filter
+    // ============================================================
     public function index(Request $request)
     {
-        // 🔒 Validasi filter query
         $validated = $request->validate([
             'search'           => 'nullable|string|max:100',
             'bentuk'           => 'nullable|string|max:100',
@@ -38,11 +40,16 @@ class UserManagementController extends Controller
         $status_aktif     = $validated['status_aktif'] ?? null;
         $status_pelaporan = $validated['status_pelaporan'] ?? null;
 
-        $query = Ormas::with(['pengurus', 'user', 'jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan'])
-            ->where('status', 'disetujui');
+        $query = Ormas::with([
+            'pengurus',
+            'user',
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan',
+        ])->where('status', 'disetujui');
 
         if ($search) {
-            // 🔒 Escape wildcard LIKE
             $searchEscaped = str_replace(['%', '_'], ['\%', '\_'], $search);
             $query->where('nama', 'like', '%' . $searchEscaped . '%');
         }
@@ -99,7 +106,10 @@ class UserManagementController extends Controller
         ));
     }
 
-    public function bulkUpdatePelaporan(Request $request)
+    // ============================================================
+    // BULK UPDATE PELAPORAN
+    // ============================================================
+    public function bulkUpdatePelaporan(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -112,17 +122,14 @@ class UserManagementController extends Controller
                 'tidak_ada' => 'Tidak Ada',
             ];
 
-            $count = Ormas::where('status', 'disetujui')->update([
-                'pelaporan' => $validated['pelaporan'],
-            ]);
+            $count = Ormas::where('status', 'disetujui')
+                ->update(['pelaporan' => $validated['pelaporan']]);
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Bulk Update Pelaporan',
-                'deskripsi'  => "Mengupdate status pelaporan {$count} ORMAS menjadi {$pelaporanLabels[$validated['pelaporan']]}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas(
+                $request,
+                'Bulk Update Pelaporan',
+                "Mengupdate status pelaporan {$count} ORMAS menjadi {$pelaporanLabels[$validated['pelaporan']]}"
+            );
 
             return response()->json([
                 'success' => true,
@@ -130,7 +137,7 @@ class UserManagementController extends Controller
                 'count'   => $count,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -151,7 +158,10 @@ class UserManagementController extends Controller
         }
     }
 
-    public function bulkUpdateStatus(Request $request)
+    // ============================================================
+    // BULK UPDATE STATUS AKTIF/NONAKTIF
+    // ============================================================
+    public function bulkUpdateStatus(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -161,17 +171,14 @@ class UserManagementController extends Controller
             $isActive   = $validated['status'] === 'aktif' ? 1 : 0;
             $statusText = $validated['status'] === 'aktif' ? 'diaktifkan' : 'dinonaktifkan';
 
-            $count = Ormas::where('status', 'disetujui')->update([
-                'is_active' => $isActive,
-            ]);
+            $count = Ormas::where('status', 'disetujui')
+                ->update(['is_active' => $isActive]);
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Bulk Update Status',
-                'deskripsi'  => "Mengupdate status {$count} ORMAS menjadi {$statusText}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas(
+                $request,
+                'Bulk Update Status',
+                "Mengupdate status {$count} ORMAS menjadi {$statusText}"
+            );
 
             return response()->json([
                 'success' => true,
@@ -179,7 +186,7 @@ class UserManagementController extends Controller
                 'count'   => $count,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -200,18 +207,26 @@ class UserManagementController extends Controller
         }
     }
 
-    public function show($id)
+    // ============================================================
+    // SHOW — Detail ORMAS via AJAX
+    // ============================================================
+    public function show($id): JsonResponse
     {
-        // 🔒 Validasi ID
-        if (!is_numeric($id) || (int) $id < 1) {
+        if (!$this->isValidId($id)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data tidak ditemukan.',
             ], 404);
         }
 
-        $ormas = Ormas::with(['pengurus', 'user', 'jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan'])
-            ->find($id);
+        $ormas = Ormas::with([
+            'pengurus',
+            'user',
+            'jenisOrmas',
+            'bidangKegiatan',
+            'kecamatan',
+            'kelurahan',
+        ])->find((int) $id);
 
         if (!$ormas) {
             return response()->json([
@@ -226,14 +241,17 @@ class UserManagementController extends Controller
         ]);
     }
 
-    public function editOrmas($id)
+    // ============================================================
+    // EDIT ORMAS — Ambil data untuk form edit
+    // ============================================================
+    public function editOrmas($id): JsonResponse
     {
-        if (!is_numeric($id) || (int) $id < 1) {
+        if (!$this->isValidId($id)) {
             return response()->json(['message' => 'Data tidak ditemukan.'], 404);
         }
 
         $ormas = Ormas::with(['jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan'])
-            ->find($id);
+            ->find((int) $id);
 
         if (!$ormas) {
             return response()->json(['message' => 'Data tidak ditemukan.'], 404);
@@ -242,7 +260,10 @@ class UserManagementController extends Controller
         return response()->json($ormas);
     }
 
-    public function updateOrmas(Request $request, $id)
+    // ============================================================
+    // UPDATE ORMAS
+    // ============================================================
+    public function updateOrmas(Request $request, $id): JsonResponse
     {
         try {
             $ormas = Ormas::findOrFail($id);
@@ -268,34 +289,9 @@ class UserManagementController extends Controller
                 'pelaporan'                        => 'nullable|in:sudah,belum,tidak_ada',
             ]);
 
-            // Proses Jenis ORMAS
-            $jenisOrmasId = null;
-            if (!empty($validated['jenis_ormas_id'])) {
-                $jenis = JenisOrmas::firstOrCreate(
-                    ['nama' => $validated['jenis_ormas_id']],
-                    ['nama' => $validated['jenis_ormas_id']]
-                );
-                $jenisOrmasId = $jenis->id;
-            }
-
-            // Proses Bidang Kegiatan
-            $bidangKegiatanId = null;
-            if (!empty($validated['bidang_kegiatan_id'])) {
-                $bidang = BidangKegiatan::firstOrCreate(
-                    ['nama' => $validated['bidang_kegiatan_id']],
-                    ['nama' => $validated['bidang_kegiatan_id']]
-                );
-                $bidangKegiatanId = $bidang->id;
-            }
-
-            // Proses Kelurahan
-            $kelurahanId = null;
-            if (!empty($validated['kelurahan_id'])) {
-                $kelurahan = Kelurahan::find($validated['kelurahan_id']);
-                if ($kelurahan) {
-                    $kelurahanId = $kelurahan->id;
-                }
-            }
+            $jenisOrmasId     = $this->resolveJenisOrmasId($validated['jenis_ormas_id'] ?? null);
+            $bidangKegiatanId = $this->resolveBidangKegiatanId($validated['bidang_kegiatan_id'] ?? null);
+            $kelurahanId      = $this->resolveKelurahanId($validated['kelurahan_id'] ?? null);
 
             $ormas->update([
                 'nama'                             => $validated['nama'],
@@ -318,21 +314,15 @@ class UserManagementController extends Controller
                 'pelaporan'                        => $validated['pelaporan'] ?? 'belum',
             ]);
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Update ORMAS',
-                'deskripsi'  => "Mengupdate data ORMAS {$ormas->nama}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas($request, 'Update ORMAS', "Mengupdate data ORMAS {$ormas->nama}");
 
             return response()->json([
                 'success' => true,
                 'message' => 'Data ORMAS berhasil diupdate.',
-                'data'    => $ormas->fresh(),
+                'data'    => $ormas,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -341,9 +331,9 @@ class UserManagementController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Update ORMAS error', [
-                'message' => $e->getMessage(),
-                'file'    => $e->getFile(),
-                'line'    => $e->getLine(),
+                'message'  => $e->getMessage(),
+                'file'     => $e->getFile(),
+                'line'     => $e->getLine(),
                 'ormas_id' => $id,
             ]);
 
@@ -354,7 +344,10 @@ class UserManagementController extends Controller
         }
     }
 
-    public function updatePelaporan(Request $request, $id)
+    // ============================================================
+    // UPDATE PELAPORAN
+    // ============================================================
+    public function updatePelaporan(Request $request, $id): JsonResponse
     {
         try {
             $ormas = Ormas::findOrFail($id);
@@ -366,13 +359,11 @@ class UserManagementController extends Controller
             $ormas->pelaporan = $validated['pelaporan'];
             $ormas->save();
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Update Pelaporan ORMAS',
-                'deskripsi'  => "Mengupdate status pelaporan ORMAS {$ormas->nama} menjadi {$ormas->pelaporan_text}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas(
+                $request,
+                'Update Pelaporan ORMAS',
+                "Mengupdate status pelaporan ORMAS {$ormas->nama} menjadi {$ormas->pelaporan_text}"
+            );
 
             return response()->json([
                 'success' => true,
@@ -384,7 +375,7 @@ class UserManagementController extends Controller
                 ],
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -404,13 +395,16 @@ class UserManagementController extends Controller
         }
     }
 
-    public function editPengurus($id)
+    // ============================================================
+    // EDIT PENGURUS
+    // ============================================================
+    public function editPengurus($id): JsonResponse
     {
-        if (!is_numeric($id) || (int) $id < 1) {
+        if (!$this->isValidId($id)) {
             return response()->json(['message' => 'Data tidak ditemukan.'], 404);
         }
 
-        $pengurus = Pengurus::find($id);
+        $pengurus = Pengurus::find((int) $id);
 
         if (!$pengurus) {
             return response()->json(['message' => 'Data tidak ditemukan.'], 404);
@@ -419,7 +413,10 @@ class UserManagementController extends Controller
         return response()->json($pengurus);
     }
 
-    public function updatePengurus(Request $request, $id)
+    // ============================================================
+    // UPDATE PENGURUS
+    // ============================================================
+    public function updatePengurus(Request $request, $id): JsonResponse
     {
         try {
             $pengurus = Pengurus::findOrFail($id);
@@ -432,13 +429,7 @@ class UserManagementController extends Controller
 
             $pengurus->update($validated);
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Update Pengurus',
-                'deskripsi'  => "Mengupdate data pengurus {$pengurus->nama}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas($request, 'Update Pengurus', "Mengupdate data pengurus {$pengurus->nama}");
 
             return response()->json([
                 'success' => true,
@@ -446,7 +437,7 @@ class UserManagementController extends Controller
                 'data'    => $pengurus,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -466,7 +457,10 @@ class UserManagementController extends Controller
         }
     }
 
-    public function tambahPengurus(Request $request)
+    // ============================================================
+    // TAMBAH PENGURUS
+    // ============================================================
+    public function tambahPengurus(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -483,13 +477,7 @@ class UserManagementController extends Controller
                 'no_hp'    => $validated['no_hp'] ?? null,
             ]);
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Tambah Pengurus',
-                'deskripsi'  => "Menambahkan pengurus {$pengurus->nama}",
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            $this->logAktivitas($request, 'Tambah Pengurus', "Menambahkan pengurus {$pengurus->nama}");
 
             return response()->json([
                 'success' => true,
@@ -497,7 +485,7 @@ class UserManagementController extends Controller
                 'data'    => $pengurus,
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal.',
@@ -516,16 +504,13 @@ class UserManagementController extends Controller
         }
     }
 
-    /**
-     * ============================================================
-     * HAPUS PENGURUS (METHOD BARU)
-     * ============================================================
-     */
-    public function destroyPengurus($id)
+    // ============================================================
+    // HAPUS PENGURUS
+    // ============================================================
+    public function destroyPengurus($id): JsonResponse
     {
         try {
-            // 🔒 Validasi ID
-            if (!is_numeric($id) || (int) $id < 1) {
+            if (!$this->isValidId($id)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'ID pengurus tidak valid.',
@@ -546,14 +531,11 @@ class UserManagementController extends Controller
 
             $pengurus->delete();
 
-            // Log aktivitas
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Hapus Pengurus',
-                'deskripsi'  => "Menghapus pengurus '{$nama}' dari ORMAS ID {$ormasId}",
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+            $this->logAktivitas(
+                request(),
+                'Hapus Pengurus',
+                "Menghapus pengurus '{$nama}' dari ORMAS ID {$ormasId}"
+            );
 
             return response()->json([
                 'success' => true,
@@ -575,23 +557,24 @@ class UserManagementController extends Controller
         }
     }
 
-    public function destroyOrmas($id)
+    // ============================================================
+    // HAPUS ORMAS (beserta pengurus)
+    // ============================================================
+    public function destroyOrmas($id): JsonResponse
     {
         try {
             $ormas = Ormas::findOrFail($id);
-            $namaOrmas      = $ormas->nama;
-            $pengurusCount  = $ormas->pengurus()->count();
+            $namaOrmas     = $ormas->nama;
+            $pengurusCount = $ormas->pengurus()->count();
 
             $ormas->pengurus()->delete();
             $ormas->delete();
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Hapus ORMAS',
-                'deskripsi'  => "Menghapus ORMAS {$namaOrmas} beserta {$pengurusCount} pengurus",
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+            $this->logAktivitas(
+                request(),
+                'Hapus ORMAS',
+                "Menghapus ORMAS {$namaOrmas} beserta {$pengurusCount} pengurus"
+            );
 
             return response()->json([
                 'success' => true,
@@ -611,7 +594,10 @@ class UserManagementController extends Controller
         }
     }
 
-    public function toggleActive($id)
+    // ============================================================
+    // TOGGLE ACTIVE/NONACTIVE
+    // ============================================================
+    public function toggleActive($id): JsonResponse
     {
         try {
             $ormas = Ormas::findOrFail($id);
@@ -621,13 +607,11 @@ class UserManagementController extends Controller
 
             $status = $ormas->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
-            LogAktivitas::create([
-                'user_id'    => auth()->id(),
-                'aktivitas'  => 'Toggle Status ORMAS',
-                'deskripsi'  => "ORMAS {$ormas->nama} {$status} oleh admin",
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+            $this->logAktivitas(
+                request(),
+                'Toggle Status ORMAS',
+                "ORMAS {$ormas->nama} {$status} oleh admin"
+            );
 
             return response()->json([
                 'success'   => true,
@@ -646,5 +630,67 @@ class UserManagementController extends Controller
                 'message' => 'Terjadi kesalahan. Silakan coba lagi.',
             ], 500);
         }
+    }
+
+    // ============================================================
+    // PRIVATE HELPERS
+    // ============================================================
+
+    /**
+     * Validasi format ID (angka positif).
+     */
+    private function isValidId($id): bool
+    {
+        return is_numeric($id) && (int) $id > 0;
+    }
+
+    /**
+     * Helper log aktivitas — supaya tidak duplikasi di setiap method.
+     */
+    private function logAktivitas(Request $request, string $aktivitas, string $deskripsi): void
+    {
+        LogAktivitas::create([
+            'user_id'    => (int) Auth::id(),
+            'aktivitas'  => $aktivitas,
+            'deskripsi'  => $deskripsi,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+    }
+
+    /**
+     * Resolve Jenis ORMAS (firstOrCreate).
+     */
+    private function resolveJenisOrmasId(?string $nama): ?int
+    {
+        if (empty($nama)) {
+            return null;
+        }
+
+        return JenisOrmas::firstOrCreate(['nama' => $nama], ['nama' => $nama])->id;
+    }
+
+    /**
+     * Resolve Bidang Kegiatan (firstOrCreate).
+     */
+    private function resolveBidangKegiatanId(?string $nama): ?int
+    {
+        if (empty($nama)) {
+            return null;
+        }
+
+        return BidangKegiatan::firstOrCreate(['nama' => $nama], ['nama' => $nama])->id;
+    }
+
+    /**
+     * Resolve Kelurahan ID (find).
+     */
+    private function resolveKelurahanId(?string $id): ?int
+    {
+        if (empty($id)) {
+            return null;
+        }
+
+        return Kelurahan::find($id)?->id;
     }
 }
