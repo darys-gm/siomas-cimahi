@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\AdminSaranController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminPosterController;
 use App\Http\Controllers\Admin\AgendaController;
+use App\Http\Controllers\Admin\AdminStrukturController;
 use App\Models\Kelurahan;
 use App\Models\Ormas;
 use App\Models\Saran;
@@ -286,16 +287,11 @@ Route::middleware('auth')->group(function () {
 
         // ============================================
         // LOG AKTIVITAS
-        // ⚠️ URUTAN SANGAT PENTING! Route statis HARUS di atas route dinamis
         // ============================================
         Route::prefix('logs')->name('logs.')->group(function () {
             Route::get('/', [LogController::class, 'index'])->name('index');
-
-            // Route STATIS (clear, clear-old) — HARUS di atas
             Route::delete('clear', [LogController::class, 'clear'])->name('clear');
             Route::delete('clear-old', [LogController::class, 'clearOld'])->name('clear-old');
-
-            // Route DINAMIS ({id}) — di paling bawah + constraint angka
             Route::delete('{id}', [LogController::class, 'destroy'])
                 ->where('id', '[0-9]+')
                 ->name('destroy');
@@ -306,7 +302,6 @@ Route::middleware('auth')->group(function () {
         // ============================================
         Route::get('saran', [AdminSaranController::class, 'index'])->name('saran');
 
-        // Polling: rate limit lebih longgar, tapi tetap dibatasi
         Route::get('saran/check-new', [AdminSaranController::class, 'checkNew'])
             ->middleware('throttle:60,1')
             ->name('saran.check-new');
@@ -347,5 +342,14 @@ Route::middleware('auth')->group(function () {
         // ---------- MANAJEMEN AGENDA ----------
         Route::resource('agenda', AgendaController::class);
         Route::post('agenda/{id}/toggle-active', [AgendaController::class, 'toggleActive'])->name('agenda.toggle-active');
+
+        // ============================================
+        // ===== MANAJEMEN STRUKTUR ORGANISASI =====
+        // ============================================
+        Route::get('struktur', [AdminStrukturController::class, 'index'])->name('struktur.index');
+        Route::post('struktur', [AdminStrukturController::class, 'store'])->name('struktur.store');
+        Route::delete('struktur/{id}', [AdminStrukturController::class, 'destroy'])
+            ->where('id', '[0-9]+')
+            ->name('struktur.destroy');
     });
 });

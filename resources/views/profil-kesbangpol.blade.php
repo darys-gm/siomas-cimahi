@@ -68,16 +68,14 @@
 
                 <!-- Konten Dinamis -->
                 <div id="content-container">
-                    <!-- Struktur Organisasi -->
+                    <!-- ============================================ -->
+                    <!-- STRUKTUR ORGANISASI - DARI DATABASE         -->
+                    <!-- ============================================ -->
                     <div id="content-struktur" class="content-section bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden">
                         <div class="p-2 sm:p-4 md:p-6">
-                            @php
-                                $strukturPath = public_path('images/struktur-organisasi.webp');
-                                $strukturUrl = file_exists($strukturPath) ? asset('images/struktur-organisasi.webp') : null;
-                            @endphp
-                            @if($strukturUrl)
+                            @if(isset($struktur) && $struktur && $struktur->gambar)
                                 <div class="w-full">
-                                    <img src="{{ $strukturUrl }}" 
+                                    <img src="{{ asset('storage/' . $struktur->gambar) }}" 
                                          alt="Struktur Organisasi Bakesbangpol Kota Cimahi" 
                                          class="w-full h-auto object-contain rounded-lg">
                                     <p class="text-center text-[10px] sm:text-sm text-gray-500 mt-1.5 sm:mt-3">

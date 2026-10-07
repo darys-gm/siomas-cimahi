@@ -394,6 +394,11 @@
                 <span>Manajemen Home</span>
             </a>
 
+            <a href="{{ route('admin.struktur.index') }}" class="menu-item {{ request()->routeIs('admin.struktur.*') ? 'active' : '' }}">
+                <i class="fas fa-sitemap"></i>
+                <span>Manajemen Profil</span>
+            </a>
+
             <a href="{{ route('admin.laporan.index') }}" class="menu-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i>
                 <span>Statistik & Laporan</span>
