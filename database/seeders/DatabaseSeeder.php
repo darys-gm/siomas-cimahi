@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\DokumenPersyaratan;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -12,13 +11,16 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Create admin
-        User::create([
-            'name' => 'Admin Kesbangpol',
-            'email' => 'admin@kesbangpol.cimahi',
-            'password' => Hash::make('password123'),
-            'role' => 'admin',
-            'is_active' => true
-        ]);
+        User::updateOrCreate(
+            ['username' => 'adminksbgpl6202'],
+            [
+                'name'      => 'Admin Kesbangpol',
+                'email'     => 'admin@kesbangpol.cimahi',
+                'password'  => Hash::make('password123'),
+                'role'      => 'admin',
+                'is_active' => 1,
+            ]
+        );
 
         // Seed master data
         $this->call([
@@ -51,25 +53,5 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Seed dokumen persyaratan
-        $dokumen = [
-            'Fotokopi KTP Pengurus',
-            'Fotokopi KK Pengurus',
-            'Surat Keterangan Domisili',
-            'Akta Pendirian ORMAS',
-            'Anggaran Dasar dan Anggaran Rumah Tangga',
-            'Surat Keterangan dari Kepolisian',
-            'Surat Pernyataan Kesanggupan',
-            'Fotokopi NPWP',
-            'Struktur Organisasi',
-            'Proposal Kegiatan'
-        ];
-
-        foreach ($dokumen as $item) {
-            DokumenPersyaratan::create([
-                'nama' => $item,
-                'keterangan' => 'Dokumen persyaratan untuk verifikasi ORMAS'
-            ]);
-        }
     }
 }
