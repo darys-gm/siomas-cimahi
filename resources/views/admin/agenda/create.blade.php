@@ -29,18 +29,33 @@
 
     <form action="{{ route('admin.agenda.store') }}" method="POST">
         @csrf
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- Judul --}}
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Agenda <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Judul Agenda <span class="text-red-500">*</span>
+                </label>
                 <input type="text" name="judul" value="{{ old('judul') }}" required
                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('judul') border-red-500 @enderror"
                        placeholder="Masukkan judul agenda">
                 @error('judul') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
+            {{-- Deskripsi --}}
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                <textarea name="deskripsi" rows="3"
+                          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('deskripsi') border-red-500 @enderror"
+                          placeholder="Masukkan deskripsi agenda (opsional)">{{ old('deskripsi') }}</textarea>
+                @error('deskripsi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Tanggal --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Tanggal <span class="text-red-500">*</span>
+                </label>
                 <input type="date" name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" required
                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal') border-red-500 @enderror">
                 @error('tanggal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -50,12 +65,34 @@
                 </p>
             </div>
 
-            <!-- Status Aktif/Nonaktif -->
+            {{-- Waktu --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
+                <input type="text" name="waktu" value="{{ old('waktu') }}"
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('waktu') border-red-500 @enderror"
+                       placeholder="Contoh: 09:00 - 12:00">
+                @error('waktu') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <p class="text-xs text-gray-400 mt-1">
+                    <i class="fas fa-clock mr-1"></i>
+                    Opsional, format bebas
+                </p>
+            </div>
+
+            {{-- Tempat --}}
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tempat</label>
+                <input type="text" name="tempat" value="{{ old('tempat') }}"
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tempat') border-red-500 @enderror"
+                       placeholder="Contoh: Aula Kantor Kesbangpol">
+                @error('tempat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Status Aktif/Nonaktif --}}
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Agenda</label>
                 <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_active" id="is_active" value="1" 
+                        <input type="checkbox" name="is_active" id="is_active" value="1"
                                {{ old('is_active', '1') == '1' ? 'checked' : '' }}
                                onchange="updateStatusPreview()"
                                class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
@@ -64,8 +101,8 @@
                             <p class="text-xs text-gray-500">Centang untuk membuat agenda aktif</p>
                         </label>
                     </div>
-                    
-                    <!-- Preview Status -->
+
+                    {{-- Preview Status --}}
                     <div class="ml-auto flex items-center gap-2">
                         <span class="text-sm text-gray-500">Status:</span>
                         <span id="statusPreview" class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
@@ -95,7 +132,7 @@
     function updateStatusPreview() {
         const checkbox = document.getElementById('is_active');
         const statusPreview = document.getElementById('statusPreview');
-        
+
         if (checkbox.checked) {
             statusPreview.textContent = 'Aktif';
             statusPreview.className = 'px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
@@ -105,7 +142,6 @@
         }
     }
 
-    // Jalankan saat halaman dimuat untuk set status awal
     document.addEventListener('DOMContentLoaded', function() {
         updateStatusPreview();
     });

@@ -35,7 +35,7 @@
             <div class="hero-slide" style="background-image: url('{{ asset('images/bg-image2.webp') }}');"></div>
             <div class="hero-slide" style="background-image: url('{{ asset('images/bg-image3.webp') }}');"></div>
             <div class="hero-slide" style="background-image: url('{{ asset('images/bg-image4.webp') }}');"></div>
-            
+
             <div class="absolute inset-0 bg-red-700/50"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-red-800/80 via-red-700/60 to-transparent"></div>
         </div>
@@ -70,13 +70,13 @@
                 <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white/90 leading-relaxed scroll-animate max-w-1xl mx-auto px-2">
                     Layanan digital resmi Badan Kesatuan Bangsa dan Politik (Bakesbangpol) Kota Cimahi untuk pendataan, transparansi, dan sinergi organisasi kemasyarakatan demi mewujudkan Cimahi yang kolaboratif, kondusif, maju, dan harmonis.
                 </h3>
-                
+
                 <div class="flex flex-wrap gap-3 md:gap-4 mt-4 md:mt-6 justify-center scroll-animate">
-                    <a href="{{ route('pelaporan-ormas.create') }}" 
+                    <a href="{{ route('pelaporan-ormas.create') }}"
                        class="px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-red-50 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
                         <i class="fas fa-file-alt mr-2"></i> Daftar
                     </a>
-                    <a href="{{ route('alur-pelaporan') }}" 
+                    <a href="{{ route('alur-pelaporan') }}"
                        class="px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg font-semibold hover:bg-white/30 transition text-sm sm:text-base">
                         <i class="fas fa-book mr-2"></i> Panduan
                     </a>
@@ -97,11 +97,11 @@
                         @foreach($posters as $poster)
                         <div class="swiper-slide">
                             <div class="relative rounded-xl overflow-hidden bg-white shadow-lg">
-                                <img src="{{ asset('storage/' . $poster->gambar) }}" 
-                                     alt="{{ $poster->judul }}" 
+                                <img src="{{ asset('storage/' . $poster->gambar) }}"
+                                     alt="{{ $poster->judul }}"
                                      class="w-full h-auto object-cover aspect-[16/9]">
                                 @if($poster->link)
-                                <a href="{{ $poster->link }}" target="_blank" 
+                                <a href="{{ $poster->link }}" target="_blank"
                                    class="absolute bottom-3 right-3 bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-700 transition opacity-0 hover:opacity-100">
                                     <i class="fas fa-external-link-alt mr-1"></i> Lihat
                                 </a>
@@ -168,7 +168,7 @@
                         @endif
                         @if($index == 1)
                         <div class="mt-2 sm:mt-3">
-                            <a href="{{ route('download.formulir-ormas') }}" 
+                            <a href="{{ route('download.formulir-ormas') }}"
                                class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-green-600 text-white text-[10px] sm:text-xs rounded-lg hover:bg-green-700 transition">
                                 <i class="fas fa-download mr-1"></i> Download Formulir
                             </a>
@@ -198,8 +198,8 @@
                         $maskotUrl = file_exists(public_path('images/maskot1.png')) ? asset('images/maskot1.png') : null;
                     @endphp
                     @if($maskotUrl)
-                        <img src="{{ $maskotUrl }}" 
-                             alt="Maskot" 
+                        <img src="{{ $maskotUrl }}"
+                             alt="Maskot"
                              class="maskot-image w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-60 lg:h-60 object-contain drop-shadow-2xl">
                     @else
                         <div class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 bg-white/20 rounded-full flex items-center justify-center">
@@ -213,7 +213,7 @@
                         Tarif Pelayanan <span class="text-orange-400">100% Gratis</span>
                     </h2>
                     <p class="text-white/90 text-xs sm:text-sm md:text-base lg:text-lg max-w-lg leading-relaxed">
-                        Pelayanan pendataan ORMAS di Kota Cimahi tidak dipungut biaya apapun. 
+                        Pelayanan pendataan ORMAS di Kota Cimahi tidak dipungut biaya apapun.
                         Sepenuhnya gratis untuk masyarakat.
                     </p>
                     <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 mt-2 sm:mt-3 text-white/80 text-[10px] sm:text-xs md:text-sm">
@@ -270,15 +270,15 @@
                                 @foreach($sliderBeritas as $index => $berita)
                                 <div class="berita-slide {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}" style="position: absolute; inset: 0;">
                                     @if($berita->gambar)
-                                    <img src="{{ asset('storage/' . $berita->gambar) }}" 
-                                         alt="{{ $berita->judul }}" 
+                                    <img src="{{ asset('storage/' . $berita->gambar) }}"
+                                         alt="{{ $berita->judul }}"
                                          class="w-full h-full object-cover">
                                     @else
                                     <div class="w-full h-full bg-gradient-to-r from-red-600 to-red-800 flex items-center justify-center">
                                         <i class="fas fa-newspaper text-4xl sm:text-5xl md:text-6xl text-white/30"></i>
                                     </div>
                                     @endif
-                                    
+
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
                                         <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-5">
                                             <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
@@ -310,17 +310,17 @@
                         </div>
 
                         @if($sliderBeritas->count() > 1)
-                        <button onclick="prevBeritaSlide()" 
+                        <button onclick="prevBeritaSlide()"
                                 class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
                             <i class="fas fa-chevron-left text-sm sm:text-base"></i>
                         </button>
-                        <button onclick="nextBeritaSlide()" 
+                        <button onclick="nextBeritaSlide()"
                                 class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
                             <i class="fas fa-chevron-right text-sm sm:text-base"></i>
                         </button>
                         <div class="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2 z-20">
                             @foreach($sliderBeritas as $index => $berita)
-                            <button onclick="goToBeritaSlide({{ $index }})" 
+                            <button onclick="goToBeritaSlide({{ $index }})"
                                     class="berita-dot w-2 h-2 sm:w-3 sm:h-3 rounded-full transition {{ $index === 0 ? 'bg-white' : 'bg-white/40 hover:bg-white/60' }}"
                                     data-index="{{ $index }}">
                             </button>
@@ -337,15 +337,15 @@
                             <i class="fas fa-list-ul text-red-600"></i>
                             Berita Lainnya
                         </h3>
-                        
+
                         @php
                             $sidebarBeritas = isset($beritas) ? $beritas->skip(5)->take(5) : collect();
                         @endphp
-                        
+
                         @if($sidebarBeritas->count() > 0)
                             <div class="space-y-1.5 sm:space-y-2 mt-2 sm:mt-3 overflow-y-auto pr-1 flex-1 max-h-[280px] lg:max-h-none">
                                 @foreach($sidebarBeritas as $berita)
-                                <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}" 
+                                <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}"
                                    class="block group hover:bg-red-50 rounded-lg p-1.5 sm:p-2 transition border-l-3 border-transparent hover:border-red-500">
                                     <h4 class="text-xs sm:text-sm font-medium text-gray-800 group-hover:text-red-600 transition line-clamp-2">
                                         {{ $berita->judul }}
@@ -365,7 +365,9 @@
                     </div>
                 </div>
 
-                <!-- KOLOM 3: AGENDA KEGIATAN (4/12) -->
+                <!-- ============================================ -->
+                <!-- KOLOM 3: AGENDA KEGIATAN (4/12) — UPDATED    -->
+                <!-- ============================================ -->
                 <div class="lg:col-span-4 scroll-animate">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 h-full flex flex-col">
                         <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 flex-shrink-0">
@@ -387,47 +389,73 @@
                         <div id="agendaListContainer" class="bg-gray-50 rounded-lg p-2 sm:p-3 overflow-y-auto flex-shrink-0 max-h-[150px] sm:max-h-[180px] lg:max-h-[200px]">
                             @if(isset($todayAgendas) && $todayAgendas->count() > 0)
                                 <div id="agendaItems" class="space-y-1.5 sm:space-y-2">
+                                    {{-- ============ UPDATED: foreach agenda dengan detail lengkap ============ --}}
                                     @foreach($todayAgendas as $agenda)
+                                    @php
+                                        $isUpcoming = strtotime($agenda->tanggal) >= strtotime(date('Y-m-d'));
+                                        $hasDetail = !empty($agenda->deskripsi) || !empty($agenda->waktu) || !empty($agenda->tempat);
+                                    @endphp
                                     <div class="flex flex-col p-1.5 sm:p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group agenda-item" data-agenda-id="{{ $agenda->id }}">
+                                        {{-- Header --}}
                                         <div class="flex items-start gap-2 sm:gap-3">
                                             <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-red-600 rounded-lg flex flex-col items-center justify-center text-white text-center shadow-sm mt-0.5">
                                                 <span class="text-sm sm:text-base font-bold leading-none">{{ date('d', strtotime($agenda->tanggal)) }}</span>
                                                 <span class="text-[6px] sm:text-[7px] font-bold uppercase leading-none">{{ date('M', strtotime($agenda->tanggal)) }}</span>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title line-clamp-1" 
+                                                <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title"
                                                     data-full-text="{{ $agenda->judul }}">
-                                                    {{ strlen($agenda->judul) > 40 ? substr($agenda->judul, 0, 40) . '...' : $agenda->judul }}
+                                                    {{ $agenda->judul }}
                                                 </h4>
                                                 <p class="text-[8px] sm:text-[9px] text-gray-400">
                                                     {{ date('l, d F Y', strtotime($agenda->tanggal)) }}
                                                 </p>
                                             </div>
-                                            @php
-                                                $isUpcoming = strtotime($agenda->tanggal) >= strtotime(date('Y-m-d'));
-                                            @endphp
                                             <span class="flex-shrink-0 text-[7px] sm:text-[8px] font-medium px-1.5 py-0.5 sm:px-2 rounded-full {{ $isUpcoming ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400' }}">
                                                 <i class="fas {{ $isUpcoming ? 'fa-clock' : 'fa-check-circle' }} mr-0.5"></i>
                                                 {{ $isUpcoming ? 'Akan Datang' : 'Selesai' }}
                                             </span>
                                         </div>
-                                        
-                                        <div class="mt-1 ml-10 sm:ml-12">
-                                            @if($agenda->deskripsi)
-                                            <div class="agenda-description hidden text-[9px] sm:text-[10px] text-gray-600 border-t border-gray-100 pt-1.5">
-                                                {{ $agenda->deskripsi }}
+
+                                        {{-- Detail lengkap (hidden by default) --}}
+                                        <div class="agenda-detail hidden mt-2 ml-10 sm:ml-12 border-t border-red-100 pt-2 space-y-1.5">
+                                            @if(!empty($agenda->deskripsi))
+                                            <div class="flex items-start gap-1.5">
+                                                <i class="fas fa-align-left text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                                <p class="text-[9px] sm:text-[10px] text-gray-600 leading-relaxed whitespace-pre-line">{{ $agenda->deskripsi }}</p>
                                             </div>
                                             @endif
-                                            
-                                            @if(strlen($agenda->judul) > 40 || ($agenda->deskripsi && strlen($agenda->deskripsi) > 50))
-                                            <div class="flex justify-end mt-1">
-                                                <button onclick="toggleAgendaExpand(this)" 
-                                                        class="text-[8px] sm:text-[9px] text-red-600 hover:text-red-800 font-medium transition agenda-toggle-btn hover:underline">
-                                                    Lihat Selengkapnya
-                                                </button>
+
+                                            @if(!empty($agenda->waktu))
+                                            <div class="flex items-center gap-1.5">
+                                                <i class="fas fa-clock text-red-500 text-[9px] sm:text-[10px] flex-shrink-0"></i>
+                                                <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                                    <span class="font-medium text-gray-700">Waktu:</span> {{ $agenda->waktu }}
+                                                </p>
+                                            </div>
+                                            @endif
+
+                                            @if(!empty($agenda->tempat))
+                                            <div class="flex items-start gap-1.5">
+                                                <i class="fas fa-map-marker-alt text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                                <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                                    <span class="font-medium text-gray-700">Tempat:</span> {{ $agenda->tempat }}
+                                                </p>
                                             </div>
                                             @endif
                                         </div>
+
+                                        {{-- Button Lihat Selengkapnya --}}
+                                        @if($hasDetail)
+                                        <div class="flex justify-end mt-1.5 ml-10 sm:ml-12">
+                                            <button type="button"
+                                                    onclick="toggleAgendaExpand(this)"
+                                                    class="agenda-toggle-btn inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 font-medium px-2 py-1 rounded-full transition-all duration-200 hover:shadow-sm">
+                                                <span class="toggle-text">Lihat Selengkapnya</span>
+                                                <i class="fas fa-chevron-down toggle-icon transition-transform duration-200"></i>
+                                            </button>
+                                        </div>
+                                        @endif
                                     </div>
                                     @endforeach
                                 </div>
@@ -449,7 +477,7 @@
                                 </div>
                             @endif
                         </div>
-                        
+
                         @if(isset($todayAgendas) && $todayAgendas->count() > 2)
                         <div class="text-center mt-1.5 text-[8px] sm:text-[9px] text-gray-400 flex-shrink-0">
                             <i class="fas fa-chevron-down mr-1"></i>
@@ -478,15 +506,15 @@
             <!-- Filter Tab Kategori -->
             <div class="flex justify-center mb-6 sm:mb-8">
                 <div class="inline-flex bg-white rounded-full shadow-sm border border-gray-200 p-1">
-                    <button type="button" 
-                            onclick="filterGaleri('bakesbangpol')" 
+                    <button type="button"
+                            onclick="filterGaleri('bakesbangpol')"
                             id="tab-bakesbangpol"
                             class="galeri-tab active px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
                         <i class="fas fa-building"></i>
                         <span>Bakesbangpol</span>
                     </button>
-                    <button type="button" 
-                            onclick="filterGaleri('ormas')" 
+                    <button type="button"
+                            onclick="filterGaleri('ormas')"
                             id="tab-ormas"
                             class="galeri-tab px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
                         <i class="fas fa-users"></i>
@@ -506,16 +534,16 @@
                                  '{{ addslashes($item->judul) }}',
                                  '{{ addslashes($item->deskripsi ?? '') }}'
                              )">
-                            <img src="{{ asset('storage/' . $item->gambar) }}" 
-                                 alt="{{ $item->judul }}" 
+                            <img src="{{ asset('storage/' . $item->gambar) }}"
+                                 alt="{{ $item->judul }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            
+
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
                                     <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
                                 </div>
                             </div>
-                            
+
                             <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
                                 <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
                                 @if($item->deskripsi)
@@ -544,16 +572,16 @@
                                  '{{ addslashes($item->judul) }}',
                                  '{{ addslashes($item->deskripsi ?? '') }}'
                              )">
-                            <img src="{{ asset('storage/' . $item->gambar) }}" 
-                                 alt="{{ $item->judul }}" 
+                            <img src="{{ asset('storage/' . $item->gambar) }}"
+                                 alt="{{ $item->judul }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            
+
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
                                     <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
                                 </div>
                             </div>
-                            
+
                             <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
                                 <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
                                 @if($item->deskripsi)
@@ -581,13 +609,13 @@
         <button onclick="closeLightbox()" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/70 hover:text-white text-2xl sm:text-3xl transition z-10 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full">
             <i class="fas fa-times"></i>
         </button>
-        
+
         <div class="relative max-w-5xl w-full max-h-[95vh] flex flex-col rounded-xl overflow-hidden" onclick="event.stopPropagation()">
             <!-- Gambar -->
             <div class="flex-1 flex items-center justify-center overflow-hidden bg-black/50">
                 <img id="lightboxImage" src="" alt="" class="w-full h-auto max-h-[70vh] object-contain">
             </div>
-            
+
             <!-- Info Panel -->
             <div class="bg-white p-4 sm:p-6 max-h-[25vh] overflow-y-auto" id="lightboxInfoPanel">
                 <h3 class="text-base sm:text-xl font-bold text-gray-800 mb-2 flex items-start gap-2">
@@ -621,7 +649,7 @@
                     ];
                 @endphp
                 @foreach($links as $link)
-                <a href="{{ $link['url'] }}" target="_blank" 
+                <a href="{{ $link['url'] }}" target="_blank"
                    class="text-center group hover:scale-105 transition duration-300 scroll-animate">
                     <div class="flex justify-center mb-2">
                         @php
@@ -646,7 +674,7 @@
     <section id="statistik-pengunjung" class="py-6 sm:py-8 bg-gradient-to-r from-red-600 to-red-700 scroll-animate">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
-                
+
                 <div class="text-center mb-4 sm:mb-5">
                     <h2 class="text-lg sm:text-xl font-bold text-white inline-flex items-center gap-2">
                         <i class="fas fa-chart-line"></i>
@@ -656,7 +684,7 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 sm:gap-4">
-                    
+
                     <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 sm:p-4 hover:bg-white/25 transition text-center">
                         <div class="flex items-center justify-center gap-2 mb-1">
                             <i class="fas fa-calendar-day text-white/80 text-sm sm:text-base"></i>
@@ -753,7 +781,7 @@
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
     }
-    
+
     .hero-slide {
         position: absolute;
         inset: 0;
@@ -766,7 +794,7 @@
     .hero-slide.active {
         opacity: 1;
     }
-    
+
     .running-text-container {
         overflow: hidden;
         white-space: nowrap;
@@ -786,7 +814,7 @@
         0% { transform: translateX(0); }
         100% { transform: translateX(-50%); }
     }
-    
+
     .scroll-animate {
         opacity: 0;
         transform: translateY(40px);
@@ -800,24 +828,24 @@
     .posterSwiper {
         padding-bottom: 10px;
     }
-    
+
     .posterSwiper .swiper-slide {
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         transition: transform 0.3s ease;
     }
-    
+
     .posterSwiper .swiper-slide:hover {
         transform: scale(1.02);
     }
-    
+
     .posterSwiper .swiper-slide img {
         width: 100%;
         height: auto;
         display: block;
     }
-    
+
     .posterSwiper .swiper-pagination {
         position: relative !important;
         margin-top: 16px !important;
@@ -826,7 +854,7 @@
         align-items: center !important;
         gap: 8px !important;
     }
-    
+
     .posterSwiper .swiper-pagination-bullet {
         width: 12px !important;
         height: 12px !important;
@@ -837,12 +865,12 @@
         cursor: pointer !important;
         border: 2px solid transparent !important;
     }
-    
+
     .posterSwiper .swiper-pagination-bullet:hover {
         background: #fca5a5 !important;
         transform: scale(1.1);
     }
-    
+
     .posterSwiper .swiper-pagination-bullet-active {
         background: #dc2626 !important;
         width: 32px !important;
@@ -850,7 +878,7 @@
         border-color: #dc2626 !important;
         box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4) !important;
     }
-    
+
     @media (max-width: 640px) {
         .posterSwiper .swiper-pagination-bullet {
             width: 10px !important;
@@ -864,7 +892,7 @@
             margin-top: 12px !important;
         }
     }
-    
+
     @media (max-width: 374px) {
         .posterSwiper .swiper-pagination-bullet {
             width: 8px !important;
@@ -878,7 +906,7 @@
             margin-top: 10px !important;
         }
     }
-    
+
     .berita-slide {
         display: none;
         opacity: 0;
@@ -951,7 +979,7 @@
     .galeri-item:hover .fa-search-plus {
         transform: scale(1.1);
     }
-    
+
     #lightboxModal {
         animation: lightboxFadeIn 0.3s ease;
     }
@@ -1135,6 +1163,9 @@
         background: white;
     }
 
+    /* ============================================ */
+    /* AGENDA ITEM — UPDATED                        */
+    /* ============================================ */
     .agenda-item {
         transition: all 0.3s ease;
     }
@@ -1145,18 +1176,22 @@
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
     }
 
-    .agenda-item .agenda-title {
+    .agenda-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.3;
         transition: all 0.3s ease;
     }
 
     .agenda-item.expanded .agenda-title {
-        white-space: normal !important;
-        -webkit-line-clamp: unset !important;
-        overflow: visible !important;
+        -webkit-line-clamp: unset;
+        overflow: visible;
         line-height: 1.4;
     }
 
-    .agenda-description {
+    .agenda-detail {
         animation: fadeInExpand 0.3s ease;
     }
 
@@ -1169,21 +1204,25 @@
         to {
             opacity: 1;
             transform: translateY(0);
-            max-height: 200px;
+            max-height: 300px;
         }
     }
 
     .agenda-toggle-btn {
-        transition: all 0.2s ease;
         white-space: nowrap;
+        transition: all 0.2s ease;
     }
 
     .agenda-toggle-btn:hover {
-        transform: scale(1.05);
+        transform: translateY(-1px);
+    }
+
+    .agenda-toggle-btn .toggle-icon {
+        transition: transform 0.25s ease;
     }
 
     .agenda-item.expanded .agenda-toggle-btn {
-        color: #b91c1c;
+        /* Style handled by JS toggle */
     }
 
     #agendaListContainer {
@@ -1226,13 +1265,13 @@
         'use strict';
 
         window.scrollTo(0, 0);
-        
+
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
 
         const agendaData = @json($allAgendas ?? []);
-        
+
         let currentDate = new Date();
         let currentYear = currentDate.getFullYear();
         let currentMonth = currentDate.getMonth();
@@ -1334,12 +1373,12 @@
         function scrollToSelectedDate() {
             const container = document.getElementById('calendarHorizontal');
             if (!container) return;
-            
+
             let targetElement = container.querySelector('.calendar-day-horizontal.selected');
             if (!targetElement) {
                 targetElement = container.querySelector('.calendar-day-horizontal.today');
             }
-            
+
             if (targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
@@ -1359,11 +1398,15 @@
         function updateHeaderDate(year, month, day) {
             const dayDisplay = document.getElementById('selectedDayHeader');
             const monthDisplay = document.getElementById('selectedMonthHeader');
-            
+
             dayDisplay.textContent = String(day).padStart(2, '0');
             monthDisplay.textContent = monthNames[month].substring(0, 3).toUpperCase();
         }
 
+        // ============================================
+        // UPDATED: updateAgendaListHorizontal
+        // Render agenda dinamis dengan button Lihat Selengkapnya
+        // ============================================
         function updateAgendaListHorizontal(year, month, day) {
             const dateObj = new Date(year, month, day);
             const agendas = getAgendasForDate(dateObj);
@@ -1378,8 +1421,9 @@
                     const statusIcon = isUpcoming ? 'fa-clock' : 'fa-check-circle';
                     const statusText = isUpcoming ? 'Akan Datang' : 'Selesai';
                     const title = agenda.judul || '';
-                    const truncatedTitle = title.length > 40 ? title.substring(0, 40) + '...' : title;
-                    const showToggle = title.length > 40 || (agenda.deskripsi && agenda.deskripsi.length > 50);
+                    const hasDetail = (agenda.deskripsi && agenda.deskripsi.trim() !== '') ||
+                                      (agenda.waktu && agenda.waktu.trim() !== '') ||
+                                      (agenda.tempat && agenda.tempat.trim() !== '');
 
                     html += `
                         <div class="flex flex-col p-1.5 sm:p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group agenda-item" data-agenda-id="${agenda.id}">
@@ -1389,9 +1433,9 @@
                                     <span class="text-[6px] sm:text-[7px] font-bold uppercase leading-none">${monthNames[agendaDate.getMonth()].substring(0, 3)}</span>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title line-clamp-1" 
+                                    <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title"
                                         data-full-text="${title.replace(/"/g, '&quot;')}">
-                                        ${truncatedTitle}
+                                        ${title}
                                     </h4>
                                     <p class="text-[8px] sm:text-[9px] text-gray-400">
                                         ${formatDateDisplay(agendaDate)}
@@ -1402,19 +1446,39 @@
                                     ${statusText}
                                 </span>
                             </div>
-                            
-                            <div class="mt-1 ml-10 sm:ml-12">
-                                ${agenda.deskripsi ? `<div class="agenda-description hidden text-[9px] sm:text-[10px] text-gray-600 border-t border-gray-100 pt-1.5">${agenda.deskripsi}</div>` : ''}
-                                
-                                ${showToggle ? `
-                                <div class="flex justify-end mt-1">
-                                    <button onclick="toggleAgendaExpand(this)" 
-                                            class="text-[8px] sm:text-[9px] text-red-600 hover:text-red-800 font-medium transition agenda-toggle-btn hover:underline">
-                                        Lihat Selengkapnya
-                                    </button>
-                                </div>
-                                ` : ''}
+
+                            <div class="agenda-detail hidden mt-2 ml-10 sm:ml-12 border-t border-red-100 pt-2 space-y-1.5">
+                                ${agenda.deskripsi && agenda.deskripsi.trim() !== '' ? `
+                                <div class="flex items-start gap-1.5">
+                                    <i class="fas fa-align-left text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-600 leading-relaxed whitespace-pre-line">${agenda.deskripsi}</p>
+                                </div>` : ''}
+                                ${agenda.waktu && agenda.waktu.trim() !== '' ? `
+                                <div class="flex items-center gap-1.5">
+                                    <i class="fas fa-clock text-red-500 text-[9px] sm:text-[10px] flex-shrink-0"></i>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                        <span class="font-medium text-gray-700">Waktu:</span> ${agenda.waktu}
+                                    </p>
+                                </div>` : ''}
+                                ${agenda.tempat && agenda.tempat.trim() !== '' ? `
+                                <div class="flex items-start gap-1.5">
+                                    <i class="fas fa-map-marker-alt text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                        <span class="font-medium text-gray-700">Tempat:</span> ${agenda.tempat}
+                                    </p>
+                                </div>` : ''}
                             </div>
+
+                            ${hasDetail ? `
+                            <div class="flex justify-end mt-1.5 ml-10 sm:ml-12">
+                                <button type="button"
+                                        onclick="toggleAgendaExpand(this)"
+                                        class="agenda-toggle-btn inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 font-medium px-2 py-1 rounded-full transition-all duration-200 hover:shadow-sm">
+                                    <span class="toggle-text">Lihat Selengkapnya</span>
+                                    <i class="fas fa-chevron-down toggle-icon transition-transform duration-200"></i>
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                 });
@@ -1448,35 +1512,40 @@
             renderHorizontalCalendar(currentYear, currentMonth);
         }
 
+        // ============================================
+        // UPDATED: toggleAgendaExpand
+        // Toggle detail agenda dengan animasi + style
+        // ============================================
         window.toggleAgendaExpand = function(button) {
             const agendaItem = button.closest('.agenda-item');
-            const title = agendaItem.querySelector('.agenda-title');
-            const description = agendaItem.querySelector('.agenda-description');
-            const fullText = title.getAttribute('data-full-text') || title.textContent;
-            
+            if (!agendaItem) return;
+
+            const detail = agendaItem.querySelector('.agenda-detail');
+            const toggleText = button.querySelector('.toggle-text');
+            const toggleIcon = button.querySelector('.toggle-icon');
+
             agendaItem.classList.toggle('expanded');
-            
-            if (agendaItem.classList.contains('expanded')) {
-                title.textContent = fullText;
-                title.classList.remove('line-clamp-1');
-                
-                if (description) {
-                    description.classList.remove('hidden');
-                }
-                
-                button.textContent = 'Sembunyikan';
-                button.classList.add('text-red-700');
+            const isExpanded = agendaItem.classList.contains('expanded');
+
+            if (detail) {
+                detail.classList.toggle('hidden', !isExpanded);
+            }
+
+            if (toggleText) {
+                toggleText.textContent = isExpanded ? 'Sembunyikan' : 'Lihat Selengkapnya';
+            }
+
+            if (toggleIcon) {
+                toggleIcon.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+
+            // Style button saat expanded
+            if (isExpanded) {
+                button.classList.remove('text-red-600', 'border-red-300');
+                button.classList.add('text-white', 'bg-red-600', 'border-red-600');
             } else {
-                const truncatedText = fullText.length > 40 ? fullText.substring(0, 40) + '...' : fullText;
-                title.textContent = truncatedText;
-                title.classList.add('line-clamp-1');
-                
-                if (description) {
-                    description.classList.add('hidden');
-                }
-                
-                button.textContent = 'Lihat Selengkapnya';
-                button.classList.remove('text-red-700');
+                button.classList.remove('text-white', 'bg-red-600', 'border-red-600');
+                button.classList.add('text-red-600', 'border-red-300');
             }
         };
 
@@ -1485,22 +1554,22 @@
             if (toggleBtn) {
                 const currentItem = toggleBtn.closest('.agenda-item');
                 const allItems = document.querySelectorAll('.agenda-item');
-                
+
                 allItems.forEach(function(item) {
                     if (item !== currentItem && item.classList.contains('expanded')) {
                         const otherBtn = item.querySelector('.agenda-toggle-btn');
                         if (otherBtn) {
-                            const otherTitle = item.querySelector('.agenda-title');
-                            const otherDesc = item.querySelector('.agenda-description');
-                            const fullText = otherTitle.getAttribute('data-full-text') || otherTitle.textContent;
-                            
+                            const otherDetail = item.querySelector('.agenda-detail');
+                            const otherToggleText = otherBtn.querySelector('.toggle-text');
+                            const otherToggleIcon = otherBtn.querySelector('.toggle-icon');
+
                             item.classList.remove('expanded');
-                            const truncatedText = fullText.length > 40 ? fullText.substring(0, 40) + '...' : fullText;
-                            otherTitle.textContent = truncatedText;
-                            otherTitle.classList.add('line-clamp-1');
-                            if (otherDesc) otherDesc.classList.add('hidden');
-                            otherBtn.textContent = 'Lihat Selengkapnya';
-                            otherBtn.classList.remove('text-red-700');
+                            if (otherDetail) otherDetail.classList.add('hidden');
+                            if (otherToggleText) otherToggleText.textContent = 'Lihat Selengkapnya';
+                            if (otherToggleIcon) otherToggleIcon.style.transform = 'rotate(0deg)';
+
+                            otherBtn.classList.remove('text-white', 'bg-red-600', 'border-red-600');
+                            otherBtn.classList.add('text-red-600', 'border-red-300');
                         }
                     }
                 });
@@ -1706,13 +1775,9 @@
             var descEl = document.getElementById('lightboxDescription');
             var emptyDescEl = document.getElementById('lightboxEmptyDescription');
 
-            // Set gambar
             img.src = imageUrl;
-
-            // Set judul
             titleText.textContent = title && title.trim() !== '' ? title : 'Galeri';
 
-            // Set deskripsi
             if (description && description.trim() !== '') {
                 descEl.textContent = description;
                 descWrapper.classList.remove('hidden');
@@ -1733,7 +1798,6 @@
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
 
-            // Reset konten setelah modal tertutup
             setTimeout(function() {
                 document.getElementById('lightboxImage').src = '';
                 document.getElementById('lightboxTitleText').textContent = '';

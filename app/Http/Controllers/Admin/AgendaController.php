@@ -46,7 +46,7 @@ class AgendaController extends Controller
                 'is_active' => 'nullable|boolean',
             ]);
 
-            // 🔒 Explicit assign (bukan mass assignment)
+            // Explicit assign (tanpa user_id)
             $agenda = new Agenda();
             $agenda->judul     = $validated['judul'];
             $agenda->deskripsi = $validated['deskripsi'] ?? null;
@@ -54,7 +54,6 @@ class AgendaController extends Controller
             $agenda->waktu     = $validated['waktu'] ?? null;
             $agenda->tempat    = $validated['tempat'] ?? null;
             $agenda->is_active = $request->has('is_active') ? 1 : 0;
-            $agenda->user_id   = (int) Auth::id();
             $agenda->save();
 
             $this->logAktivitas(
@@ -114,7 +113,7 @@ class AgendaController extends Controller
                 'is_active' => 'nullable|boolean',
             ]);
 
-            // 🔒 Explicit assign
+            // Explicit assign (tanpa user_id)
             $agenda->judul     = $validated['judul'];
             $agenda->deskripsi = $validated['deskripsi'] ?? null;
             $agenda->tanggal   = $validated['tanggal'];
@@ -257,6 +256,8 @@ class AgendaController extends Controller
 
     /**
      * Helper log aktivitas — supaya tidak duplikasi.
+     * CATATAN: user_id di sini untuk tabel log_aktivitas,
+     *          BUKAN untuk tabel agendas.
      */
     private function logAktivitas(Request $request, string $aktivitas, string $deskripsi): void
     {
