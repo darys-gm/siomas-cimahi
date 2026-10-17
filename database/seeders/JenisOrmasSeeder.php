@@ -9,19 +9,10 @@ class JenisOrmasSeeder extends Seeder
 {
     public function run()
     {
+        // Hanya menyisakan data yang dipakai sesuai database asli
         $jenis = [
-            'Organisasi Kemasyarakatan',
-            'Organisasi Profesi',
-            'Organisasi Keagamaan',
-            'Organisasi Pemuda',
-            'Organisasi Perempuan',
-            'Organisasi Olahraga',
-            'Organisasi Seni dan Budaya',
-            'Organisasi Lingkungan Hidup',
-            'Organisasi Pendidikan',
-            'Organisasi Sosial',
             'Yayasan',
-            'Perkumpulan'
+            'Perkumpulan',
         ];
 
         foreach ($jenis as $item) {

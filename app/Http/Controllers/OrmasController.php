@@ -19,8 +19,8 @@ class OrmasController extends Controller
             'search'    => 'nullable|string|max:100',
             'bentuk'    => 'nullable|string|max:100',
             'bidang'    => 'nullable|string|max:255',
-            'kecamatan' => 'nullable|integer|exists:kecamatans,id',
-            'kelurahan' => 'nullable|integer|exists:kelurahans,id',
+            'kecamatan' => 'nullable|integer|exists:kecamatan,id',
+            'kelurahan' => 'nullable|integer|exists:kelurahan,id',
         ]);
 
         $search    = $validated['search'] ?? null;

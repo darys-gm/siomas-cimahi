@@ -55,7 +55,7 @@
 
                 <!-- Back Button -->
                 <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200/70">
-                    <a href="{{ route('home') }}#berita" class="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100/80 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-gray-200/90 transition inline-flex items-center gap-2 text-xs sm:text-sm border border-gray-200/50">
+                    <a href="{{ route('berita.semua') }}#berita" class="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100/80 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-gray-200/90 transition inline-flex items-center gap-2 text-xs sm:text-sm border border-gray-200/50">
                         <i class="fas fa-arrow-left"></i> Kembali ke Berita
                     </a>
                 </div>

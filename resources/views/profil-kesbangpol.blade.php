@@ -60,17 +60,13 @@
                         <button class="menu-btn px-2 sm:px-4 md:px-5 py-1 sm:py-2 md:py-2.5 rounded-lg text-[10px] sm:text-xs md:text-sm font-medium transition text-gray-700 hover:bg-red-50 hover:text-red-600 whitespace-nowrap" data-target="tupoksi">
                             <i class="fas fa-tasks mr-0.5 sm:mr-2"></i> <span class="text-[9px] sm:text-xs">TUPOKSI</span>
                         </button>
-                        <button class="menu-btn px-2 sm:px-4 md:px-5 py-1 sm:py-2 md:py-2.5 rounded-lg text-[10px] sm:text-xs md:text-sm font-medium transition text-gray-700 hover:bg-red-50 hover:text-red-600 whitespace-nowrap" data-target="galeri">
-                            <i class="fas fa-images mr-0.5 sm:mr-2"></i> <span class="text-[9px] sm:text-xs">Galeri</span>
-                        </button>
+                        <!-- Tombol Galeri DIHAPUS -->
                     </div>
                 </div>
 
                 <!-- Konten Dinamis -->
                 <div id="content-container">
-                    <!-- ============================================ -->
-                    <!-- STRUKTUR ORGANISASI - DARI DATABASE         -->
-                    <!-- ============================================ -->
+                    <!-- STRUKTUR ORGANISASI -->
                     <div id="content-struktur" class="content-section bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden">
                         <div class="p-2 sm:p-4 md:p-6">
                             @if(isset($struktur) && $struktur && $struktur->gambar)
@@ -176,31 +172,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Galeri -->
-                    <div id="content-galeri" class="content-section bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden hidden">
-                        <div class="p-2 sm:p-4 md:p-6">
-                            @if(isset($galeris) && $galeris->count() > 0)
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-3 md:gap-4">
-                                @foreach($galeris as $item)
-                                <div class="aspect-square rounded-lg overflow-hidden shadow-md hover:shadow-xl transition group relative">
-                                    <img src="{{ asset('storage/' . $item->gambar) }}" 
-                                         alt="{{ $item->judul }}" 
-                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-1.5 sm:p-3">
-                                        <p class="text-white text-[8px] sm:text-xs font-medium line-clamp-1">{{ $item->judul }}</p>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                            @else
-                            <div class="text-center py-4 sm:py-8">
-                                <i class="fas fa-images text-2xl sm:text-4xl text-red-300 block mb-1.5 sm:mb-3"></i>
-                                <p class="text-xs sm:text-base text-gray-500">Belum ada galeri</p>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
+                    
+                    <!-- Div content-galeri DIHAPUS -->
                 </div>
             </div>
 
@@ -275,14 +248,6 @@
 </div>
 
 <style>
-    /* === LINE CLAMP UNTUK GALERI === */
-    .line-clamp-1 {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
     /* === RESPONSIVE BREAKPOINT UNTUK XS (320px) === */
     @media (max-width: 374px) {
         .container {
@@ -381,19 +346,6 @@
             font-size: 10px !important;
         }
         .space-y-1\.5 {
-            gap: 2px !important;
-        }
-        
-        /* Galeri */
-        .gap-1\.5 {
-            gap: 4px !important;
-        }
-        .p-1\.5 {
-            padding: 3px !important;
-        }
-        
-        /* TUPOKSI */
-        .space-y-1 {
             gap: 2px !important;
         }
     }

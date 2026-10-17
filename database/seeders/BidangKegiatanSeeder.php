@@ -9,17 +9,8 @@ class BidangKegiatanSeeder extends Seeder
 {
     public function run()
     {
+        // Data dibersihkan, hanya menyisakan yang ada di aplikasi
         $bidang = [
-            'Sosial dan Kemanusiaan',
-            'Pendidikan',
-            'Kesehatan',
-            'Ekonomi dan Kewirausahaan',
-            'Lingkungan Hidup',
-            'Seni dan Budaya',
-            'Olahraga',
-            'Keagamaan',
-            'Hukum dan HAM',
-            'Kepemudaan',
             'Keagamaan dan Kepercayaan',
             'Sosial, Kemanusiaan dan Kemasyarakatan',
             'Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga',
@@ -29,7 +20,9 @@ class BidangKegiatanSeeder extends Seeder
             'Lingkungan Hidup dan Kebencanaan',
             'Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat',
             'Kebangsaan dan Bela Negara',
-            'Hukum, HAM dan Advokasi Publik'
+            'Hukum, HAM dan Advokasi Publik',
+            'Komunitas, Minat dan Hobi',
+            'Bidang Kegiatan Lainnya',
         ];
 
         foreach ($bidang as $item) {
