@@ -39,16 +39,17 @@ class SaranController extends Controller
             // ============================================================
             $validated = $request->validate([
                 'nama'  => 'required|string|min:2|max:255',
-                'email' => 'nullable|email|max:255',
-                'pesan' => 'required|string|min:10|max:5000',
+                'email' => 'nullable|string|max:255', // Opsional, boleh diisi '-'
+                'pesan' => 'required|string|min:3|max:5000', // Minimal 3 karakter
             ], [
-                'pesan.min' => 'Pesan minimal 10 karakter.',
-                'pesan.max' => 'Pesan maksimal 5000 karakter.',
+                'nama.required' => 'Nama wajib diisi.',
+                'pesan.min'     => 'Pesan minimal 3 karakter.',
+                'pesan.max'     => 'Pesan maksimal 5000 karakter.',
             ]);
 
             $saran = Saran::create([
                 'nama'       => $validated['nama'],
-                'email'      => $validated['email'] ?? null,
+                'email'      => !empty($validated['email']) ? $validated['email'] : null, // Jika kosong, jadikan NULL
                 'pesan'      => $validated['pesan'],
                 'status'     => 'baru',
                 'ip_address' => $request->ip(),
@@ -67,9 +68,6 @@ class SaranController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            // ============================================================
-            // 🔒 LOG DI SERVER, JANGAN BOCOR KE USER
-            // ============================================================
             Log::error('Error saat menyimpan saran', [
                 'message'    => $e->getMessage(),
                 'file'       => $e->getFile(),

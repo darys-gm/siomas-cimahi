@@ -31,7 +31,14 @@
 
                 <form id="saranForm" class="p-4 sm:p-6 md:p-8">
                     @csrf
+                    
+                    <!-- 🔒 HONEYPOT ANTI-BOT (Disembunyikan) -->
+                    <div style="display: none;">
+                        <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+                    </div>
+
                     <div class="space-y-3 sm:space-y-4">
+                        <!-- INPUT NAMA (Wajib) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nama <span class="text-red-500">*</span></label>
                             <input type="text" name="nama" id="nama" 
@@ -39,19 +46,21 @@
                                    placeholder="Masukkan nama Anda" required>
                         </div>
 
+                        <!-- INPUT EMAIL (Opsional) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" name="email" id="email" 
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-gray-400 font-normal">(Opsional)</span></label>
+                            <input type="text" name="email" id="email" 
                                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base"
-                                   placeholder="Masukkan email Anda (opsional)">
+                                   placeholder="Masukkan email Anda atau tanda strip (-)">
                         </div>
 
+                        <!-- INPUT PESAN (Minimal 3) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Pesan <span class="text-red-500">*</span></label>
                             <textarea name="pesan" id="pesan" rows="5" 
                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base"
                                       placeholder="Tulis saran, kritik, atau masukan Anda..." required></textarea>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">Anda bebas menulis pesan tanpa batasan minimal karakter.</p>
+                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">Minimal 3 karakter.</p>
                         </div>
 
                         <button type="submit" id="submitBtn" 
