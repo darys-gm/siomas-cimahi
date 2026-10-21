@@ -118,71 +118,117 @@
     @endif
 
     <!-- ============================================ -->
-    <!-- ALUR PELAPORAN                               -->
+    <!-- SECTION ALUR PELAPORAN - SPLIT CAROUSEL      -->
     <!-- ============================================ -->
-    <section id="alur-pelaporan" class="py-8 sm:py-10 md:py-12 bg-red-50 scroll-animate">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-6 sm:mb-8">
-                <h2 class="text-2xl sm:text-3xl font-bold text-red-700 scroll-animate">Alur Pelaporan Keberadaan ORMAS</h2>
-                <p class="text-gray-600 text-base sm:text-lg mt-2 scroll-animate">Panduan lengkap tata cara pendaftaran Organisasi Masyarakat (ORMAS) di Kota Cimahi</p>
-                <div class="w-20 h-1 bg-red-500 mx-auto mt-3 rounded-full scroll-animate"></div>
+    <section id="alur-pelaporan" class="py-12 sm:py-16 md:py-20 bg-white scroll-animate relative overflow-hidden">
+        <!-- Background Ornamen -->
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Judul Section -->
+            <div class="text-center mb-10 md:mb-14">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 scroll-animate">Alur Pelaporan Keberadaan ORMAS</h2>
+                <p class="text-gray-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto scroll-animate">Panduan lengkap tata cara pendaftaran Organisasi Masyarakat (ORMAS) di Kota Cimahi</p>
+                <div class="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full scroll-animate"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
-                @php
-                    $imgPaths = ['img_p2.png', 'img_p1.png', 'img_p3.png', 'img_p4.png'];
-                    $labels = ['Mengisi Form Pelaporan', 'Mengajukan Surat Permohonan', 'Verifikasi Dokumen dan Lapangan', 'Selesai'];
-                    $descs = [
-                        'Mengisi data ORMAS melalui form pelaporan yang tersedia di website SIOMAS Cimahi',
-                        'Dokumen ajuan surat permohonan dan dokumen pendukung lainnya dibawa ke kantor Bakesbangpol Cimahi',
-                        'Petugas akan memverifikasi dokumen dan survei lapangan',
-                        'Ormas sudah terverifikasi dan terdata telah melaporkan keberadaannya di Kota Cimahi'
-                    ];
-                @endphp
-                @foreach($imgPaths as $index => $imgPath)
-                <div class="text-center group scroll-animate">
-                    <div class="w-48 h-40 sm:w-56 sm:h-44 md:w-60 md:h-50 mx-auto mb-3 md:mb-4 rounded-2xl overflow-hidden bg-white">
-                        @php
-                            $imgUrl = file_exists(public_path('images/' . $imgPath)) ? asset('images/' . $imgPath) : null;
-                        @endphp
-                        @if($imgUrl)
-                            <img src="{{ $imgUrl }}" alt="Langkah {{ $index+1 }}" class="w-full h-full object-contain group-hover:scale-105 transition duration-500">
-                        @else
-                            <div class="w-full h-full bg-red-100 flex items-center justify-center">
-                                <span class="text-4xl sm:text-5xl md:text-6xl font-bold text-red-400">{{ $index+1 }}</span>
+            <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="flex flex-col lg:flex-row items-stretch">
+                    
+                    <!-- ============================================ -->
+                    <!-- BAGIAN KIRI: CAROUSEL GAMBAR                 -->
+                    <!-- ============================================ -->
+                    <div class="w-full lg:w-1/2 bg-gray-50 relative p-6 sm:p-10 flex flex-col justify-center min-h-[300px] sm:min-h-[400px]">
+                        
+                        <!-- Slides Container -->
+                        <div class="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-white border border-gray-200">
+                            @php
+                                $imgPaths = ['img_p2.png', 'img_p1.png', 'img_p3.png', 'img_p4.png'];
+                            @endphp
+
+                            @foreach($imgPaths as $index => $imgPath)
+                            <div class="alur-slide absolute inset-0 transition-opacity duration-700 ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}" data-index="{{ $index }}">
+                                @php
+                                    $imgUrl = file_exists(public_path('images/' . $imgPath)) ? asset('images/' . $imgPath) : null;
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="Alur {{ $index+1 }}" class="w-full h-full object-contain p-4 sm:p-8">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-red-50">
+                                        <span class="text-6xl font-bold text-red-200">Langkah {{ $index+1 }}</span>
+                                    </div>
+                                @endif
                             </div>
-                        @endif
+                            @endforeach
+                        </div>
+
+                        <!-- Tombol Navigasi Kiri & Kanan -->
+                        <button onclick="prevAlur()" class="absolute left-2 sm:left-4 top-[45%] -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-600 hover:text-red-600 hover:scale-110 transition z-20 focus:outline-none">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button onclick="nextAlur()" class="absolute right-2 sm:right-4 top-[45%] -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-600 hover:text-red-600 hover:scale-110 transition z-20 focus:outline-none">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+
+                        <!-- Indikator Titik (Dots) -->
+                        <div class="flex justify-center gap-2 mt-6">
+                            @foreach($imgPaths as $index => $imgPath)
+                            <button onclick="goToAlur({{ $index }})" class="alur-dot w-3 h-3 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-red-600 w-8' : 'bg-gray-300 hover:bg-gray-400' }}" data-index="{{ $index }}"></button>
+                            @endforeach
+                        </div>
                     </div>
-                    <div class="px-2">
-                        <div class="flex items-center justify-center gap-2 sm:gap-3 mb-2">
-                            <span class="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-[10px] sm:text-xs">{{ $index+1 }}</span>
-                            <h3 class="font-bold text-sm sm:text-base text-gray-800">{{ $labels[$index] }}</h3>
-                        </div>
-                        <p class="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-xs mx-auto">{{ $descs[$index] }}</p>
-                        @if($index == 0)
-                        <div class="mt-2 sm:mt-3">
-                            <a href="{{ route('pelaporan-ormas.create') }}" class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-red-600 text-white text-[10px] sm:text-xs rounded-lg hover:bg-red-700 transition">
-                                <i class="fas fa-file-alt mr-1"></i> Isi Form Pelaporan
+
+                    <!-- ============================================ -->
+                    <!-- BAGIAN KANAN: TEKS DINAMIS                   -->
+                    <!-- ============================================ -->
+                    <div class="w-full lg:w-1/2 p-6 sm:p-10 flex flex-col justify-center relative bg-white">
+                        
+                        <!-- Tombol Panduan Kanan Atas -->
+                        <div class="absolute top-6 right-6 sm:top-8 sm:right-8">
+                            <a href="{{ route('alur-pelaporan') }}" class="inline-flex items-center text-xs sm:text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 sm:px-4 py-2 rounded-full transition-colors group shadow-sm border border-red-100">
+                                Panduan Lengkap <i class="fas fa-arrow-right ml-1.5 transform group-hover:translate-x-1 transition-transform"></i>
                             </a>
                         </div>
-                        @endif
-                        @if($index == 1)
-                        <div class="mt-2 sm:mt-3">
-                            <a href="{{ route('download.formulir-ormas') }}"
-                               class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-green-600 text-white text-[10px] sm:text-xs rounded-lg hover:bg-green-700 transition">
-                                <i class="fas fa-download mr-1"></i> Download Formulir
-                            </a>
+
+                        @php
+                            $labels = ['Mengisi Form Pelaporan', 'Mengajukan Surat Permohonan', 'Verifikasi Dokumen dan Lapangan', 'Selesai'];
+                            $descs = [
+                                'Mengisi data ORMAS melalui form pelaporan yang tersedia di website SIOMAS Cimahi. Pastikan seluruh data dan dokumen yang diunggah valid dan sesuai dengan kondisi lapangan.',
+                                'Dokumen ajuan surat permohonan dan dokumen pendukung lainnya dibawa ke kantor Bakesbangpol Cimahi untuk diproses lebih lanjut oleh petugas.',
+                                'Petugas akan memverifikasi kelengkapan dokumen dan melakukan survei lapangan (jika diperlukan) guna memastikan validitas data ORMAS.',
+                                'Ormas sudah terverifikasi dan terdata telah melaporkan keberadaannya di Kota Cimahi. Status keberadaan Ormas dapat dipantau secara berkala.'
+                            ];
+                        @endphp
+
+                        <div class="pt-12 sm:pt-4"> <!-- Padding top untuk memberi ruang tombol panduan di mobile -->
+                            <!-- Teks Dinamis -->
+                            <div id="alurTextContainer" class="transition-opacity duration-500 ease-in-out opacity-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span id="alurNumberBadge" class="w-10 h-10 rounded-full bg-red-100 text-red-600 font-bold flex items-center justify-center text-lg">1</span>
+                                    <h3 id="alurTitle" class="text-xl sm:text-2xl font-bold text-gray-800">Mengisi Form Pelaporan</h3>
+                                </div>
+                                <p id="alurDesc" class="text-gray-600 leading-relaxed text-sm sm:text-base mb-8 text-justify">
+                                    Mengisi data ORMAS melalui form pelaporan yang tersedia di website SIOMAS Cimahi. Pastikan seluruh data dan dokumen yang diunggah valid dan sesuai dengan kondisi lapangan.
+                                </p>
+                            </div>
+
+                            <!-- Container Tombol Aksi Dinamis -->
+                            <div id="alurActionContainer" class="h-12">
+                                <!-- Tombol Langkah 1 (Tampil Default) -->
+                                <a id="btnAksi1" href="{{ route('pelaporan-ormas.create') }}" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                    <i class="fas fa-file-alt mr-2"></i> Isi Form Pelaporan
+                                </a>
+                                
+                                <!-- Tombol Langkah 2 -->
+                                <a id="btnAksi2" href="{{ route('download.formulir-ormas') }}" class="hidden items-center px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                    <i class="fas fa-download mr-2"></i> Download Formulir
+                                </a>
+                            </div>
                         </div>
-                        @endif
+
                     </div>
                 </div>
-                @endforeach
-            </div>
-
-            <div class="text-center mt-6 sm:mt-8 scroll-animate">
-                <a href="{{ route('alur-pelaporan') }}" class="inline-flex items-center px-5 py-2.5 sm:px-6 sm:py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition text-sm sm:text-base">
-                    Lihat Selengkapnya <i class="fas fa-arrow-right ml-2"></i>
-                </a>
             </div>
         </div>
     </section>
@@ -1403,10 +1449,6 @@
             monthDisplay.textContent = monthNames[month].substring(0, 3).toUpperCase();
         }
 
-        // ============================================
-        // UPDATED: updateAgendaListHorizontal
-        // Render agenda dinamis dengan button Lihat Selengkapnya
-        // ============================================
         function updateAgendaListHorizontal(year, month, day) {
             const dateObj = new Date(year, month, day);
             const agendas = getAgendasForDate(dateObj);
@@ -1512,10 +1554,6 @@
             renderHorizontalCalendar(currentYear, currentMonth);
         }
 
-        // ============================================
-        // UPDATED: toggleAgendaExpand
-        // Toggle detail agenda dengan animasi + style
-        // ============================================
         window.toggleAgendaExpand = function(button) {
             const agendaItem = button.closest('.agenda-item');
             if (!agendaItem) return;
@@ -1539,7 +1577,6 @@
                 toggleIcon.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
             }
 
-            // Style button saat expanded
             if (isExpanded) {
                 button.classList.remove('text-red-600', 'border-red-300');
                 button.classList.add('text-white', 'bg-red-600', 'border-red-600');
@@ -1842,6 +1879,112 @@
 
         window.goToToday = goToToday;
         window.selectDate = selectDate;
+
+        // ============================================
+        // LOGIKA CAROUSEL ALUR PELAPORAN (BARU)
+        // ============================================
+        const alurSlides = document.querySelectorAll('.alur-slide');
+        const alurDots = document.querySelectorAll('.alur-dot');
+        const alurTitles = ['Mengisi Form Pelaporan', 'Mengajukan Surat Permohonan', 'Verifikasi Dokumen dan Lapangan', 'Selesai'];
+        const alurDescs = [
+            'Mengisi data ORMAS melalui form pelaporan yang tersedia di website SIOMAS Cimahi. Pastikan seluruh data dan dokumen yang diunggah valid dan sesuai dengan kondisi lapangan.',
+            'Dokumen ajuan surat permohonan dan dokumen pendukung lainnya dibawa ke kantor Bakesbangpol Cimahi untuk diproses lebih lanjut oleh petugas.',
+            'Petugas akan memverifikasi kelengkapan dokumen dan melakukan survei lapangan (jika diperlukan) guna memastikan validitas data ORMAS.',
+            'Ormas sudah terverifikasi dan terdata telah melaporkan keberadaannya di Kota Cimahi. Status keberadaan Ormas dapat dipantau secara berkala.'
+        ];
+
+        let currentAlurIndex = 0;
+        let alurInterval = null;
+        const alurTextContainer = document.getElementById('alurTextContainer');
+        const alurTitleEl = document.getElementById('alurTitle');
+        const alurDescEl = document.getElementById('alurDesc');
+        const alurNumberBadge = document.getElementById('alurNumberBadge');
+        const btnAksi1 = document.getElementById('btnAksi1');
+        const btnAksi2 = document.getElementById('btnAksi2');
+
+        window.showAlurSlide = function(index) {
+            // 1. Ganti Gambar
+            alurSlides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.remove('opacity-0', 'z-0');
+                    slide.classList.add('opacity-100', 'z-10');
+                } else {
+                    slide.classList.remove('opacity-100', 'z-10');
+                    slide.classList.add('opacity-0', 'z-0');
+                }
+            });
+
+            // 2. Ganti Dot
+            alurDots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.remove('bg-gray-300', 'hover:bg-gray-400', 'w-3');
+                    dot.classList.add('bg-red-600', 'w-8');
+                } else {
+                    dot.classList.remove('bg-red-600', 'w-8');
+                    dot.classList.add('bg-gray-300', 'hover:bg-gray-400', 'w-3');
+                }
+            });
+
+            // 3. Animasi Teks (Fade Out -> Ganti -> Fade In)
+            alurTextContainer.classList.remove('opacity-100');
+            alurTextContainer.classList.add('opacity-0');
+
+            setTimeout(() => {
+                // Ganti Konten Teks
+                alurTitleEl.textContent = alurTitles[index];
+                alurDescEl.textContent = alurDescs[index];
+                alurNumberBadge.textContent = index + 1;
+
+                // Ganti Tombol Aksi
+                if (index === 0) {
+                    btnAksi1.classList.remove('hidden'); btnAksi1.classList.add('inline-flex');
+                    btnAksi2.classList.add('hidden'); btnAksi2.classList.remove('inline-flex');
+                } else if (index === 1) {
+                    btnAksi1.classList.add('hidden'); btnAksi1.classList.remove('inline-flex');
+                    btnAksi2.classList.remove('hidden'); btnAksi2.classList.add('inline-flex');
+                } else {
+                    btnAksi1.classList.add('hidden'); btnAksi1.classList.remove('inline-flex');
+                    btnAksi2.classList.add('hidden'); btnAksi2.classList.remove('inline-flex');
+                }
+
+                alurTextContainer.classList.remove('opacity-0');
+                alurTextContainer.classList.add('opacity-100');
+            }, 300); // Waktu tunggu sesuai dengan transisi CSS (300ms)
+
+            currentAlurIndex = index;
+        };
+
+        window.nextAlur = function() {
+            let nextIndex = (currentAlurIndex + 1) % alurSlides.length;
+            showAlurSlide(nextIndex);
+            resetAlurInterval();
+        };
+
+        window.prevAlur = function() {
+            let prevIndex = (currentAlurIndex - 1 + alurSlides.length) % alurSlides.length;
+            showAlurSlide(prevIndex);
+            resetAlurInterval();
+        };
+
+        window.goToAlur = function(index) {
+            showAlurSlide(index);
+            resetAlurInterval();
+        };
+
+        function startAlurInterval() {
+            if (alurInterval) clearInterval(alurInterval);
+            alurInterval = setInterval(nextAlur, 5000); // 5000ms = 5 detik
+        }
+
+        function resetAlurInterval() {
+            clearInterval(alurInterval);
+            startAlurInterval();
+        }
+
+        // Jalankan saat pertama kali load
+        if (alurSlides.length > 0) {
+            startAlurInterval();
+        }
 
     })();
 </script>
