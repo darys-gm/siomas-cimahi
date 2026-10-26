@@ -8,6 +8,7 @@ use App\Models\Pengurus;
 use App\Models\JenisOrmas;
 use App\Models\BidangKegiatan;
 use App\Models\Kelurahan;
+use App\Models\Kecamatan; // Tambahkan model Kecamatan
 use App\Models\LogAktivitas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,12 +23,13 @@ class UserManagementController extends Controller
     // ============================================================
     public function index(Request $request)
     {
+        // PERBAIKAN: nama tabel di database adalah 'kecamatan' dan 'kelurahan' (tanpa s)
         $validated = $request->validate([
             'search'           => 'nullable|string|max:100',
             'bentuk'           => 'nullable|string|max:100',
             'bidang'           => 'nullable|string|max:255',
-            'kecamatan'        => 'nullable|integer|exists:kecamatans,id',
-            'kelurahan'        => 'nullable|integer|exists:kelurahans,id',
+            'kecamatan'        => 'nullable|integer|exists:kecamatan,id', 
+            'kelurahan'        => 'nullable|integer|exists:kelurahan,id',
             'status_aktif'     => 'nullable|in:0,1',
             'status_pelaporan' => 'nullable|in:sudah,belum,tidak_ada',
         ]);
@@ -282,7 +284,7 @@ class UserManagementController extends Controller
                 'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
                 'latitude'                         => 'nullable|numeric|between:-90,90',
                 'longitude'                        => 'nullable|numeric|between:-180,180',
-                'kecamatan_id'                     => 'nullable|exists:kecamatans,id',
+                'kecamatan_id'                     => 'nullable|exists:kecamatan,id', // PERBAIKAN: tanpa s
                 'kelurahan_id'                     => 'nullable|string|max:255',
                 'no_telepon'                       => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
                 'email'                            => 'nullable|email|max:255',
