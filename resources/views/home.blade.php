@@ -40,7 +40,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-red-800/80 via-red-700/60 to-transparent"></div>
         </div>
 
-        <div class="container mx-auto px-4 relative z-10">
+        <div class="container mx-auto px-4 relative z-10 pb-20 sm:pb-28 md:pb-36">
             <div class="max-w-4xl mx-auto text-center">
                 @php
                     $runningText = $runningText ?? 'Selamat datang di SIOMAS Kota Cimahi - Sistem Informasi Organisasi Masyarakat';
@@ -86,32 +86,54 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- SECTION POSTER - MENGGUNAKAN SWIPER.JS     -->
+    <!-- SECTION POSTER - COVERFLOW SWIPER (FULL WIDTH) -->
     <!-- ============================================ -->
     @if(isset($posters) && $posters->count() > 0)
-    <section id="poster" class="py-6 sm:py-8 md:py-10 bg-gradient-to-br from-red-50 to-white scroll-animate">
-        <div class="container mx-auto px-3 sm:px-4">
-            <div class="relative max-w-7xl mx-auto">
-                <div class="swiper posterSwiper overflow-hidden rounded-xl py-3 sm:py-4">
-                    <div class="swiper-wrapper">
-                        @foreach($posters as $poster)
-                        <div class="swiper-slide">
-                            <div class="relative rounded-xl overflow-hidden bg-white shadow-lg">
-                                <img src="{{ asset('storage/' . $poster->gambar) }}"
-                                     alt="{{ $poster->judul }}"
-                                     class="w-full h-auto object-cover aspect-[16/9]">
-                                @if($poster->link)
-                                <a href="{{ $poster->link }}" target="_blank"
-                                   class="absolute bottom-3 right-3 bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-700 transition opacity-0 hover:opacity-100">
-                                    <i class="fas fa-external-link-alt mr-1"></i> Lihat
-                                </a>
-                                @endif
-                            </div>
+    <!-- relative z-20 dan -mt-24 membuat poster melayang menimpa Hero -->
+    <section id="poster" class="relative z-20 -mt-24 sm:-mt-32 md:-mt-40 bg-transparent scroll-animate">
+        <!-- Gunakan w-full agar mentok ke kiri & kanan layar -->
+        <div class="w-full overflow-visible">
+            <!-- Swiper Container -->
+            <div class="swiper posterCoverflow py-4 sm:py-8">
+                <div class="swiper-wrapper">
+                    @foreach($posters as $poster)
+                    <div class="swiper-slide">
+                        <div class="relative rounded-2xl overflow-hidden bg-white shadow-xl">
+                            <img src="{{ asset('storage/' . $poster->gambar) }}"
+                                 alt="{{ $poster->judul }}"
+                                 class="w-full h-auto object-cover aspect-[4/3] sm:aspect-[16/9]">
+                            @if($poster->link)
+                            <a href="{{ $poster->link }}" target="_blank"
+                               class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition duration-300 flex items-center justify-center">
+                                <span class="px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold shadow-lg">
+                                    <i class="fas fa-external-link-alt mr-2"></i> Lihat Detail
+                                </span>
+                            </a>
+                            @endif
                         </div>
-                        @endforeach
                     </div>
-                    <div class="swiper-pagination !relative !mt-4"></div>
+                    @endforeach
                 </div>
+            </div>
+
+            <!-- Kontrol Navigasi & Progress Bar (Sejajar Kanan-Kiri di Tengah) -->
+            <div class="container mx-auto px-6 sm:px-12 mt-6 flex items-center justify-between">
+                
+                <!-- Tombol Kiri -->
+                <button class="poster-prev w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:text-red-600 hover:scale-105 transition focus:outline-none z-30">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <!-- Progress Bar di Tengah -->
+                <div class="flex-1 max-w-lg mx-4 sm:mx-8 h-1.5 bg-gray-300 rounded-full overflow-hidden shadow-inner">
+                    <div id="posterProgressBar" class="h-full bg-red-600 w-0 transition-all duration-100 ease-linear"></div>
+                </div>
+
+                <!-- Tombol Kanan -->
+                <button class="poster-next w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:text-red-600 hover:scale-105 transition focus:outline-none z-30">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
             </div>
         </div>
     </section>
@@ -120,7 +142,7 @@
     <!-- ============================================ -->
     <!-- SECTION ALUR PELAPORAN - SPLIT CAROUSEL      -->
     <!-- ============================================ -->
-    <section id="alur-pelaporan" class="py-12 sm:py-16 md:py-20 bg-white scroll-animate relative overflow-hidden">
+    <section id="alur-pelaporan" class="py-12 sm:py-16 md:py-20 bg-white scroll-animate relative overflow-hidden mt-8">
         <!-- Background Ornamen -->
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
         <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
@@ -136,12 +158,8 @@
             <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
                 <div class="flex flex-col lg:flex-row items-stretch">
                     
-                    <!-- ============================================ -->
-                    <!-- BAGIAN KIRI: CAROUSEL GAMBAR                 -->
-                    <!-- ============================================ -->
+                    <!-- BAGIAN KIRI: CAROUSEL GAMBAR -->
                     <div class="w-full lg:w-1/2 bg-gray-50 relative p-6 sm:p-10 flex flex-col justify-center min-h-[300px] sm:min-h-[400px]">
-                        
-                        <!-- Slides Container -->
                         <div class="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-white border border-gray-200">
                             @php
                                 $imgPaths = ['img_p2.png', 'img_p1.png', 'img_p3.png', 'img_p4.png'];
@@ -163,7 +181,6 @@
                             @endforeach
                         </div>
 
-                        <!-- Tombol Navigasi Kiri & Kanan -->
                         <button onclick="prevAlur()" class="absolute left-2 sm:left-4 top-[45%] -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-600 hover:text-red-600 hover:scale-110 transition z-20 focus:outline-none">
                             <i class="fas fa-chevron-left"></i>
                         </button>
@@ -171,7 +188,6 @@
                             <i class="fas fa-chevron-right"></i>
                         </button>
 
-                        <!-- Indikator Titik (Dots) -->
                         <div class="flex justify-center gap-2 mt-6">
                             @foreach($imgPaths as $index => $imgPath)
                             <button onclick="goToAlur({{ $index }})" class="alur-dot w-3 h-3 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-red-600 w-8' : 'bg-gray-300 hover:bg-gray-400' }}" data-index="{{ $index }}"></button>
@@ -179,12 +195,8 @@
                         </div>
                     </div>
 
-                    <!-- ============================================ -->
-                    <!-- BAGIAN KANAN: TEKS DINAMIS                   -->
-                    <!-- ============================================ -->
+                    <!-- BAGIAN KANAN: TEKS DINAMIS -->
                     <div class="w-full lg:w-1/2 p-6 sm:p-10 flex flex-col justify-center relative bg-white">
-                        
-                        <!-- Tombol Panduan Kanan Atas -->
                         <div class="absolute top-6 right-6 sm:top-8 sm:right-8">
                             <a href="{{ route('alur-pelaporan') }}" class="inline-flex items-center text-xs sm:text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 sm:px-4 py-2 rounded-full transition-colors group shadow-sm border border-red-100">
                                 Panduan Lengkap <i class="fas fa-arrow-right ml-1.5 transform group-hover:translate-x-1 transition-transform"></i>
@@ -201,8 +213,7 @@
                             ];
                         @endphp
 
-                        <div class="pt-12 sm:pt-4"> <!-- Padding top untuk memberi ruang tombol panduan di mobile -->
-                            <!-- Teks Dinamis -->
+                        <div class="pt-12 sm:pt-4"> 
                             <div id="alurTextContainer" class="transition-opacity duration-500 ease-in-out opacity-100">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span id="alurNumberBadge" class="w-10 h-10 rounded-full bg-red-100 text-red-600 font-bold flex items-center justify-center text-lg">1</span>
@@ -213,14 +224,11 @@
                                 </p>
                             </div>
 
-                            <!-- Container Tombol Aksi Dinamis -->
                             <div id="alurActionContainer" class="h-12">
-                                <!-- Tombol Langkah 1 (Tampil Default) -->
                                 <a id="btnAksi1" href="{{ route('pelaporan-ormas.create') }}" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
                                     <i class="fas fa-file-alt mr-2"></i> Isi Form Pelaporan
                                 </a>
                                 
-                                <!-- Tombol Langkah 2 -->
                                 <a id="btnAksi2" href="{{ route('download.formulir-ormas') }}" class="hidden items-center px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
                                     <i class="fas fa-download mr-2"></i> Download Formulir
                                 </a>
@@ -871,86 +879,32 @@
         transform: translateY(0);
     }
 
-    .posterSwiper {
+    /* ============================================ */
+    /* POSTER COVERFLOW SWIPER                      */
+    /* ============================================ */
+    .posterCoverflow {
         padding-bottom: 10px;
     }
-
-    .posterSwiper .swiper-slide {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease;
-    }
-
-    .posterSwiper .swiper-slide:hover {
-        transform: scale(1.02);
-    }
-
-    .posterSwiper .swiper-slide img {
-        width: 100%;
+    .posterCoverflow .swiper-slide {
+        width: 300px; 
         height: auto;
-        display: block;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease;
+        opacity: 1; /* Opacity 100% */
     }
-
-    .posterSwiper .swiper-pagination {
-        position: relative !important;
-        margin-top: 16px !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 8px !important;
-    }
-
-    .posterSwiper .swiper-pagination-bullet {
-        width: 12px !important;
-        height: 12px !important;
-        background: #d1d5db !important;
-        opacity: 1 !important;
-        border-radius: 50% !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-        border: 2px solid transparent !important;
-    }
-
-    .posterSwiper .swiper-pagination-bullet:hover {
-        background: #fca5a5 !important;
-        transform: scale(1.1);
-    }
-
-    .posterSwiper .swiper-pagination-bullet-active {
-        background: #dc2626 !important;
-        width: 32px !important;
-        border-radius: 20px !important;
-        border-color: #dc2626 !important;
-        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4) !important;
-    }
-
-    @media (max-width: 640px) {
-        .posterSwiper .swiper-pagination-bullet {
-            width: 10px !important;
-            height: 10px !important;
-        }
-        .posterSwiper .swiper-pagination-bullet-active {
-            width: 24px !important;
-        }
-        .posterSwiper .swiper-pagination {
-            gap: 6px !important;
-            margin-top: 12px !important;
+    @media (min-width: 640px) {
+        .posterCoverflow .swiper-slide {
+            width: 480px;
         }
     }
-
-    @media (max-width: 374px) {
-        .posterSwiper .swiper-pagination-bullet {
-            width: 8px !important;
-            height: 8px !important;
+    @media (min-width: 1024px) {
+        .posterCoverflow .swiper-slide {
+            width: 650px; 
         }
-        .posterSwiper .swiper-pagination-bullet-active {
-            width: 20px !important;
-        }
-        .posterSwiper .swiper-pagination {
-            gap: 4px !important;
-            margin-top: 10px !important;
-        }
+    }
+    .posterCoverflow .swiper-slide-active {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
     }
 
     .berita-slide {
@@ -1679,35 +1633,54 @@
         window.addEventListener('load', function() { setTimeout(handleScrollAnimation, 300); });
         window.addEventListener('resize', handleScrollAnimation);
 
+        // ============================================
+        // POSTER COVERFLOW SWIPER (BARU)
+        // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            const swiperEl = document.querySelector('.posterSwiper');
-            if (swiperEl) {
-                const slides = swiperEl.querySelectorAll('.swiper-slide');
-                if (slides.length > 0) {
-                    const swiper = new Swiper('.posterSwiper', {
-                        slidesPerView: 1,
-                        spaceBetween: 20,
+            const posterCoverflowEl = document.querySelector('.posterCoverflow');
+            if (posterCoverflowEl) {
+                const totalSlides = posterCoverflowEl.querySelectorAll('.swiper-slide').length;
+                
+                if (totalSlides > 0) {
+                    const posterSwiper = new Swiper('.posterCoverflow', {
+                        effect: 'coverflow',
+                        grabCursor: true,
                         centeredSlides: true,
-                        loop: true,
+                        slidesPerView: 'auto',
+                        loop: totalSlides > 3,
+                        speed: 800,
+                        coverflowEffect: {
+                            rotate: 35,
+                            stretch: 0,
+                            depth: 150,
+                            modifier: 1,
+                            slideShadows: true,
+                        },
                         autoplay: {
-                            delay: 10000,
-                            disableOnInteraction: true,
+                            delay: 6000,
+                            disableOnInteraction: false,
                         },
-                        pagination: {
-                            el: '.swiper-pagination',
-                            clickable: true,
-                            dynamicBullets: false,
-                        },
-                        breakpoints: {
-                            320: { slidesPerView: 1.2, spaceBetween: 12, centeredSlides: true },
-                            425: { slidesPerView: 1.5, spaceBetween: 16, centeredSlides: true },
-                            641: { slidesPerView: 2.2, spaceBetween: 20, centeredSlides: true },
-                            769: { slidesPerView: 2.5, spaceBetween: 24, centeredSlides: true },
-                            1025: { slidesPerView: 3, spaceBetween: 24, centeredSlides: true },
+                        navigation: {
+                            nextEl: '.poster-next',
+                            prevEl: '.poster-prev',
                         },
                         on: {
-                            init: function() {
-                                document.querySelector('.posterSwiper .swiper-pagination').classList.add('!relative', '!mt-4');
+                            init: function () {
+                                // Trik urutan awal (Poster Terakhir - Poster Pertama - Poster Kedua)
+                                setTimeout(() => {
+                                    this.slidePrev();
+                                }, 100);
+
+                                // Inisialisasi Progress Bar
+                                const progressBar = document.getElementById('posterProgressBar');
+                                if(progressBar) progressBar.style.width = '0%';
+                            },
+                            autoplayTimeLeft(s, time, progress) {
+                                // Update Progress Bar setiap milidetik
+                                const progressBar = document.getElementById('posterProgressBar');
+                                if(progressBar) {
+                                    progressBar.style.width = (100 - (progress * 100)) + '%';
+                                }
                             }
                         }
                     });
@@ -1881,7 +1854,7 @@
         window.selectDate = selectDate;
 
         // ============================================
-        // LOGIKA CAROUSEL ALUR PELAPORAN (BARU)
+        // LOGIKA CAROUSEL ALUR PELAPORAN
         // ============================================
         const alurSlides = document.querySelectorAll('.alur-slide');
         const alurDots = document.querySelectorAll('.alur-dot');
