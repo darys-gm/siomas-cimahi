@@ -8,16 +8,85 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('images/logo-siomas1.png') }}" type="image/png">
     <link rel="shortcut icon" href="{{ asset('images/logo-siomas1.png') }}" type="image/png">
-    <!-- Untuk Apple Touch Icon -->
     <link rel="apple-touch-icon" href="{{ asset('images/logo-siomas1.png') }}">
     
     <title>@yield('title', 'SIOMAS - Kota Cimahi')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Alpine.js & Plugin Collapse -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
     <style>
         /* ============================================ */
-        /* MASKOT                                      */
+        /* VARIABEL TINGGI TOP BAR (Untuk Sticky Nav)   */
+        /* ============================================ */
+        :root {
+            --topbar-height: 32px; /* Default Desktop */
+        }
+        @media (max-width: 767px) {
+            :root {
+                --topbar-height: 42px; /* Mobile */
+            }
+        }
+
+        /* ============================================ */
+        /* TOP BAR INFORMASI                            */
+        /* ============================================ */
+        .top-info-bar {
+            background-color: #b91c1c;
+            color: white;
+            font-size: 0.75rem;
+            height: var(--topbar-height);
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            z-index: 60;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+        }
+
+        /* ============================================ */
+        /* ANIMASI FADE IN/OUT (MOBILE)                 */
+        /* ============================================ */
+        .slider-container-mobile {
+            position: relative;
+            height: 1.25rem; 
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .slider-text-mobile > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1.25rem; 
+            line-height: 1.25rem; 
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; 
+            padding-left: 16px; 
+            white-space: nowrap;
+            opacity: 0;
+            animation: fadeInOut 8s infinite ease-in-out;
+        }
+
+        .slider-text-mobile > span:nth-child(1) { animation-delay: 0s; }
+        .slider-text-mobile > span:nth-child(2) { animation-delay: 4s; }
+
+        @keyframes fadeInOut {
+            0%, 10% { opacity: 0; }      
+            15%, 40% { opacity: 1; }     
+            45%, 100% { opacity: 0; }    
+        }
+
+        /* ============================================ */
+        /* MASKOT                                       */
         /* ============================================ */
         .maskot {
             position: fixed;
@@ -37,7 +106,7 @@
         }
         
         /* ============================================ */
-        /* POPUP                                       */
+        /* POPUP                                        */
         /* ============================================ */
         .popup-overlay {
             display: none;
@@ -80,7 +149,7 @@
         }
         
         /* ============================================ */
-        /* NAVIGATION - DESKTOP                        */
+        /* NAVIGATION - DESKTOP                         */
         /* ============================================ */
         .nav-link {
             transition: color 0.3s ease;
@@ -113,7 +182,7 @@
         }
         
         /* ============================================ */
-        /* MOBILE NAVIGATION                           */
+        /* MOBILE NAVIGATION                            */
         /* ============================================ */
         .mobile-nav-link {
             display: block;
@@ -195,7 +264,7 @@
         }
 
         /* ============================================ */
-        /* HAMBURGER MENU BUTTON                       */
+        /* HAMBURGER MENU BUTTON                        */
         /* ============================================ */
         .hamburger {
             display: flex;
@@ -226,7 +295,7 @@
         }
 
         /* ============================================ */
-        /* MOBILE NAV OVERLAY & PANEL                  */
+        /* MOBILE NAV OVERLAY & PANEL                   */
         /* ============================================ */
         .mobile-nav-overlay {
             position: fixed;
@@ -244,13 +313,15 @@
             opacity: 1;
             visibility: visible;
         }
+        
+        /* PERBAIKAN: Panel menu diturunkan tepat di bawah Top Bar */
         .mobile-nav-panel {
             position: fixed;
-            top: 0;
+            top: var(--topbar-height); /* Dimulai tepat di bawah top bar */
             left: -300px;
             width: 280px;
             max-width: 80%;
-            height: 100%;
+            height: calc(100% - var(--topbar-height)); /* Tinggi disesuaikan sisa layar */
             background: white;
             z-index: 50;
             overflow-y: auto;
@@ -297,7 +368,7 @@
         }
 
         /* ============================================ */
-        /* LOGO                                        */
+        /* LOGO                                         */
         /* ============================================ */
         .logo-container {
             display: flex;
@@ -313,7 +384,7 @@
         }
         
         /* ============================================ */
-        /* FOOTER                                      */
+        /* FOOTER                                       */
         /* ============================================ */
         .footer-phone-item {
             transition: all 0.2s ease;
@@ -351,7 +422,7 @@
         }
 
         /* ============================================ */
-        /* RESPONSIVE BREAKPOINTS                      */
+        /* RESPONSIVE BREAKPOINTS                       */
         /* ============================================ */
         
         /* --- Tablet (768px - 1024px) --- */
@@ -379,6 +450,31 @@
 
         /* --- Mobile (480px - 767px) --- */
         @media (max-width: 767px) {
+            /* Penyesuaian Top Bar di Mobile */
+            .top-info-bar {
+                padding: 0 16px;
+                font-size: 0.65rem;
+            }
+            
+            /* Sisi Kiri - Animasi Slider */
+            .top-bar-left {
+                flex: 1;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                position: relative;
+                overflow: hidden;
+                height: 1.25rem;
+            }
+
+            /* Sisi Kanan - Jam Real Time */
+            .top-bar-right {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                font-size: 0.85rem;
+            }
+            
             .logo-container {
                 margin-left: 4px;
             }
@@ -467,11 +563,58 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- ============================================ -->
+    <!-- TOP INFO BAR (STICKY)                        -->
+    <!-- ============================================ -->
+    <div class="top-info-bar font-sans sticky top-0 z-[60]">
+        
+        <!-- Sisi Kiri: Di Desktop tampil sejajar -->
+        <div class="hidden sm:flex items-center gap-2">
+            <i class="far fa-clock"></i>
+            <span>Jam Pelayanan: Senin - Jumat: 08.00 - 16.00 WIB</span>
+        </div>
+
+        <!-- Jam Real-Time (Tengah) - HANYA UNTUK DESKTOP -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 items-center font-mono font-bold text-sm tracking-widest bg-red-800 px-3 py-0.5 rounded hidden sm:flex">
+            <span id="liveClockDesktop">00:00:00</span>
+        </div>
+
+        <!-- Sisi Kanan Desktop -->
+        <div class="hidden sm:flex items-center gap-2">
+            <i class="far fa-calendar-alt"></i>
+            <span id="liveDateTimeDesktop">Memuat tanggal...</span>
+        </div>
+
+        <!-- Mobile Layout (Kiri: Slider Teks, Kanan: Jam) -->
+        <div class="flex sm:hidden w-full justify-between items-center">
+            
+            <!-- Sisi Kiri: Teks Bergantian (Fade) -->
+            <div class="top-bar-left flex-1 relative overflow-hidden h-[1.25rem]">
+                <div class="slider-text-mobile relative w-full h-full">
+                    <span>
+                        <i class="far fa-clock mr-1"></i> Jam Pelayanan: 08.00 - 16.00 WIB
+                    </span>
+                    <span>
+                        <i class="far fa-calendar-alt mr-1"></i> <span id="liveDateTimeMobile">Tanggal...</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Sisi Kanan: Jam Digital Real-time -->
+            <div class="top-bar-right flex-shrink-0">
+                <div class="font-mono font-bold tracking-widest bg-red-800 px-2 py-0.5 rounded text-xs mr-2">
+                    <span id="liveClockMobile">00:00:00</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- ============================================ -->
     <!-- NAVBAR                                       -->
     <!-- ============================================ -->
-    <nav class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+    <nav class="bg-white shadow-md sticky top-[var(--topbar-height)] left-0 right-0 z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <!-- Logo SIOMAS -->
@@ -489,9 +632,7 @@
                     @endif
                 </a>
 
-                <!-- ============================================ -->
-                <!-- DESKTOP NAV                                  -->
-                <!-- ============================================ -->
+                <!-- DESKTOP NAV -->
                 <div class="desktop-nav hidden md:flex space-x-8">
                     <a href="{{ route('home') }}" 
                        class="nav-link {{ request()->routeIs('home') ? 'active' : '' }} text-gray-700 hover:text-red-600">
@@ -528,7 +669,6 @@
                              x-transition:leave-start="opacity-100 translate-y-0"
                              x-transition:leave-end="opacity-0 -translate-y-2">
                             
-                            <!-- Menu Existing -->
                             <a href="{{ route('alur-pelaporan') }}" 
                                class="block px-4 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition flex items-center gap-2 {{ request()->routeIs('alur-pelaporan') ? 'text-red-600 bg-red-50' : 'text-gray-700' }}">
                                 <i class="fas fa-clipboard-list text-red-500 w-5"></i>
@@ -540,13 +680,11 @@
                                 Form Pelaporan ORMAS
                             </a>
                             
-                            <!-- Divider -->
                             <div class="border-t border-gray-100 my-1"></div>
                             <div class="px-4 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                                 Persyaratan Pendirian ORMAS
                             </div>
                             
-                            <!-- Menu Baru 1 -->
                             <a href="{{ route('persyaratan-berbadan-hukum') }}" 
                                class="block px-4 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition flex items-start gap-2 {{ request()->routeIs('persyaratan-berbadan-hukum') ? 'text-red-600 bg-red-50' : 'text-gray-700' }}">
                                 <i class="fas fa-balance-scale text-red-500 w-5 mt-0.5"></i>
@@ -556,7 +694,6 @@
                                 </div>
                             </a>
                             
-                            <!-- Menu Baru 2 -->
                             <a href="{{ route('persyaratan-tidak-berbadan-hukum') }}" 
                                class="block px-4 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition flex items-start gap-2 {{ request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'text-red-600 bg-red-50' : 'text-gray-700' }}">
                                 <i class="fas fa-file-signature text-red-500 w-5 mt-0.5"></i>
@@ -573,9 +710,7 @@
                     </a>
                 </div>
 
-                <!-- ============================================ -->
-                <!-- RIGHT SIDE - AUTH (Desktop)                 -->
-                <!-- ============================================ -->
+                <!-- RIGHT SIDE - AUTH (Desktop) -->
                 <div class="navbar-auth-desktop hidden md:flex items-center space-x-3">
                     @auth
                         <span class="text-sm text-gray-600 hidden lg:inline font-medium">Halo, {{ Auth::user()->name }}</span>
@@ -592,11 +727,8 @@
                     @endauth
                 </div>
 
-                <!-- ============================================ -->
-                <!-- MOBILE: Hamburger Button + Auth (Mobile)    -->
-                <!-- ============================================ -->
+                <!-- MOBILE: Hamburger Button + Auth (Mobile) -->
                 <div class="flex items-center gap-2">
-                    <!-- Auth buttons on mobile -->
                     @auth
                     <div class="mobile-auth hidden items-center gap-1">
                         <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard') }}" 
@@ -612,7 +744,6 @@
                     </div>
                     @endauth
 
-                    <!-- Hamburger Button -->
                     <button class="hamburger mobile-nav-toggle hidden" id="hamburgerBtn" aria-label="Toggle Menu">
                         <span></span>
                         <span></span>
@@ -632,7 +763,6 @@
     <!-- MOBILE NAV PANEL                            -->
     <!-- ============================================ -->
     <div class="mobile-nav-panel" id="mobilePanel">
-        <!-- Header -->
         <div class="mobile-nav-panel-header">
             <div class="flex items-center gap-2">
                 @php
@@ -652,101 +782,63 @@
             </button>
         </div>
 
-        <!-- Body -->
         <div class="mobile-nav-panel-body">
-            <!-- 1. Beranda -->
-            <a href="{{ route('home') }}" 
-               class="mobile-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
+            <a href="{{ route('home') }}" class="mobile-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="fas fa-home text-red-500"></i> Beranda
             </a>
-            
-            <!-- 2. Produk Hukum -->
-            <a href="{{ route('produk-hukum.index') }}" 
-               class="mobile-nav-link {{ request()->routeIs('produk-hukum.*') ? 'active' : '' }}">
+            <a href="{{ route('produk-hukum.index') }}" class="mobile-nav-link {{ request()->routeIs('produk-hukum.*') ? 'active' : '' }}">
                 <i class="fas fa-gavel text-red-500"></i> Produk Hukum
             </a>
-            
-            <!-- 3. Data ORMAS -->
-            <a href="{{ route('ormas') }}" 
-               class="mobile-nav-link {{ request()->routeIs('ormas') ? 'active' : '' }}">
+            <a href="{{ route('ormas') }}" class="mobile-nav-link {{ request()->routeIs('ormas') ? 'active' : '' }}">
                 <i class="fas fa-building text-red-500"></i> Data ORMAS
             </a>
-            
-            <!-- 4. Profil Kesbangpol -->
-            <a href="{{ route('profil-kesbangpol') }}" 
-               class="mobile-nav-link {{ request()->routeIs('profil-kesbangpol') ? 'active' : '' }}">
+            <a href="{{ route('profil-kesbangpol') }}" class="mobile-nav-link {{ request()->routeIs('profil-kesbangpol') ? 'active' : '' }}">
                 <i class="fas fa-address-card text-red-500"></i> Profil Kesbangpol
             </a>
-            
-            <!-- 5. Berita -->
-            <a href="{{ route('berita.semua') }}" 
-               class="mobile-nav-link {{ request()->routeIs('berita.semua') || request()->routeIs('berita.show') ? 'active' : '' }}">
+            <a href="{{ route('berita.semua') }}" class="mobile-nav-link {{ request()->routeIs('berita.semua') || request()->routeIs('berita.show') ? 'active' : '' }}">
                 <i class="fas fa-newspaper text-red-500"></i> Berita
             </a>
             
-            <!-- 6. Layanan (Dropdown) -->
             <div x-data="{ open: {{ request()->routeIs('alur-pelaporan') || request()->routeIs('pelaporan-ormas.create') || request()->routeIs('persyaratan-berbadan-hukum') || request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="mobile-dropdown-toggle {{ request()->routeIs('alur-pelaporan') || request()->routeIs('pelaporan-ormas.create') || request()->routeIs('persyaratan-berbadan-hukum') || request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'active' : '' }}">
-                    <span>
-                        <i class="fas fa-concierge-bell text-red-500"></i> Layanan
-                    </span>
+                <button @click="open = !open" class="mobile-dropdown-toggle {{ request()->routeIs('alur-pelaporan') || request()->routeIs('pelaporan-ormas.create') || request()->routeIs('persyaratan-berbadan-hukum') || request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'active' : '' }}">
+                    <span><i class="fas fa-concierge-bell text-red-500"></i> Layanan</span>
                     <i class="fas fa-chevron-down" :class="{'rotate-180': open}"></i>
                 </button>
                 <div x-show="open" x-collapse>
-                    <a href="{{ route('alur-pelaporan') }}" 
-                       class="mobile-dropdown-item {{ request()->routeIs('alur-pelaporan') ? 'active' : '' }}">
+                    <a href="{{ route('alur-pelaporan') }}" class="mobile-dropdown-item {{ request()->routeIs('alur-pelaporan') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-list"></i> Alur Pelaporan ORMAS
                     </a>
-                    <a href="{{ route('pelaporan-ormas.create') }}" 
-                       class="mobile-dropdown-item {{ request()->routeIs('pelaporan-ormas.create') ? 'active' : '' }}">
+                    <a href="{{ route('pelaporan-ormas.create') }}" class="mobile-dropdown-item {{ request()->routeIs('pelaporan-ormas.create') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Form Pelaporan ORMAS
                     </a>
-                    
                     <div class="mobile-nav-divider"></div>
                     <div class="px-4 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                         Persyaratan Pendirian ORMAS
                     </div>
-                    
-                    <a href="{{ route('persyaratan-berbadan-hukum') }}" 
-                       class="mobile-dropdown-item {{ request()->routeIs('persyaratan-berbadan-hukum') ? 'active' : '' }}">
+                    <a href="{{ route('persyaratan-berbadan-hukum') }}" class="mobile-dropdown-item {{ request()->routeIs('persyaratan-berbadan-hukum') ? 'active' : '' }}">
                         <i class="fas fa-balance-scale"></i> Ormas Berbadan Hukum
                     </a>
-                    <a href="{{ route('persyaratan-tidak-berbadan-hukum') }}" 
-                       class="mobile-dropdown-item {{ request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'active' : '' }}">
+                    <a href="{{ route('persyaratan-tidak-berbadan-hukum') }}" class="mobile-dropdown-item {{ request()->routeIs('persyaratan-tidak-berbadan-hukum') ? 'active' : '' }}">
                         <i class="fas fa-file-signature"></i> Ormas Tidak Berbadan Hukum
                     </a>
                 </div>
             </div>
             
-            <!-- 7. Kotak Saran -->
-            <a href="{{ route('saran') }}" 
-               class="mobile-nav-link {{ request()->routeIs('saran*') ? 'active' : '' }}">
+            <a href="{{ route('saran') }}" class="mobile-nav-link {{ request()->routeIs('saran*') ? 'active' : '' }}">
                 <i class="fas fa-envelope text-red-500"></i> Kotak Saran
             </a>
-
-            <!-- Divider -->
             <div class="mobile-nav-divider"></div>
 
-            <!-- User Info on Mobile -->
             @auth
                 <div class="bg-gray-50 rounded-lg p-3 mb-2">
-                    <p class="text-sm font-medium text-gray-700">
-                        <i class="fas fa-user-circle text-red-500 mr-2"></i>
-                        {{ Auth::user()->name }}
-                    </p>
+                    <p class="text-sm font-medium text-gray-700"><i class="fas fa-user-circle text-red-500 mr-2"></i>{{ Auth::user()->name }}</p>
                     <p class="text-xs text-gray-500 mt-1">Role: {{ ucfirst(Auth::user()->role) }}</p>
                 </div>
             @endauth
 
-            <!-- Contact Info -->
             <div class="bg-gray-50 rounded-lg p-3 mt-2">
-                <p class="text-xs text-gray-500">
-                    <i class="fas fa-phone text-red-500 mr-2"></i> (022) 6654274
-                </p>
-                <p class="text-xs text-gray-500 mt-1">
-                    <i class="fas fa-envelope text-red-500 mr-2"></i> bakesbangpol@cimahikota.go.id
-                </p>
+                <p class="text-xs text-gray-500"><i class="fas fa-phone text-red-500 mr-2"></i> (022) 6654274</p>
+                <p class="text-xs text-gray-500 mt-1"><i class="fas fa-envelope text-red-500 mr-2"></i> bakesbangpol@cimahikota.go.id</p>
             </div>
         </div>
     </div>
@@ -754,14 +846,14 @@
     <!-- ============================================ -->
     <!-- MAIN CONTENT                                 -->
     <!-- ============================================ -->
-    <main class="mt-16">
+    <main class="flex-grow mt-0">
         @yield('content')
     </main>
 
     <!-- ============================================ -->
     <!-- FOOTER                                       -->
     <!-- ============================================ -->
-    <footer class="footer-bg text-white py-8">
+    <footer class="footer-bg text-white py-8 mt-auto">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-center md:justify-start mb-6">
                 <div class="flex items-center space-x-3">
@@ -947,6 +1039,39 @@
     <!-- SCRIPTS                                     -->
     <!-- ============================================ -->
     <script>
+        function updateLiveDateTime() {
+            const now = new Date();
+            
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('id-ID', options);
+            
+            const dateElementDesktop = document.getElementById('liveDateTimeDesktop');
+            if (dateElementDesktop) dateElementDesktop.textContent = formattedDate;
+
+            const dateElementMobile = document.getElementById('liveDateTimeMobile');
+            if (dateElementMobile) dateElementMobile.textContent = formattedDate;
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            
+            const clockElementDesktop = document.getElementById('liveClockDesktop');
+            if (clockElementDesktop) clockElementDesktop.textContent = timeString;
+
+            const clockElementMobile = document.getElementById('liveClockMobile');
+            if (clockElementMobile) clockElementMobile.textContent = timeString;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLiveDateTime();
+            setInterval(updateLiveDateTime, 1000);
+        });
+
+        updateLiveDateTime();
+        setInterval(updateLiveDateTime, 1000);
+
+
         function togglePopup() {
             var overlay = document.getElementById('popupOverlay');
             overlay.classList.toggle('active');
@@ -971,9 +1096,6 @@
             });
         });
 
-        // ============================================
-        // MOBILE NAV TOGGLE
-        // ============================================
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const mobilePanel = document.getElementById('mobilePanel');
         const mobileOverlay = document.getElementById('mobileOverlay');
@@ -1011,7 +1133,6 @@
             mobileOverlay.addEventListener('click', closeMobileNav);
         }
 
-        // Close on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && mobilePanel && mobilePanel.classList.contains('active')) {
                 closeMobileNav();

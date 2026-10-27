@@ -29,7 +29,7 @@
 <!-- ============================================ -->
 <div id="homeContent" class="opacity-0 transition-opacity duration-700">
     <!-- Hero Section -->
-    <section id="beranda" class="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] flex items-center overflow-hidden -mt-6">
+    <section id="beranda" class="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] flex items-center overflow-hidden -mt-0">
         <div class="absolute inset-0 w-full h-full">
             <div class="hero-slide active" style="background-image: url('{{ asset('images/bg-image1.webp') }}');"></div>
             <div class="hero-slide" style="background-image: url('{{ asset('images/bg-image2.webp') }}');"></div>
@@ -89,12 +89,11 @@
     <!-- SECTION POSTER - COVERFLOW SWIPER (FULL WIDTH) -->
     <!-- ============================================ -->
     @if(isset($posters) && $posters->count() > 0)
-    <!-- relative z-20 dan -mt-24 membuat poster melayang menimpa Hero -->
-    <section id="poster" class="relative z-20 -mt-24 sm:-mt-32 md:-mt-40 bg-transparent scroll-animate">
-        <!-- Gunakan w-full agar mentok ke kiri & kanan layar -->
+    <section id="poster" class="relative z-20 -mt-24 sm:-mt-32 md:-mt-40 scroll-animate pb-10">
         <div class="w-full overflow-visible">
+            
             <!-- Swiper Container -->
-            <div class="swiper posterCoverflow py-4 sm:py-8">
+            <div class="swiper posterCoverflow">
                 <div class="swiper-wrapper">
                     @foreach($posters as $poster)
                     <div class="swiper-slide">
@@ -116,23 +115,28 @@
                 </div>
             </div>
 
-            <!-- Kontrol Navigasi & Progress Bar (Sejajar Kanan-Kiri di Tengah) -->
-            <div class="container mx-auto px-6 sm:px-12 mt-6 flex items-center justify-between">
+            <!-- Kontrol Navigasi & Progress Bar (Sejajar Tengah) -->
+            <div class="container mx-auto mt-8 flex items-center justify-center gap-3 sm:gap-5 px-4">
                 
-                <!-- Tombol Kiri -->
-                <button class="poster-prev w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:text-red-600 hover:scale-105 transition focus:outline-none z-30">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-
-                <!-- Progress Bar di Tengah -->
-                <div class="flex-1 max-w-lg mx-4 sm:mx-8 h-1.5 bg-gray-300 rounded-full overflow-hidden shadow-inner">
-                    <div id="posterProgressBar" class="h-full bg-red-600 w-0 transition-all duration-100 ease-linear"></div>
+                <!-- Tombol Kiri & Kanan -->
+                <div class="flex items-center gap-2">
+                    <button class="poster-prev w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 shadow-md flex items-center justify-center text-white hover:scale-105 transition focus:outline-none">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="poster-next w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 shadow-md flex items-center justify-center text-white hover:scale-105 transition focus:outline-none">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
 
-                <!-- Tombol Kanan -->
-                <button class="poster-next w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:text-red-600 hover:scale-105 transition focus:outline-none z-30">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                <!-- Pagination Garis (Warna Merah) -->
+                <div class="w-48 sm:w-72 h-1.5 flex gap-1">
+                    <div class="poster-pagination flex w-full gap-1"></div>
+                </div>
+
+                <!-- Angka Total Poster (Dinamis mengikuti urutan slide) -->
+                <div id="posterTotalCount" class="flex-shrink-0 min-w-[2.5rem] h-10 px-2 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center shadow-md transition-all">
+                    01
+                </div>
 
             </div>
         </div>
@@ -883,7 +887,7 @@
     /* POSTER COVERFLOW SWIPER                      */
     /* ============================================ */
     .posterCoverflow {
-        padding-bottom: 10px;
+        padding-bottom: 0;
     }
     .posterCoverflow .swiper-slide {
         width: 300px; 
@@ -891,7 +895,7 @@
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         transition: transform 0.3s ease;
-        opacity: 1; /* Opacity 100% */
+        opacity: 1;
     }
     @media (min-width: 640px) {
         .posterCoverflow .swiper-slide {
@@ -905,6 +909,30 @@
     }
     .posterCoverflow .swiper-slide-active {
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ============================================ */
+    /* KUSTOM PAGINATION (Garis Merah)              */
+    /* ============================================ */
+    .poster-pagination {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        gap: 4px; /* Jarak antar potongan garis */
+    }
+
+    .poster-pagination .swiper-pagination-bullet {
+        flex: 1;
+        height: 100%;
+        border-radius: 99px; /* Membuat ujung garis membulat */
+        background-color: rgba(220, 38, 38, 0.3); /* Merah transparan */
+        opacity: 1;
+        margin: 0 !important;
+        transition: all 0.3s ease;
+    }
+
+    .poster-pagination .swiper-pagination-bullet-active {
+        background-color: #dc2626; /* Merah solid */
     }
 
     .berita-slide {
@@ -1642,6 +1670,9 @@
                 const totalSlides = posterCoverflowEl.querySelectorAll('.swiper-slide').length;
                 
                 if (totalSlides > 0) {
+                    // Set angka total awal
+                    document.getElementById('posterTotalCount').textContent = String(totalSlides).padStart(2, '0');
+
                     const posterSwiper = new Swiper('.posterCoverflow', {
                         effect: 'coverflow',
                         grabCursor: true,
@@ -1664,23 +1695,23 @@
                             nextEl: '.poster-next',
                             prevEl: '.poster-prev',
                         },
-                        on: {
-                            init: function () {
-                                // Trik urutan awal (Poster Terakhir - Poster Pertama - Poster Kedua)
-                                setTimeout(() => {
-                                    this.slidePrev();
-                                }, 100);
-
-                                // Inisialisasi Progress Bar
-                                const progressBar = document.getElementById('posterProgressBar');
-                                if(progressBar) progressBar.style.width = '0%';
+                        pagination: {
+                            el: '.poster-pagination',
+                            clickable: true,
+                            renderBullet: function (index, className) {
+                                return '<span class="' + className + '"></span>';
                             },
-                            autoplayTimeLeft(s, time, progress) {
-                                // Update Progress Bar setiap milidetik
-                                const progressBar = document.getElementById('posterProgressBar');
-                                if(progressBar) {
-                                    progressBar.style.width = (100 - (progress * 100)) + '%';
+                        },
+                        on: {
+                            // Menghapus init slidePrev agar mulai dari urutan pertama
+                            slideChange: function() {
+                                if (!this.autoplay.running) {
+                                    this.autoplay.start();
                                 }
+                                
+                                // Update angka dinamis sesuai urutan
+                                let realIndex = this.realIndex + 1;
+                                document.getElementById('posterTotalCount').textContent = String(realIndex).padStart(2, '0');
                             }
                         }
                     });
