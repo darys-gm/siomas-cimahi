@@ -702,8 +702,15 @@
     </div>
 
     <!-- Link Terkait -->
-    <section id="link-terkait" class="py-8 sm:py-10 md:py-12 bg-white scroll-animate">
-        <div class="container mx-auto px-4">
+    <section id="link-terkait" class="py-8 sm:py-10 md:py-12 relative overflow-hidden scroll-animate">
+        <!-- Background Image Kustom & Overlay -->
+        <div class="absolute inset-0 w-full h-full z-0">
+            <img src="{{ asset('images/bg-link.jpg') }}" alt="Background Link Terkait" class="w-full h-full object-cover">
+            <!-- Overlay Putih: bg-white/80 (80% putih) agar logo dan teks tetap kontras dan terbaca -->
+            <div class="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
             <div class="text-center mb-6 sm:mb-8 md:mb-10">
                 <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 scroll-animate">Link Terkait</h2>
                 <div class="w-20 h-1 bg-red-500 mx-auto mt-3 rounded-full scroll-animate"></div>
@@ -720,7 +727,7 @@
                 @endphp
                 @foreach($links as $link)
                 <a href="{{ $link['url'] }}" target="_blank"
-                   class="text-center group hover:scale-105 transition duration-300 scroll-animate">
+                   class="text-center group hover:scale-105 transition duration-300 scroll-animate bg-white/50 p-4 rounded-xl shadow-sm hover:shadow-md border border-white/60">
                     <div class="flex justify-center mb-2">
                         @php
                             $logoUrl = file_exists(public_path('images/' . $link['logo'])) ? asset('images/' . $link['logo']) : null;
