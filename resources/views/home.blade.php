@@ -305,7 +305,7 @@
         <div class="absolute inset-0 w-full h-full z-0">
             <img src="{{ asset('images/bg-pola.png') }}" alt="Background" class="w-full h-full object-cover">
             <!-- Gradasi putih agar kartu berita/galeri tetap kontras -->
-            <div class="absolute inset-0 bg-gradient-to-b from-gray-50/95 via-white/95 to-gray-50/95"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-white/80 via-white/90 to-white/95"></div>
         </div>
 
         @php
