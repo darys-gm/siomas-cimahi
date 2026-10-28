@@ -3,7 +3,7 @@
 @section('title', 'Kotak Saran - SIOMAS Kota Cimahi')
 
 @section('content')
-<div class="relative min-h-screen py-8 sm:py-12 md:py-16 mt-8">
+<div class="relative min-h-screen py-8 sm:py-12">
     <!-- Background Image -->
     <div class="absolute inset-0 w-full h-full">
         <img src="{{ asset('images/bg-pola.png') }}" 

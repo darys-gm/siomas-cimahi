@@ -3,15 +3,17 @@
 @section('title', $berita->judul . ' - SIOMAS Kota Cimahi')
 
 @section('content')
-<div class="relative min-h-screen py-8 sm:py-12 mt-8">
+<!-- Pembungkus utama dengan z-0 agar konten berada di bawah navbar -->
+<div class="relative min-h-screen py-8 sm:py-12 z-0">
     <!-- Background Image -->
-    <div class="absolute inset-0 w-full h-full">
+    <div class="absolute inset-0 w-full h-full z-0">
         <img src="{{ asset('images/bg-pola.png') }}" 
              alt="Background" 
              class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-b from-white/70 via-white/80 to-white/90"></div>
     </div>
     
+    <!-- Kontainer Utama Konten -->
     <div class="container mx-auto px-3 sm:px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
             <!-- Kolom Kiri: Detail Berita Utama (70%) -->
@@ -63,7 +65,8 @@
 
             <!-- Kolom Kanan: Berita Terkait (30%) -->
             <div class="lg:w-3/12">
-                <div class="sticky top-24">
+                <!-- Top disesuaikan (top-28 lg:top-32) agar tidak tertutup navbar saat scroll -->
+                <div class="sticky top-28 lg:top-32">
                     <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100/50 p-4 sm:p-5">
                         <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-gray-200 flex items-center gap-2">
                             <i class="fas fa-newspaper text-red-600"></i>
@@ -98,6 +101,7 @@
     </div>
 </div>
 
+<!-- Style khusus untuk format teks berita (prose) -->
 <style>
     .prose p {
         margin-bottom: 1rem;
@@ -128,223 +132,6 @@
         height: auto;
         border-radius: 8px;
         margin: 1rem 0;
-    }
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    .sticky {
-        position: sticky;
-        top: 24px;
-    }
-
-    /* ============================================ */
-    /* RESPONSIVE UNTUK MOBILE 320px, 375px, 425px */
-    /* ============================================ */
-    @media (max-width: 374px) {
-        /* 320px */
-        .container {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-        .text-xl {
-            font-size: 16px !important;
-        }
-        .text-sm {
-            font-size: 11px !important;
-        }
-        .text-xs {
-            font-size: 10px !important;
-        }
-        .text-\[10px\] {
-            font-size: 8px !important;
-        }
-        .p-4 {
-            padding: 8px !important;
-        }
-        .p-3 {
-            padding: 6px !important;
-        }
-        .px-3 {
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-        }
-        .py-1\.5 {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
-        }
-        .gap-2 {
-            gap: 2px !important;
-        }
-        .gap-3 {
-            gap: 4px !important;
-        }
-        .gap-4 {
-            gap: 6px !important;
-        }
-        .mb-2 {
-            margin-bottom: 4px !important;
-        }
-        .mb-3 {
-            margin-bottom: 6px !important;
-        }
-        .mb-4 {
-            margin-bottom: 8px !important;
-        }
-        .mb-6 {
-            margin-bottom: 12px !important;
-        }
-        .mt-4 {
-            margin-top: 8px !important;
-        }
-        .mt-6 {
-            margin-top: 12px !important;
-        }
-        .mt-8 {
-            margin-top: 16px !important;
-        }
-        .py-8 {
-            padding-top: 12px !important;
-            padding-bottom: 12px !important;
-        }
-        .max-h-\[350px\] {
-            max-height: 180px !important;
-        }
-        .w-16 {
-            width: 48px !important;
-        }
-        .h-16 {
-            height: 48px !important;
-        }
-        .rounded-xl {
-            border-radius: 8px !important;
-        }
-        .rounded-lg {
-            border-radius: 6px !important;
-        }
-        .text-base {
-            font-size: 12px !important;
-        }
-        .text-lg {
-            font-size: 14px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 6px !important;
-        }
-        .space-y-4 > * + * {
-            margin-top: 8px !important;
-        }
-        .pt-4 {
-            padding-top: 8px !important;
-        }
-        .pb-2 {
-            padding-bottom: 4px !important;
-        }
-        .mb-3 {
-            margin-bottom: 6px !important;
-        }
-    }
-
-    @media (min-width: 375px) and (max-width: 424px) {
-        /* 375px */
-        .container {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-        }
-        .text-xl {
-            font-size: 18px !important;
-        }
-        .text-sm {
-            font-size: 12px !important;
-        }
-        .p-4 {
-            padding: 10px !important;
-        }
-        .p-3 {
-            padding: 8px !important;
-        }
-        .px-3 {
-            padding-left: 8px !important;
-            padding-right: 8px !important;
-        }
-        .py-8 {
-            padding-top: 16px !important;
-            padding-bottom: 16px !important;
-        }
-        .max-h-\[350px\] {
-            max-height: 220px !important;
-        }
-        .gap-3 {
-            gap: 6px !important;
-        }
-        .gap-4 {
-            gap: 8px !important;
-        }
-        .mb-6 {
-            margin-bottom: 14px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 8px !important;
-        }
-        .w-16 {
-            width: 56px !important;
-        }
-        .h-16 {
-            height: 56px !important;
-        }
-    }
-
-    @media (min-width: 425px) and (max-width: 640px) {
-        /* 425px */
-        .text-xl {
-            font-size: 20px !important;
-        }
-        .py-8 {
-            padding-top: 20px !important;
-            padding-bottom: 20px !important;
-        }
-        .max-h-\[350px\] {
-            max-height: 260px !important;
-        }
-        .gap-3 {
-            gap: 8px !important;
-        }
-        .gap-4 {
-            gap: 10px !important;
-        }
-        .mb-6 {
-            margin-bottom: 16px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 10px !important;
-        }
-        .w-16 {
-            width: 60px !important;
-        }
-        .h-16 {
-            height: 60px !important;
-        }
-    }
-
-    @media (max-width: 640px) {
-        /* Mobile umum - ubah sticky menjadi static */
-        .sticky {
-            position: static !important;
-        }
-        .lg\:w-9\/12, .lg\:w-3\/12 {
-            width: 100% !important;
-        }
-        .flex-col {
-            flex-direction: column !important;
-        }
-        .gap-8 {
-            gap: 16px !important;
-        }
-        .top-24 {
-            top: 0 !important;
-        }
     }
 </style>
 @endsection

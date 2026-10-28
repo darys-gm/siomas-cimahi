@@ -3,15 +3,17 @@
 @section('title', 'Pelaporan ORMAS - SIOMAS Kota Cimahi')
 
 @section('content')
-<div class="relative min-h-screen py-8 sm:py-12 md:py-16 mt-8">
+<!-- Menghapus mt-8 dan menambahkan z-0 agar background langsung menempel di bawah navbar -->
+<div class="relative min-h-screen py-8 sm:py-12 md:py-16 z-0">
     <!-- Background Image -->
-    <div class="absolute inset-0 w-full h-full">
+    <div class="absolute inset-0 w-full h-full z-0">
         <img src="{{ asset('images/bg-pola.png') }}" 
              alt="Background" 
              class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-b from-white/70 via-white/80 to-white/90"></div>
     </div>
     
+    <!-- Kontainer Konten -->
     <div class="container mx-auto px-3 sm:px-4 relative z-10">
         <div class="max-w-4xl mx-auto">
             <!-- Header -->
@@ -412,7 +414,7 @@
 
                         <!-- ===== DATA KEANGGOTAAN ===== -->
                         <div class="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 mt-3 sm:mt-4">
-                            <h4 class="font-semibold text-black-700 text-sm sm:text-base mb-2 sm:mb-3">
+                            <h4 class="font-semibold text-gray-700 text-sm sm:text-base mb-2 sm:mb-3">
                                 <i class="fas fa-users text-red-600 mr-2"></i> Data Keanggotaan
                             </h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -523,157 +525,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-    /* === RESPONSIVE UNTUK MOBILE 320px, 375px, 425px === */
-    @media (max-width: 374px) {
-        .container {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-        .text-2xl {
-            font-size: 18px !important;
-        }
-        .text-sm {
-            font-size: 11px !important;
-        }
-        .text-xs {
-            font-size: 10px !important;
-        }
-        .text-\[10px\] {
-            font-size: 8px !important;
-        }
-        .text-\[11px\] {
-            font-size: 9px !important;
-        }
-        .p-4 {
-            padding: 10px !important;
-        }
-        .px-3 {
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-        }
-        .py-2 {
-            padding-top: 4px !important;
-            padding-bottom: 4px !important;
-        }
-        .gap-2 {
-            gap: 3px !important;
-        }
-        .gap-3 {
-            gap: 4px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 6px !important;
-        }
-        .mb-2 {
-            margin-bottom: 3px !important;
-        }
-        .mb-3 {
-            margin-bottom: 6px !important;
-        }
-        .mb-4 {
-            margin-bottom: 8px !important;
-        }
-        .mt-1 {
-            margin-top: 2px !important;
-        }
-        .mt-1.5 {
-            margin-top: 3px !important;
-        }
-        .mt-2 {
-            margin-top: 4px !important;
-        }
-        .py-8 {
-            padding-top: 16px !important;
-            padding-bottom: 16px !important;
-        }
-        .mb-6 {
-            margin-bottom: 12px !important;
-        }
-        .h-56 {
-            height: 180px !important;
-        }
-        .grid-cols-1 {
-            grid-template-columns: 1fr !important;
-        }
-        .md\:grid-cols-2 {
-            grid-template-columns: 1fr !important;
-        }
-        .md\:grid-cols-3 {
-            grid-template-columns: 1fr !important;
-        }
-        .p-3 {
-            padding: 6px !important;
-        }
-        .p-2.5 {
-            padding: 4px !important;
-        }
-        .rounded-lg {
-            border-radius: 6px !important;
-        }
-        .text-base {
-            font-size: 13px !important;
-        }
-        .text-lg {
-            font-size: 15px !important;
-        }
-        .py-1.5 {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
-        }
-        .w-16 {
-            width: 40px !important;
-        }
-        .w-20 {
-            width: 48px !important;
-        }
-    }
-
-    @media (min-width: 375px) and (max-width: 424px) {
-        .container {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-        }
-        .text-2xl {
-            font-size: 20px !important;
-        }
-        .text-sm {
-            font-size: 12px !important;
-        }
-        .p-4 {
-            padding: 12px !important;
-        }
-        .px-3 {
-            padding-left: 8px !important;
-            padding-right: 8px !important;
-        }
-        .py-8 {
-            padding-top: 20px !important;
-            padding-bottom: 20px !important;
-        }
-        .h-56 {
-            height: 200px !important;
-        }
-        .gap-3 {
-            gap: 6px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 8px !important;
-        }
-    }
-
-    @media (min-width: 425px) and (max-width: 640px) {
-        .text-2xl {
-            font-size: 22px !important;
-        }
-        .py-8 {
-            padding-top: 24px !important;
-            padding-bottom: 24px !important;
-        }
-        .h-56 {
-            height: 220px !important;
-        }
-    }
-
     /* === TEXTAREA RESIZE === */
     textarea {
         resize: vertical;

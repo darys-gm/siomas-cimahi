@@ -29,7 +29,7 @@
 <!-- ============================================ -->
 <div id="homeContent" class="opacity-0 transition-opacity duration-700">
     <!-- Hero Section -->
-    <section id="beranda" class="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] flex items-center overflow-hidden -mt-0">
+    <section id="beranda" class="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] flex items-center overflow-hidden mt-0">
         <div class="absolute inset-0 w-full h-full">
             <div class="hero-slide active" style="background-image: url('{{ asset('images/bg-image1.webp') }}');"></div>
             <div class="hero-slide" style="background-image: url('{{ asset('images/bg-image2.webp') }}');"></div>
@@ -46,7 +46,7 @@
                     $runningText = $runningText ?? 'Selamat datang di SIOMAS Kota Cimahi - Sistem Informasi Organisasi Masyarakat';
                     $runningSpeed = $runningSpeed ?? 20;
                 @endphp
-                <div class="bg-orange-500/20 backdrop-blur-sm border border-orange-400/30 rounded-lg px-3 py-1 mb-3 md:mb-4 overflow-hidden inline-block w-full" style="margin-top: -10px;">
+                <div class="bg-orange-500/20 backdrop-blur-sm border border-orange-400/30 rounded-lg px-3 py-1 mb-3 md:mb-4 overflow-hidden inline-block w-full mt-2">
                     <div class="running-text-container">
                         <div class="running-text-wrapper" style="animation-duration: {{ $runningSpeed }}s;">
                             <p class="running-text text-white text-xs sm:text-sm md:text-base font-medium">
@@ -146,10 +146,12 @@
     <!-- ============================================ -->
     <!-- SECTION ALUR PELAPORAN - SPLIT CAROUSEL      -->
     <!-- ============================================ -->
-    <section id="alur-pelaporan" class="py-12 sm:py-16 md:py-20 bg-white scroll-animate relative overflow-hidden mt-8">
-        <!-- Background Ornamen -->
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-red-50 opacity-50 blur-3xl"></div>
+    <section id="alur-pelaporan" class="py-12 sm:py-16 md:py-20 relative overflow-hidden mt-8">
+        <!-- Background Image & Overlay -->
+        <div class="absolute inset-0 w-full h-full z-0">
+            <img src="{{ asset('images/bg-pola.png') }}" alt="Background" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-b from-white/80 via-white/90 to-white/95"></div>
+        </div>
 
         <div class="container mx-auto px-4 relative z-10">
             <!-- Judul Section -->
@@ -159,11 +161,11 @@
                 <div class="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full scroll-animate"></div>
             </div>
 
-            <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            <div class="max-w-6xl mx-auto bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
                 <div class="flex flex-col lg:flex-row items-stretch">
                     
                     <!-- BAGIAN KIRI: CAROUSEL GAMBAR -->
-                    <div class="w-full lg:w-1/2 bg-gray-50 relative p-6 sm:p-10 flex flex-col justify-center min-h-[300px] sm:min-h-[400px]">
+                    <div class="w-full lg:w-1/2 bg-gray-50/50 relative p-6 sm:p-10 flex flex-col justify-center min-h-[300px] sm:min-h-[400px]">
                         <div class="relative w-full aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-white border border-gray-200">
                             @php
                                 $imgPaths = ['img_p2.png', 'img_p1.png', 'img_p3.png', 'img_p4.png'];
@@ -200,7 +202,7 @@
                     </div>
 
                     <!-- BAGIAN KANAN: TEKS DINAMIS -->
-                    <div class="w-full lg:w-1/2 p-6 sm:p-10 flex flex-col justify-center relative bg-white">
+                    <div class="w-full lg:w-1/2 p-6 sm:p-10 flex flex-col justify-center relative bg-transparent">
                         <div class="absolute top-6 right-6 sm:top-8 sm:right-8">
                             <a href="{{ route('alur-pelaporan') }}" class="inline-flex items-center text-xs sm:text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 px-3 sm:px-4 py-2 rounded-full transition-colors group shadow-sm border border-red-100">
                                 Panduan Lengkap <i class="fas fa-arrow-right ml-1.5 transform group-hover:translate-x-1 transition-transform"></i>
@@ -296,369 +298,379 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- SECTION BERITA + AGENDA (LAYOUT SEJAJAR)   -->
+    <!-- WRAPPER UNTUK BERITA & GALERI (BACKGROUND MENYATU) -->
     <!-- ============================================ -->
-    @php
-        date_default_timezone_set('Asia/Jakarta');
-        $todayDate = date('Y-m-d');
-        $todayFull = date('l, d F Y');
-        $todayDay = date('d');
-        $todayMonth = strtoupper(date('M'));
-        $currentMonthName = date('F Y');
-    @endphp
+    <div class="relative overflow-hidden">
+        <!-- Background Image & Overlay (Menyatu untuk Berita & Galeri) -->
+        <div class="absolute inset-0 w-full h-full z-0">
+            <img src="{{ asset('images/bg-pola.png') }}" alt="Background" class="w-full h-full object-cover">
+            <!-- Gradasi putih agar kartu berita/galeri tetap kontras -->
+            <div class="absolute inset-0 bg-gradient-to-b from-gray-50/95 via-white/95 to-gray-50/95"></div>
+        </div>
 
-    <section id="berita-agenda" class="py-8 sm:py-10 md:py-12 bg-gray-50 scroll-animate">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center mb-4 sm:mb-6 md:mb-8">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 section-title-red scroll-animate">Berita Terkini</h2>
-                <a href="{{ route('berita.semua') }}" class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium flex items-center gap-1 scroll-animate">
-                    Lihat semua <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+        @php
+            date_default_timezone_set('Asia/Jakarta');
+            $todayDate = date('Y-m-d');
+            $todayFull = date('l, d F Y');
+            $todayDay = date('d');
+            $todayMonth = strtoupper(date('M'));
+            $currentMonthName = date('F Y');
+        @endphp
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
-                <!-- KOLOM 1: Gambar Berita Besar (5/12) -->
-                <div class="lg:col-span-5 relative scroll-animate">
-                    <div class="relative overflow-hidden rounded-xl bg-white shadow-lg h-full min-h-[280px] lg:min-h-[400px]">
-                        <div id="beritaSlider" class="absolute inset-0">
-                            @php
-                                $sliderBeritas = isset($beritas) ? $beritas->take(5) : collect();
-                            @endphp
-                            @if($sliderBeritas->count() > 0)
-                                @foreach($sliderBeritas as $index => $berita)
-                                <div class="berita-slide {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}" style="position: absolute; inset: 0;">
-                                    @if($berita->gambar)
-                                    <img src="{{ asset('storage/' . $berita->gambar) }}"
-                                         alt="{{ $berita->judul }}"
-                                         class="w-full h-full object-cover">
-                                    @else
-                                    <div class="w-full h-full bg-gradient-to-r from-red-600 to-red-800 flex items-center justify-center">
-                                        <i class="fas fa-newspaper text-4xl sm:text-5xl md:text-6xl text-white/30"></i>
-                                    </div>
-                                    @endif
-
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
-                                        <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-5">
-                                            <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                                                <span class="bg-red-600 text-white text-[8px] sm:text-xs font-semibold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
-                                                    <i class="fas fa-calendar-alt mr-1"></i>
-                                                    {{ $berita->published_at ? $berita->published_at->format('d F Y') : $berita->created_at->format('d F Y') }}
-                                                </span>
-                                                <span class="text-white/70 text-[8px] sm:text-xs">
-                                                    <i class="fas fa-user mr-1"></i> {{ $berita->user->name ?? 'Admin' }}
-                                                </span>
-                                            </div>
-                                            <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}" class="block">
-                                                <h3 class="text-sm sm:text-lg md:text-xl font-bold text-white hover:text-red-400 transition line-clamp-2">
-                                                    {{ $berita->judul }}
-                                                </h3>
-                                            </a>
-                                            <p class="text-white/80 text-[10px] sm:text-xs mt-1 sm:mt-2 line-clamp-2 max-w-2xl hidden sm:block">
-                                                {{ $berita->excerpt ?? strip_tags($berita->konten) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                            @else
-                                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                    <p class="text-gray-500 text-sm">Belum ada berita</p>
-                                </div>
-                            @endif
-                        </div>
-
-                        @if($sliderBeritas->count() > 1)
-                        <button onclick="prevBeritaSlide()"
-                                class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
-                            <i class="fas fa-chevron-left text-sm sm:text-base"></i>
-                        </button>
-                        <button onclick="nextBeritaSlide()"
-                                class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
-                            <i class="fas fa-chevron-right text-sm sm:text-base"></i>
-                        </button>
-                        <div class="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2 z-20">
-                            @foreach($sliderBeritas as $index => $berita)
-                            <button onclick="goToBeritaSlide({{ $index }})"
-                                    class="berita-dot w-2 h-2 sm:w-3 sm:h-3 rounded-full transition {{ $index === 0 ? 'bg-white' : 'bg-white/40 hover:bg-white/60' }}"
-                                    data-index="{{ $index }}">
-                            </button>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
+        <!-- SECTION BERITA + AGENDA -->
+        <section id="berita-agenda" class="py-8 sm:py-10 md:py-12 relative scroll-animate">
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex justify-between items-center mb-4 sm:mb-6 md:mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 section-title-red scroll-animate">Berita Terkini</h2>
+                    <a href="{{ route('berita.semua') }}" class="text-red-600 hover:text-red-800 text-xs sm:text-sm font-medium flex items-center gap-1 scroll-animate">
+                        Lihat semua <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
 
-                <!-- KOLOM 2: Berita Lainnya (3/12) -->
-                <div class="lg:col-span-3 scroll-animate">
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 h-full flex flex-col">
-                        <h3 class="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-2 flex items-center gap-2 flex-shrink-0">
-                            <i class="fas fa-list-ul text-red-600"></i>
-                            Berita Lainnya
-                        </h3>
-
-                        @php
-                            $sidebarBeritas = isset($beritas) ? $beritas->skip(5)->take(5) : collect();
-                        @endphp
-
-                        @if($sidebarBeritas->count() > 0)
-                            <div class="space-y-1.5 sm:space-y-2 mt-2 sm:mt-3 overflow-y-auto pr-1 flex-1 max-h-[280px] lg:max-h-none">
-                                @foreach($sidebarBeritas as $berita)
-                                <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}"
-                                   class="block group hover:bg-red-50 rounded-lg p-1.5 sm:p-2 transition border-l-3 border-transparent hover:border-red-500">
-                                    <h4 class="text-xs sm:text-sm font-medium text-gray-800 group-hover:text-red-600 transition line-clamp-2">
-                                        {{ $berita->judul }}
-                                    </h4>
-                                    <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5">
-                                        <i class="far fa-calendar-alt mr-1"></i>
-                                        {{ $berita->published_at ? $berita->published_at->format('d F Y') : $berita->created_at->format('d F Y') }}
-                                    </p>
-                                </a>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="text-center py-4">
-                                <p class="text-gray-400 text-sm">Belum ada berita lainnya</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- ============================================ -->
-                <!-- KOLOM 3: AGENDA KEGIATAN (4/12) — UPDATED    -->
-                <!-- ============================================ -->
-                <div class="lg:col-span-4 scroll-animate">
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 h-full flex flex-col">
-                        <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 flex-shrink-0">
-                            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-xl flex flex-col items-center justify-center text-white text-center shadow-md">
-                                <span id="selectedDayHeader" class="text-lg sm:text-xl font-bold leading-none">{{ date('d') }}</span>
-                                <span id="selectedMonthHeader" class="text-[6px] sm:text-[8px] font-bold uppercase leading-none">{{ date('M') }}</span>
-                            </div>
-                            <div>
-                                <h3 class="text-sm sm:text-base font-bold text-gray-800">Agenda Kegiatan</h3>
-                                <p id="currentMonthDisplay" class="text-[10px] sm:text-xs text-gray-500">{{ $currentMonthName }}</p>
-                            </div>
-                        </div>
-
-                        <div class="mb-2 sm:mb-3 overflow-x-auto pb-1 sm:pb-2 flex-shrink-0">
-                            <div id="calendarHorizontal" class="flex gap-0.5 sm:gap-1 min-w-max">
-                            </div>
-                        </div>
-
-                        <div id="agendaListContainer" class="bg-gray-50 rounded-lg p-2 sm:p-3 overflow-y-auto flex-shrink-0 max-h-[150px] sm:max-h-[180px] lg:max-h-[200px]">
-                            @if(isset($todayAgendas) && $todayAgendas->count() > 0)
-                                <div id="agendaItems" class="space-y-1.5 sm:space-y-2">
-                                    {{-- ============ UPDATED: foreach agenda dengan detail lengkap ============ --}}
-                                    @foreach($todayAgendas as $agenda)
-                                    @php
-                                        $isUpcoming = strtotime($agenda->tanggal) >= strtotime(date('Y-m-d'));
-                                        $hasDetail = !empty($agenda->deskripsi) || !empty($agenda->waktu) || !empty($agenda->tempat);
-                                    @endphp
-                                    <div class="flex flex-col p-1.5 sm:p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group agenda-item" data-agenda-id="{{ $agenda->id }}">
-                                        {{-- Header --}}
-                                        <div class="flex items-start gap-2 sm:gap-3">
-                                            <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-red-600 rounded-lg flex flex-col items-center justify-center text-white text-center shadow-sm mt-0.5">
-                                                <span class="text-sm sm:text-base font-bold leading-none">{{ date('d', strtotime($agenda->tanggal)) }}</span>
-                                                <span class="text-[6px] sm:text-[7px] font-bold uppercase leading-none">{{ date('M', strtotime($agenda->tanggal)) }}</span>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title"
-                                                    data-full-text="{{ $agenda->judul }}">
-                                                    {{ $agenda->judul }}
-                                                </h4>
-                                                <p class="text-[8px] sm:text-[9px] text-gray-400">
-                                                    {{ date('l, d F Y', strtotime($agenda->tanggal)) }}
-                                                </p>
-                                            </div>
-                                            <span class="flex-shrink-0 text-[7px] sm:text-[8px] font-medium px-1.5 py-0.5 sm:px-2 rounded-full {{ $isUpcoming ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400' }}">
-                                                <i class="fas {{ $isUpcoming ? 'fa-clock' : 'fa-check-circle' }} mr-0.5"></i>
-                                                {{ $isUpcoming ? 'Akan Datang' : 'Selesai' }}
-                                            </span>
-                                        </div>
-
-                                        {{-- Detail lengkap (hidden by default) --}}
-                                        <div class="agenda-detail hidden mt-2 ml-10 sm:ml-12 border-t border-red-100 pt-2 space-y-1.5">
-                                            @if(!empty($agenda->deskripsi))
-                                            <div class="flex items-start gap-1.5">
-                                                <i class="fas fa-align-left text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
-                                                <p class="text-[9px] sm:text-[10px] text-gray-600 leading-relaxed whitespace-pre-line">{{ $agenda->deskripsi }}</p>
-                                            </div>
-                                            @endif
-
-                                            @if(!empty($agenda->waktu))
-                                            <div class="flex items-center gap-1.5">
-                                                <i class="fas fa-clock text-red-500 text-[9px] sm:text-[10px] flex-shrink-0"></i>
-                                                <p class="text-[9px] sm:text-[10px] text-gray-600">
-                                                    <span class="font-medium text-gray-700">Waktu:</span> {{ $agenda->waktu }}
-                                                </p>
-                                            </div>
-                                            @endif
-
-                                            @if(!empty($agenda->tempat))
-                                            <div class="flex items-start gap-1.5">
-                                                <i class="fas fa-map-marker-alt text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
-                                                <p class="text-[9px] sm:text-[10px] text-gray-600">
-                                                    <span class="font-medium text-gray-700">Tempat:</span> {{ $agenda->tempat }}
-                                                </p>
-                                            </div>
-                                            @endif
-                                        </div>
-
-                                        {{-- Button Lihat Selengkapnya --}}
-                                        @if($hasDetail)
-                                        <div class="flex justify-end mt-1.5 ml-10 sm:ml-12">
-                                            <button type="button"
-                                                    onclick="toggleAgendaExpand(this)"
-                                                    class="agenda-toggle-btn inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 font-medium px-2 py-1 rounded-full transition-all duration-200 hover:shadow-sm">
-                                                <span class="toggle-text">Lihat Selengkapnya</span>
-                                                <i class="fas fa-chevron-down toggle-icon transition-transform duration-200"></i>
-                                            </button>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+                    <!-- KOLOM 1: Gambar Berita Besar (5/12) -->
+                    <div class="lg:col-span-5 relative scroll-animate">
+                        <div class="relative overflow-hidden rounded-xl bg-white shadow-lg h-full min-h-[280px] lg:min-h-[400px]">
+                            <div id="beritaSlider" class="absolute inset-0">
+                                @php
+                                    $sliderBeritas = isset($beritas) ? $beritas->take(5) : collect();
+                                @endphp
+                                @if($sliderBeritas->count() > 0)
+                                    @foreach($sliderBeritas as $index => $berita)
+                                    <div class="berita-slide {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}" style="position: absolute; inset: 0;">
+                                        @if($berita->gambar)
+                                        <img src="{{ asset('storage/' . $berita->gambar) }}"
+                                             alt="{{ $berita->judul }}"
+                                             class="w-full h-full object-cover">
+                                        @else
+                                        <div class="w-full h-full bg-gradient-to-r from-red-600 to-red-800 flex items-center justify-center">
+                                            <i class="fas fa-newspaper text-4xl sm:text-5xl md:text-6xl text-white/30"></i>
                                         </div>
                                         @endif
+
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
+                                            <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-5">
+                                                <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                                                    <span class="bg-red-600 text-white text-[8px] sm:text-xs font-semibold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
+                                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                                        {{ $berita->published_at ? $berita->published_at->format('d F Y') : $berita->created_at->format('d F Y') }}
+                                                    </span>
+                                                    <span class="text-white/70 text-[8px] sm:text-xs">
+                                                        <i class="fas fa-user mr-1"></i> {{ $berita->user->name ?? 'Admin' }}
+                                                    </span>
+                                                </div>
+                                                <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}" class="block">
+                                                    <h3 class="text-sm sm:text-lg md:text-xl font-bold text-white hover:text-red-400 transition line-clamp-2">
+                                                        {{ $berita->judul }}
+                                                    </h3>
+                                                </a>
+                                                <p class="text-white/80 text-[10px] sm:text-xs mt-1 sm:mt-2 line-clamp-2 max-w-2xl hidden sm:block">
+                                                    {{ $berita->excerpt ?? strip_tags($berita->konten) }}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
+                                    @endforeach
+                                @else
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                        <p class="text-gray-500 text-sm">Belum ada berita</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if($sliderBeritas->count() > 1)
+                            <button onclick="prevBeritaSlide()"
+                                    class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
+                                <i class="fas fa-chevron-left text-sm sm:text-base"></i>
+                            </button>
+                            <button onclick="nextBeritaSlide()"
+                                    class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition z-20">
+                                <i class="fas fa-chevron-right text-sm sm:text-base"></i>
+                            </button>
+                            <div class="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2 z-20">
+                                @foreach($sliderBeritas as $index => $berita)
+                                <button onclick="goToBeritaSlide({{ $index }})"
+                                        class="berita-dot w-2 h-2 sm:w-3 sm:h-3 rounded-full transition {{ $index === 0 ? 'bg-white' : 'bg-white/40 hover:bg-white/60' }}"
+                                        data-index="{{ $index }}">
+                                </button>
+                                @endforeach
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- KOLOM 2: Berita Lainnya (3/12) -->
+                    <div class="lg:col-span-3 scroll-animate">
+                        <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 h-full flex flex-col">
+                            <h3 class="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-2 flex items-center gap-2 flex-shrink-0">
+                                <i class="fas fa-list-ul text-red-600"></i>
+                                Berita Lainnya
+                            </h3>
+
+                            @php
+                                $sidebarBeritas = isset($beritas) ? $beritas->skip(5)->take(5) : collect();
+                            @endphp
+
+                            @if($sidebarBeritas->count() > 0)
+                                <div class="space-y-1.5 sm:space-y-2 mt-2 sm:mt-3 overflow-y-auto pr-1 flex-1 max-h-[280px] lg:max-h-none">
+                                    @foreach($sidebarBeritas as $berita)
+                                    <a href="{{ route('berita.show', $berita->slug ?? $berita->id) }}"
+                                       class="block group hover:bg-red-50 rounded-lg p-1.5 sm:p-2 transition border-l-3 border-transparent hover:border-red-500">
+                                        <h4 class="text-xs sm:text-sm font-medium text-gray-800 group-hover:text-red-600 transition line-clamp-2">
+                                            {{ $berita->judul }}
+                                        </h4>
+                                        <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+                                            <i class="far fa-calendar-alt mr-1"></i>
+                                            {{ $berita->published_at ? $berita->published_at->format('d F Y') : $berita->created_at->format('d F Y') }}
+                                        </p>
+                                    </a>
                                     @endforeach
                                 </div>
                             @else
-                                <div id="agendaItems" class="text-center py-4 sm:py-6">
-                                    <div class="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2">
-                                        <div class="absolute inset-0 bg-gray-200 rounded-full"></div>
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs sm:text-sm font-medium text-gray-600">Tidak ada agenda</p>
-                                    <p class="text-[10px] sm:text-xs text-gray-400 mt-1">Tidak ada kegiatan/event di hari ini</p>
+                                <div class="text-center py-4">
+                                    <p class="text-gray-400 text-sm">Belum ada berita lainnya</p>
                                 </div>
                             @endif
                         </div>
-
-                        @if(isset($todayAgendas) && $todayAgendas->count() > 2)
-                        <div class="text-center mt-1.5 text-[8px] sm:text-[9px] text-gray-400 flex-shrink-0">
-                            <i class="fas fa-chevron-down mr-1"></i>
-                            Scroll untuk melihat lebih banyak agenda ({{ $todayAgendas->count() }} agenda)
-                        </div>
-                        @endif
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ============================================ -->
-    <!-- SECTION GALERI - DENGAN FILTER KATEGORI      -->
-    <!-- ============================================ -->
-    @if((isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0) || (isset($galerisOrmas) && $galerisOrmas->count() > 0))
-    <section id="galeri" class="py-8 sm:py-10 md:py-12 bg-gray-50 scroll-animate">
-        <div class="container mx-auto px-4">
-            <!-- Header -->
-            <div class="text-center mb-6 sm:mb-8">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Galeri</h2>
-                <div class="w-20 h-1 bg-red-500 mx-auto mt-3 rounded-full"></div>
-                <p class="text-gray-500 text-xs sm:text-sm mt-2">Dokumentasi kegiatan Bakesbangpol & Ormas Kota Cimahi</p>
-            </div>
-
-            <!-- Filter Tab Kategori -->
-            <div class="flex justify-center mb-6 sm:mb-8">
-                <div class="inline-flex bg-white rounded-full shadow-sm border border-gray-200 p-1">
-                    <button type="button"
-                            onclick="filterGaleri('bakesbangpol')"
-                            id="tab-bakesbangpol"
-                            class="galeri-tab active px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
-                        <i class="fas fa-building"></i>
-                        <span>Bakesbangpol</span>
-                    </button>
-                    <button type="button"
-                            onclick="filterGaleri('ormas')"
-                            id="tab-ormas"
-                            class="galeri-tab px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
-                        <i class="fas fa-users"></i>
-                        <span>Ormas</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Galeri Bakesbangpol (Default Tampil) -->
-            <div id="galeri-bakesbangpol" class="galeri-content">
-                @if(isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0)
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-                        @foreach($galerisBakesbangpol as $item)
-                        <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
-                             onclick="openLightbox(
-                                 '{{ asset('storage/' . $item->gambar) }}',
-                                 '{{ addslashes($item->judul) }}',
-                                 '{{ addslashes($item->deskripsi ?? '') }}'
-                             )">
-                            <img src="{{ asset('storage/' . $item->gambar) }}"
-                                 alt="{{ $item->judul }}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
-                                    <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
+                    <!-- ============================================ -->
+                    <!-- KOLOM 3: AGENDA KEGIATAN (4/12) — UPDATED    -->
+                    <!-- ============================================ -->
+                    <div class="lg:col-span-4 scroll-animate">
+                        <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 h-full flex flex-col">
+                            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 flex-shrink-0">
+                                <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-xl flex flex-col items-center justify-center text-white text-center shadow-md">
+                                    <span id="selectedDayHeader" class="text-lg sm:text-xl font-bold leading-none">{{ date('d') }}</span>
+                                    <span id="selectedMonthHeader" class="text-[6px] sm:text-[8px] font-bold uppercase leading-none">{{ date('M') }}</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm sm:text-base font-bold text-gray-800">Agenda Kegiatan</h3>
+                                    <p id="currentMonthDisplay" class="text-[10px] sm:text-xs text-gray-500">{{ $currentMonthName }}</p>
                                 </div>
                             </div>
 
-                            <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
-                                <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
-                                @if($item->deskripsi)
-                                <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="text-center py-12 bg-white rounded-xl">
-                        <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
-                        <p class="text-gray-500 text-sm">Belum ada galeri Bakesbangpol</p>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Galeri Ormas (Hidden by default) -->
-            <div id="galeri-ormas" class="galeri-content hidden">
-                @if(isset($galerisOrmas) && $galerisOrmas->count() > 0)
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-                        @foreach($galerisOrmas as $item)
-                        <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
-                             onclick="openLightbox(
-                                 '{{ asset('storage/' . $item->gambar) }}',
-                                 '{{ addslashes($item->judul) }}',
-                                 '{{ addslashes($item->deskripsi ?? '') }}'
-                             )">
-                            <img src="{{ asset('storage/' . $item->gambar) }}"
-                                 alt="{{ $item->judul }}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
-                                    <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
+                            <div class="mb-2 sm:mb-3 overflow-x-auto pb-1 sm:pb-2 flex-shrink-0">
+                                <div id="calendarHorizontal" class="flex gap-0.5 sm:gap-1 min-w-max">
                                 </div>
                             </div>
 
-                            <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
-                                <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
-                                @if($item->deskripsi)
-                                <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
+                            <div id="agendaListContainer" class="bg-gray-50 rounded-lg p-2 sm:p-3 overflow-y-auto flex-shrink-0 max-h-[150px] sm:max-h-[180px] lg:max-h-[200px]">
+                                @if(isset($todayAgendas) && $todayAgendas->count() > 0)
+                                    <div id="agendaItems" class="space-y-1.5 sm:space-y-2">
+                                        {{-- ============ UPDATED: foreach agenda dengan detail lengkap ============ --}}
+                                        @foreach($todayAgendas as $agenda)
+                                        @php
+                                            $isUpcoming = strtotime($agenda->tanggal) >= strtotime(date('Y-m-d'));
+                                            $hasDetail = !empty($agenda->deskripsi) || !empty($agenda->waktu) || !empty($agenda->tempat);
+                                        @endphp
+                                        <div class="flex flex-col p-1.5 sm:p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition group agenda-item" data-agenda-id="{{ $agenda->id }}">
+                                            {{-- Header --}}
+                                            <div class="flex items-start gap-2 sm:gap-3">
+                                                <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-red-600 rounded-lg flex flex-col items-center justify-center text-white text-center shadow-sm mt-0.5">
+                                                    <span class="text-sm sm:text-base font-bold leading-none">{{ date('d', strtotime($agenda->tanggal)) }}</span>
+                                                    <span class="text-[6px] sm:text-[7px] font-bold uppercase leading-none">{{ date('M', strtotime($agenda->tanggal)) }}</span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <h4 class="text-[10px] sm:text-xs font-semibold text-gray-800 group-hover:text-red-600 transition agenda-title"
+                                                        data-full-text="{{ $agenda->judul }}">
+                                                        {{ $agenda->judul }}
+                                                    </h4>
+                                                    <p class="text-[8px] sm:text-[9px] text-gray-400">
+                                                        {{ date('l, d F Y', strtotime($agenda->tanggal)) }}
+                                                    </p>
+                                                </div>
+                                                <span class="flex-shrink-0 text-[7px] sm:text-[8px] font-medium px-1.5 py-0.5 sm:px-2 rounded-full {{ $isUpcoming ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400' }}">
+                                                    <i class="fas {{ $isUpcoming ? 'fa-clock' : 'fa-check-circle' }} mr-0.5"></i>
+                                                    {{ $isUpcoming ? 'Akan Datang' : 'Selesai' }}
+                                                </span>
+                                            </div>
+
+                                            {{-- Detail lengkap (hidden by default) --}}
+                                            <div class="agenda-detail hidden mt-2 ml-10 sm:ml-12 border-t border-red-100 pt-2 space-y-1.5">
+                                                @if(!empty($agenda->deskripsi))
+                                                <div class="flex items-start gap-1.5">
+                                                    <i class="fas fa-align-left text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                                    <p class="text-[9px] sm:text-[10px] text-gray-600 leading-relaxed whitespace-pre-line">{{ $agenda->deskripsi }}</p>
+                                                </div>
+                                                @endif
+
+                                                @if(!empty($agenda->waktu))
+                                                <div class="flex items-center gap-1.5">
+                                                    <i class="fas fa-clock text-red-500 text-[9px] sm:text-[10px] flex-shrink-0"></i>
+                                                    <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                                        <span class="font-medium text-gray-700">Waktu:</span> {{ $agenda->waktu }}
+                                                    </p>
+                                                </div>
+                                                @endif
+
+                                                @if(!empty($agenda->tempat))
+                                                <div class="flex items-start gap-1.5">
+                                                    <i class="fas fa-map-marker-alt text-red-500 text-[9px] sm:text-[10px] mt-0.5 flex-shrink-0"></i>
+                                                    <p class="text-[9px] sm:text-[10px] text-gray-600">
+                                                        <span class="font-medium text-gray-700">Tempat:</span> {{ $agenda->tempat }}
+                                                    </p>
+                                                </div>
+                                                @endif
+                                            </div>
+
+                                            {{-- Button Lihat Selengkapnya --}}
+                                            @if($hasDetail)
+                                            <div class="flex justify-end mt-1.5 ml-10 sm:ml-12">
+                                                <button type="button"
+                                                        onclick="toggleAgendaExpand(this)"
+                                                        class="agenda-toggle-btn inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 font-medium px-2 py-1 rounded-full transition-all duration-200 hover:shadow-sm">
+                                                    <span class="toggle-text">Lihat Selengkapnya</span>
+                                                    <i class="fas fa-chevron-down toggle-icon transition-transform duration-200"></i>
+                                                </button>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div id="agendaItems" class="text-center py-4 sm:py-6">
+                                        <div class="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2">
+                                            <div class="absolute inset-0 bg-gray-200 rounded-full"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs sm:text-sm font-medium text-gray-600">Tidak ada agenda</p>
+                                        <p class="text-[10px] sm:text-xs text-gray-400 mt-1">Tidak ada kegiatan/event di hari ini</p>
+                                    </div>
                                 @endif
                             </div>
+
+                            @if(isset($todayAgendas) && $todayAgendas->count() > 2)
+                            <div class="text-center mt-1.5 text-[8px] sm:text-[9px] text-gray-400 flex-shrink-0">
+                                <i class="fas fa-chevron-down mr-1"></i>
+                                Scroll untuk melihat lebih banyak agenda ({{ $todayAgendas->count() }} agenda)
+                            </div>
+                            @endif
                         </div>
-                        @endforeach
                     </div>
-                @else
-                    <div class="text-center py-12 bg-white rounded-xl">
-                        <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
-                        <p class="text-gray-500 text-sm">Belum ada galeri Ormas</p>
-                    </div>
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
-    @endif
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION GALERI - DENGAN FILTER KATEGORI      -->
+        <!-- ============================================ -->
+        @if((isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0) || (isset($galerisOrmas) && $galerisOrmas->count() > 0))
+        <section id="galeri" class="py-8 sm:py-10 md:py-12 relative scroll-animate">
+            <div class="container mx-auto px-4 relative z-10">
+                <!-- Header -->
+                <div class="text-center mb-6 sm:mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Galeri</h2>
+                    <div class="w-20 h-1 bg-red-500 mx-auto mt-3 rounded-full"></div>
+                    <p class="text-gray-500 text-xs sm:text-sm mt-2">Dokumentasi kegiatan Bakesbangpol & Ormas Kota Cimahi</p>
+                </div>
+
+                <!-- Filter Tab Kategori -->
+                <div class="flex justify-center mb-6 sm:mb-8">
+                    <div class="inline-flex bg-white rounded-full shadow-sm border border-gray-200 p-1">
+                        <button type="button"
+                                onclick="filterGaleri('bakesbangpol')"
+                                id="tab-bakesbangpol"
+                                class="galeri-tab active px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
+                            <i class="fas fa-building"></i>
+                            <span>Bakesbangpol</span>
+                        </button>
+                        <button type="button"
+                                onclick="filterGaleri('ormas')"
+                                id="tab-ormas"
+                                class="galeri-tab px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
+                            <i class="fas fa-users"></i>
+                            <span>Ormas</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Galeri Bakesbangpol (Default Tampil) -->
+                <div id="galeri-bakesbangpol" class="galeri-content">
+                    @if(isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0)
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                            @foreach($galerisBakesbangpol as $item)
+                            <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
+                                 onclick="openLightbox(
+                                     '{{ asset('storage/' . $item->gambar) }}',
+                                     '{{ addslashes($item->judul) }}',
+                                     '{{ addslashes($item->deskripsi ?? '') }}'
+                                 )">
+                                <img src="{{ asset('storage/' . $item->gambar) }}"
+                                     alt="{{ $item->judul }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
+                                        <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
+                                    </div>
+                                </div>
+
+                                <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
+                                    <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
+                                    @if($item->deskripsi)
+                                    <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl">
+                            <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
+                            <p class="text-gray-500 text-sm">Belum ada galeri Bakesbangpol</p>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Galeri Ormas (Hidden by default) -->
+                <div id="galeri-ormas" class="galeri-content hidden">
+                    @if(isset($galerisOrmas) && $galerisOrmas->count() > 0)
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                            @foreach($galerisOrmas as $item)
+                            <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
+                                 onclick="openLightbox(
+                                     '{{ asset('storage/' . $item->gambar) }}',
+                                     '{{ addslashes($item->judul) }}',
+                                     '{{ addslashes($item->deskripsi ?? '') }}'
+                                 )">
+                                <img src="{{ asset('storage/' . $item->gambar) }}"
+                                     alt="{{ $item->judul }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
+                                        <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
+                                    </div>
+                                </div>
+
+                                <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
+                                    <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
+                                    @if($item->deskripsi)
+                                    <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl">
+                            <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
+                            <p class="text-gray-500 text-sm">Belum ada galeri Ormas</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </section>
+        @endif
+    </div> <!-- END WRAPPER BERITA & GALERI -->
 
     <!-- ============================================ -->
     <!-- LIGHTBOX MODAL - DENGAN JUDUL & DESKRIPSI   -->

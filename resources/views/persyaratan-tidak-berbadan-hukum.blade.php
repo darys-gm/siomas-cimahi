@@ -3,7 +3,7 @@
 @section('title', 'Persyaratan Pendaftaran ORMAS yang Tidak Berbadan Hukum - SIOMAS Kota Cimahi')
 
 @section('content')
-<div class="relative min-h-screen py-8 sm:py-12 mt-8">
+<div class="relative min-h-screen py-8 sm:py-12">
     <!-- Background -->
     <div class="absolute inset-0 w-full h-full">
         <img src="{{ asset('images/bg-pola.png') }}" alt="Background" class="w-full h-full object-cover">
