@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Kecamatan;
+use App\Models\Kelurahan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,29 +31,29 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Seed kecamatan
+        // Menggunakan firstOrCreate agar tidak duplikat jika dijalankan ulang
         $kecamatan = ['Cimahi Selatan', 'Cimahi Tengah', 'Cimahi Utara'];
         foreach ($kecamatan as $item) {
-            \App\Models\Kecamatan::create(['nama' => $item]);
+            Kecamatan::firstOrCreate(['nama' => $item]);
         }
 
-        // Seed kelurahan
+        // Seed kelurahan sesuai data terbaru
         $kelurahan = [
-            'Cimahi Selatan' => ['Cibeber', 'Cimahi', 'Leuwigajah', 'Melong', 'Utama'],
-            'Cimahi Tengah' => ['Baros', 'Cimahi', 'Citeureup', 'Karangmekar', 'Padasuka', 'Setiamanah'],
-            'Cimahi Utara' => ['Cibabat', 'Cimahi', 'Citeureup', 'Pasirkaliki']
+            'Cimahi Selatan' => ['Cibeber', 'Cibeureum', 'Leuwigajah', 'Melong', 'Utama'],
+            'Cimahi Tengah'  => ['Baros', 'Cigugur Tengah', 'Cimahi', 'Karangmekar', 'Padasuka', 'Setiamanah'],
+            'Cimahi Utara'   => ['Cibabat', 'Cipageran', 'Citeureup', 'Pasirkaliki']
         ];
 
         foreach ($kelurahan as $kecamatanName => $kelurahans) {
-            $kecamatan = \App\Models\Kecamatan::where('nama', $kecamatanName)->first();
-            if ($kecamatan) {
+            $kec = Kecamatan::where('nama', $kecamatanName)->first();
+            if ($kec) {
                 foreach ($kelurahans as $kelurahanName) {
-                    \App\Models\Kelurahan::create([
-                        'kecamatan_id' => $kecamatan->id,
+                    Kelurahan::firstOrCreate([
+                        'kecamatan_id' => $kec->id,
                         'nama' => $kelurahanName
                     ]);
                 }
             }
         }
-
     }
 }
