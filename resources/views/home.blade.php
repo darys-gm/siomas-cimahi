@@ -89,7 +89,7 @@
     <!-- SECTION POSTER - COVERFLOW SWIPER (FULL WIDTH) -->
     <!-- ============================================ -->
     @if(isset($posters) && $posters->count() > 0)
-    <section id="poster" class="relative z-20 -mt-24 sm:-mt-32 md:-mt-40 scroll-animate pb-10">
+    <section id="poster" class="relative z-20 -mt-10 sm:-mt-32 md:-mt-40 scroll-animate pb-10">
         <div class="w-full overflow-visible">
             
             <!-- Swiper Container -->
@@ -560,9 +560,20 @@
         </section>
 
         <!-- ============================================ -->
-        <!-- SECTION GALERI - DENGAN FILTER KATEGORI      -->
+        <!-- SECTION GALERI - TANPA FILTER (DIGABUNGKAN)  -->
         <!-- ============================================ -->
-        @if((isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0) || (isset($galerisOrmas) && $galerisOrmas->count() > 0))
+        @php
+            // Menggabungkan galeri bakesbangpol dan ormas menjadi satu collection
+            $semuaGaleri = collect();
+            if(isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0) {
+                $semuaGaleri = $semuaGaleri->merge($galerisBakesbangpol);
+            }
+            if(isset($galerisOrmas) && $galerisOrmas->count() > 0) {
+                $semuaGaleri = $semuaGaleri->merge($galerisOrmas);
+            }
+        @endphp
+
+        @if($semuaGaleri->count() > 0)
         <section id="galeri" class="py-8 sm:py-10 md:py-12 relative scroll-animate">
             <div class="container mx-auto px-4 relative z-10">
                 <!-- Header -->
@@ -572,100 +583,33 @@
                     <p class="text-gray-500 text-xs sm:text-sm mt-2">Dokumentasi kegiatan Bakesbangpol & Ormas Kota Cimahi</p>
                 </div>
 
-                <!-- Filter Tab Kategori -->
-                <div class="flex justify-center mb-6 sm:mb-8">
-                    <div class="inline-flex bg-white rounded-full shadow-sm border border-gray-200 p-1">
-                        <button type="button"
-                                onclick="filterGaleri('bakesbangpol')"
-                                id="tab-bakesbangpol"
-                                class="galeri-tab active px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
-                            <i class="fas fa-building"></i>
-                            <span>Bakesbangpol</span>
-                        </button>
-                        <button type="button"
-                                onclick="filterGaleri('ormas')"
-                                id="tab-ormas"
-                                class="galeri-tab px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1.5">
-                            <i class="fas fa-users"></i>
-                            <span>Ormas</span>
-                        </button>
+                <!-- Grid Galeri Gabungan -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    @foreach($semuaGaleri as $item)
+                    <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
+                         onclick="openLightbox(
+                             '{{ asset('storage/' . $item->gambar) }}',
+                             '{{ addslashes($item->judul) }}',
+                             '{{ addslashes($item->deskripsi ?? '') }}'
+                         )">
+                        <img src="{{ asset('storage/' . $item->gambar) }}"
+                             alt="{{ $item->judul }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
+                                <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
+                            <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
+                            @if($item->deskripsi)
+                            <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
+                            @endif
+                        </div>
                     </div>
-                </div>
-
-                <!-- Galeri Bakesbangpol (Default Tampil) -->
-                <div id="galeri-bakesbangpol" class="galeri-content">
-                    @if(isset($galerisBakesbangpol) && $galerisBakesbangpol->count() > 0)
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-                            @foreach($galerisBakesbangpol as $item)
-                            <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
-                                 onclick="openLightbox(
-                                     '{{ asset('storage/' . $item->gambar) }}',
-                                     '{{ addslashes($item->judul) }}',
-                                     '{{ addslashes($item->deskripsi ?? '') }}'
-                                 )">
-                                <img src="{{ asset('storage/' . $item->gambar) }}"
-                                     alt="{{ $item->judul }}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
-                                        <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
-                                    </div>
-                                </div>
-
-                                <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
-                                    <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
-                                    @if($item->deskripsi)
-                                    <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
-                                    @endif
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl">
-                            <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
-                            <p class="text-gray-500 text-sm">Belum ada galeri Bakesbangpol</p>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Galeri Ormas (Hidden by default) -->
-                <div id="galeri-ormas" class="galeri-content hidden">
-                    @if(isset($galerisOrmas) && $galerisOrmas->count() > 0)
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-                            @foreach($galerisOrmas as $item)
-                            <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition aspect-square cursor-pointer galeri-item"
-                                 onclick="openLightbox(
-                                     '{{ asset('storage/' . $item->gambar) }}',
-                                     '{{ addslashes($item->judul) }}',
-                                     '{{ addslashes($item->deskripsi ?? '') }}'
-                                 )">
-                                <img src="{{ asset('storage/' . $item->gambar) }}"
-                                     alt="{{ $item->judul }}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-300 shadow-lg border border-white/30">
-                                        <i class="fas fa-search-plus text-white text-sm sm:text-base md:text-xl"></i>
-                                    </div>
-                                </div>
-
-                                <div class="absolute bottom-0 left-0 right-0 p-2 sm:p-3 bg-gradient-to-t from-black/80 to-transparent">
-                                    <h4 class="text-white font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-1">{{ $item->judul }}</h4>
-                                    @if($item->deskripsi)
-                                    <p class="text-white/80 text-[8px] sm:text-[10px] md:text-xs line-clamp-1">{{ $item->deskripsi }}</p>
-                                    @endif
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl">
-                            <i class="fas fa-images text-4xl text-gray-300 mb-3 block"></i>
-                            <p class="text-gray-500 text-sm">Belum ada galeri Ormas</p>
-                        </div>
-                    @endif
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -675,26 +619,29 @@
     <!-- ============================================ -->
     <!-- LIGHTBOX MODAL - DENGAN JUDUL & DESKRIPSI   -->
     <!-- ============================================ -->
-    <div id="lightboxModal" class="fixed inset-0 bg-black/95 z-[9999] hidden flex items-center justify-center p-3 sm:p-4" onclick="closeLightbox()">
-        <button onclick="closeLightbox()" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/70 hover:text-white text-2xl sm:text-3xl transition z-10 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full">
+    <!-- Mengubah bg-black/95 menjadi bg-black/70 agar lebih cerah/transparan -->
+    <div id="lightboxModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-3 sm:p-4" onclick="closeLightbox()">
+        <button onclick="closeLightbox()" class="absolute top-3 right-3 sm:top-6 sm:right-6 text-white/70 hover:text-white text-2xl sm:text-3xl transition z-50 w-10 h-10 flex items-center justify-center hover:bg-white/20 rounded-full">
             <i class="fas fa-times"></i>
         </button>
 
-        <div class="relative max-w-5xl w-full max-h-[95vh] flex flex-col rounded-xl overflow-hidden" onclick="event.stopPropagation()">
+        <!-- Kontainer ini yang akan membungkus gambar dan teks agar lebarnya sama -->
+        <div class="relative inline-flex flex-col max-w-[90vw] sm:max-w-4xl max-h-[90vh] rounded-xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            
             <!-- Gambar -->
-            <div class="flex-1 flex items-center justify-center overflow-hidden bg-black/50">
-                <img id="lightboxImage" src="" alt="" class="w-full h-auto max-h-[70vh] object-contain">
+            <div class="flex items-center justify-center bg-black/50">
+                <img id="lightboxImage" src="" alt="" class="w-auto h-auto max-h-[70vh] max-w-full object-contain block">
             </div>
 
-            <!-- Info Panel -->
-            <div class="bg-white p-4 sm:p-6 max-h-[25vh] overflow-y-auto" id="lightboxInfoPanel">
-                <h3 class="text-base sm:text-xl font-bold text-gray-800 mb-2 flex items-start gap-2">
+            <!-- Info Panel (Lebar otomatis mengikuti gambar karena parent-nya inline-flex) -->
+            <div class="bg-white p-4 sm:p-5 w-full overflow-y-auto" id="lightboxInfoPanel">
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-1">
                     <span id="lightboxTitleText">Judul Galeri</span>
                 </h3>
-                <div id="lightboxDescriptionWrapper" class="hidden">
+                <div id="lightboxDescriptionWrapper" class="hidden mt-2">
                     <p class="text-gray-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line" id="lightboxDescription"></p>
                 </div>
-                <p id="lightboxEmptyDescription" class="hidden text-gray-400 text-xs sm:text-sm italic">
+                <p id="lightboxEmptyDescription" class="hidden text-gray-400 text-xs sm:text-sm italic mt-2">
                     <i class="fas fa-info-circle mr-1"></i> Tidak ada deskripsi untuk galeri ini.
                 </p>
             </div>
@@ -1027,6 +974,9 @@
         transform: scale(1.1);
     }
 
+    /* ============================================ */
+    /* LIGHTBOX MODAL ANIMATION & STYLE             */
+    /* ============================================ */
     #lightboxModal {
         animation: lightboxFadeIn 0.3s ease;
     }
@@ -1034,47 +984,16 @@
         from { opacity: 0; }
         to { opacity: 1; }
     }
+    
     #lightboxImage {
         animation: lightboxZoomIn 0.3s ease;
+        border-bottom: 2px solid #fff; /* Opsional: garis batas antara gambar dan teks */
     }
     @keyframes lightboxZoomIn {
-        from { transform: scale(0.8); opacity: 0; }
+        from { transform: scale(0.9); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
     }
 
-    /* ============================================ */
-    /* GALERI FILTER TABS                          */
-    /* ============================================ */
-    .galeri-tab {
-        background: transparent;
-        color: #6b7280;
-    }
-    .galeri-tab:hover:not(.active) {
-        color: #dc2626;
-        background: #fef2f2;
-    }
-    .galeri-tab.active {
-        background: #dc2626;
-        color: white;
-        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-    }
-    .galeri-content {
-        animation: fadeInGallery 0.4s ease-in-out;
-    }
-    @keyframes fadeInGallery {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* ============================================ */
-    /* LIGHTBOX INFO PANEL ANIMATION                */
-    /* ============================================ */
     #lightboxInfoPanel {
         animation: slideUpInfo 0.4s ease-out;
     }
@@ -1868,33 +1787,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeLightbox();
         });
-
-        // ============================================
-        // FILTER GALERI BY KATEGORI
-        // ============================================
-        window.filterGaleri = function(kategori) {
-            const contents = document.querySelectorAll('.galeri-content');
-            contents.forEach(function(el) {
-                el.classList.add('hidden');
-            });
-
-            const tabs = document.querySelectorAll('.galeri-tab');
-            tabs.forEach(function(el) {
-                el.classList.remove('active');
-            });
-
-            const target = document.getElementById('galeri-' + kategori);
-            if (target) {
-                target.classList.remove('hidden');
-                target.style.animation = 'none';
-                setTimeout(() => { target.style.animation = 'fadeInGallery 0.4s ease-in-out'; }, 10);
-            }
-
-            const activeTab = document.getElementById('tab-' + kategori);
-            if (activeTab) {
-                activeTab.classList.add('active');
-            }
-        };
 
         const today = new Date();
         renderHorizontalCalendar(today.getFullYear(), today.getMonth());

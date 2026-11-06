@@ -3,15 +3,17 @@
 @section('title', $produkHukum->judul . ' - SIOMAS Kota Cimahi')
 
 @section('content')
-<div class="relative min-h-screen py-8 sm:py-12">
+<!-- Pembungkus utama dengan z-0 agar konten tidak menembus navbar -->
+<div class="relative min-h-screen py-8 sm:py-12 z-0">
     <!-- Background Image -->
-    <div class="absolute inset-0 w-full h-full">
+    <div class="absolute inset-0 w-full h-full z-0">
         <img src="{{ asset('images/bg-pola.png') }}" 
              alt="Background" 
              class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-b from-white/70 via-white/80 to-white/90"></div>
     </div>
     
+    <!-- Kontainer Konten -->
     <div class="container mx-auto px-3 sm:px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-4 sm:gap-6">
             <!-- Kolom Kiri: PDF Viewer (70%) -->
@@ -36,6 +38,7 @@
                 <!-- PDF Viewer -->
                 @if($fileExists)
                 <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
+                    <!-- Menggunakan class tinggi bawaan Tailwind agar responsif -->
                     <div class="h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]">
                         <iframe src="{{ route('produk-hukum.pdf', $produkHukum->id) }}" 
                                 class="w-full h-full border-0"
@@ -63,7 +66,8 @@
 
             <!-- Kolom Kanan: Produk Hukum Lainnya (30%) -->
             <div class="lg:w-4/12">
-                <div class="sticky top-24">
+                <!-- Sticky sidebar: top disesuaikan agar tidak tertutup Top Bar + Navbar -->
+                <div class="sticky top-28 lg:top-32">
                     <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100/50 p-4 sm:p-5">
                         <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-gray-200 flex items-center gap-2">
                             <i class="fas fa-file-pdf text-red-500"></i>
@@ -109,6 +113,7 @@
     </div>
 </div>
 
+<!-- Style khusus untuk line-clamp teks -->
 <style>
     .line-clamp-1 {
         display: -webkit-box;
@@ -121,248 +126,6 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-    }
-    .sticky {
-        position: sticky;
-        top: 24px;
-    }
-
-    /* ============================================ */
-    /* RESPONSIVE UNTUK MOBILE 320px, 375px, 425px */
-    /* ============================================ */
-    @media (max-width: 374px) {
-        /* 320px */
-        .container {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-        .text-lg {
-            font-size: 15px !important;
-        }
-        .text-sm {
-            font-size: 11px !important;
-        }
-        .text-xs {
-            font-size: 10px !important;
-        }
-        .text-\[10px\] {
-            font-size: 8px !important;
-        }
-        .p-4 {
-            padding: 8px !important;
-        }
-        .p-3 {
-            padding: 6px !important;
-        }
-        .p-2 {
-            padding: 4px !important;
-        }
-        .px-3 {
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-        }
-        .py-1\.5 {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
-        }
-        .gap-2 {
-            gap: 3px !important;
-        }
-        .gap-3 {
-            gap: 4px !important;
-        }
-        .gap-4 {
-            gap: 6px !important;
-        }
-        .mb-2 {
-            margin-bottom: 4px !important;
-        }
-        .mb-3 {
-            margin-bottom: 6px !important;
-        }
-        .mb-4 {
-            margin-bottom: 8px !important;
-        }
-        .mt-1 {
-            margin-top: 2px !important;
-        }
-        .mt-2 {
-            margin-top: 4px !important;
-        }
-        .mt-3 {
-            margin-top: 6px !important;
-        }
-        .mt-4 {
-            margin-top: 8px !important;
-        }
-        .py-8 {
-            padding-top: 12px !important;
-            padding-bottom: 12px !important;
-        }
-        .h-\[400px\] {
-            height: 250px !important;
-        }
-        .rounded-xl {
-            border-radius: 8px !important;
-        }
-        .rounded-lg {
-            border-radius: 6px !important;
-        }
-        .max-h-\[400px\] {
-            max-height: 200px !important;
-        }
-        .space-y-2 > * + * {
-            margin-top: 4px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 6px !important;
-        }
-        .pt-2 {
-            padding-top: 4px !important;
-        }
-        .pb-2 {
-            padding-bottom: 4px !important;
-        }
-        .mr-1 {
-            margin-right: 2px !important;
-        }
-        .mr-2 {
-            margin-right: 4px !important;
-        }
-        .ml-1 {
-            margin-left: 2px !important;
-        }
-        .ml-2 {
-            margin-left: 4px !important;
-        }
-    }
-
-    @media (min-width: 375px) and (max-width: 424px) {
-        /* 375px */
-        .container {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-        }
-        .text-lg {
-            font-size: 17px !important;
-        }
-        .text-sm {
-            font-size: 12px !important;
-        }
-        .p-4 {
-            padding: 10px !important;
-        }
-        .p-3 {
-            padding: 8px !important;
-        }
-        .px-3 {
-            padding-left: 8px !important;
-            padding-right: 8px !important;
-        }
-        .py-8 {
-            padding-top: 16px !important;
-            padding-bottom: 16px !important;
-        }
-        .h-\[400px\] {
-            height: 300px !important;
-        }
-        .max-h-\[400px\] {
-            max-height: 250px !important;
-        }
-        .gap-3 {
-            gap: 6px !important;
-        }
-        .gap-4 {
-            gap: 8px !important;
-        }
-        .space-y-2 > * + * {
-            margin-top: 6px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 8px !important;
-        }
-        .mb-3 {
-            margin-bottom: 6px !important;
-        }
-        .mb-4 {
-            margin-bottom: 8px !important;
-        }
-        .mt-3 {
-            margin-top: 6px !important;
-        }
-        .mt-4 {
-            margin-top: 8px !important;
-        }
-    }
-
-    @media (min-width: 425px) and (max-width: 640px) {
-        /* 425px */
-        .text-lg {
-            font-size: 19px !important;
-        }
-        .py-8 {
-            padding-top: 20px !important;
-            padding-bottom: 20px !important;
-        }
-        .h-\[400px\] {
-            height: 350px !important;
-        }
-        .max-h-\[400px\] {
-            max-height: 300px !important;
-        }
-        .gap-3 {
-            gap: 8px !important;
-        }
-        .gap-4 {
-            gap: 10px !important;
-        }
-        .space-y-2 > * + * {
-            margin-top: 8px !important;
-        }
-        .space-y-3 > * + * {
-            margin-top: 10px !important;
-        }
-        .p-4 {
-            padding: 12px !important;
-        }
-        .p-3 {
-            padding: 10px !important;
-        }
-        .px-3 {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-        .mb-3 {
-            margin-bottom: 8px !important;
-        }
-        .mb-4 {
-            margin-bottom: 10px !important;
-        }
-        .mt-3 {
-            margin-top: 8px !important;
-        }
-        .mt-4 {
-            margin-top: 10px !important;
-        }
-    }
-
-    @media (max-width: 640px) {
-        /* Mobile umum - ubah sticky menjadi static */
-        .sticky {
-            position: static !important;
-        }
-        .lg\:w-8\/12, .lg\:w-4\/12 {
-            width: 100% !important;
-        }
-        .flex-col {
-            flex-direction: column !important;
-        }
-        .gap-6 {
-            gap: 16px !important;
-        }
-        .top-24 {
-            top: 0 !important;
-        }
     }
 </style>
 @endsection

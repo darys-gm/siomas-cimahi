@@ -314,14 +314,14 @@
             visibility: visible;
         }
         
-        /* PERBAIKAN: Panel menu diturunkan tepat di bawah Top Bar */
+        /* Panel menu diturunkan tepat di bawah Top Bar */
         .mobile-nav-panel {
             position: fixed;
-            top: var(--topbar-height); /* Dimulai tepat di bawah top bar */
+            top: var(--topbar-height); 
             left: -300px;
             width: 280px;
             max-width: 80%;
-            height: calc(100% - var(--topbar-height)); /* Tinggi disesuaikan sisa layar */
+            height: calc(100% - var(--topbar-height)); 
             background: white;
             z-index: 50;
             overflow-y: auto;
@@ -496,14 +496,17 @@
                 padding: 8px 14px 8px 46px;
                 font-size: 0.85rem;
             }
+            
+            /* --- PERBESAR MASKOT DI TABLET/MOBILE --- */
             .maskot {
-                bottom: 15px;
-                right: 15px;
+                bottom: 20px;
+                right: 20px;
             }
             .maskot img {
-                width: 50px;
-                height: 50px;
+                width: 70px; /* Diperbesar dari 50px */
+                height: 70px;
             }
+            
             .popup-content {
                 padding: 20px;
             }
@@ -536,13 +539,15 @@
             .mobile-nav-panel-header {
                 padding: 12px 16px;
             }
+            
+            /* --- PERBESAR MASKOT DI SMALL MOBILE --- */
             .maskot {
-                bottom: 12px;
-                right: 12px;
+                bottom: 15px;
+                right: 15px;
             }
             .maskot img {
-                width: 40px;
-                height: 40px;
+                width: 70px; /* Diperbesar dari 40px */
+                height: 70px;
             }
         }
 
