@@ -24,10 +24,12 @@
         /* ============================================ */
         :root {
             --topbar-height: 32px; /* Default Desktop */
+            --navbar-height: 70px; /* Estimasi tinggi navbar */
         }
         @media (max-width: 767px) {
             :root {
                 --topbar-height: 42px; /* Mobile */
+                --navbar-height: 60px; /* Estimasi tinggi navbar mobile */
             }
         }
 
@@ -48,6 +50,137 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
+        }
+
+        /* ============================================ */
+        /* WIDGET CUACA (Fixed di bawah Navbar)         */
+        /* ============================================ */
+        .weather-wrapper {
+            position: fixed;
+            /* Posisi top diturunkan agar tidak terlalu mepet navbar */
+            top: calc(var(--topbar-height) + var(--navbar-height) + 35px);
+            right: 30px;
+            z-index: 50; 
+            pointer-events: none; 
+        }
+
+        .weather-float-container {
+            display: flex;
+            align-items: stretch; /* Agar tinggi tombol dan card sama */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto; 
+        }
+
+        /* Kondisi saat widget disembunyikan */
+        .weather-float-container.collapsed {
+            /* Geser sejauh lebar card (menyisakan tombol panah di kiri) */
+            transform: translateX(calc(100% - 36px)); 
+        }
+
+        /* Desain Card Cuaca Utama */
+        .weather-card {
+            background-color: rgba(153, 27, 27, 0.9); /* bg-red-800 transparan */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: none; /* Menyatu dengan tombol di kiri */
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .weather-icon-bg {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .weather-icon-bg i {
+            color: #fcd34d; 
+            font-size: 20px;
+        }
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .weather-main {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .weather-temp {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .weather-desc {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #fecaca; 
+        }
+        .weather-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.65rem;
+            color: #fca5a5; 
+            margin-top: 2px;
+        }
+        .weather-details i {
+            color: #fcd34d; 
+        }
+
+        /* Tombol Toggle (Card Kecil Menempel di Kiri) */
+        .weather-toggle-btn {
+            background-color: rgba(153, 27, 27, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: none; 
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+            width: 36px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: -4px 10px 15px -3px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .weather-toggle-btn:hover {
+            background-color: rgba(220, 38, 38, 1);
+            color: #fcd34d;
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 767px) {
+            .weather-wrapper {
+                top: calc(var(--topbar-height) + var(--navbar-height) + 25px);
+                right: 15px;
+            }
+            .weather-card {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+            .weather-icon-bg { width: 32px; height: 32px; }
+            .weather-icon-bg i { font-size: 16px; }
+            .weather-temp { font-size: 1rem; }
+            .weather-desc { font-size: 0.65rem; }
+            .weather-details { font-size: 0.55rem; }
+            .weather-toggle-btn { width: 32px; }
+            
+            .weather-float-container.collapsed {
+                transform: translateX(calc(100% - 32px));
+            }
         }
 
         /* ============================================ */
@@ -503,7 +636,7 @@
                 right: 20px;
             }
             .maskot img {
-                width: 70px; /* Diperbesar dari 50px */
+                width: 70px;
                 height: 70px;
             }
             
@@ -546,7 +679,7 @@
                 right: 15px;
             }
             .maskot img {
-                width: 70px; /* Diperbesar dari 40px */
+                width: 70px;
                 height: 70px;
             }
         }
@@ -760,6 +893,38 @@
     </nav>
 
     <!-- ============================================ -->
+    <!-- WIDGET CUACA (Fixed di bawah Navbar)         -->
+    <!-- ============================================ -->
+    <div class="weather-wrapper">
+        <div class="weather-float-container" id="weatherContainer">
+            
+            <!-- Tombol Toggle Panah (Menempel di kiri card) -->
+            <button class="weather-toggle-btn" id="weatherToggleBtn" onclick="toggleWeatherWidget()" title="Sembunyikan/Tampilkan Cuaca">
+                <!-- Awalnya terbuka, jadi panah ke kanan -->
+                <i class="fas fa-chevron-right" id="weatherToggleIcon"></i>
+            </button>
+            
+            <!-- Card Cuaca Utama -->
+            <div class="weather-card">
+                <div class="weather-icon-bg">
+                    <i class="fas fa-cloud" id="weatherIconCard"></i>
+                </div>
+                <div class="weather-info">
+                    <div class="weather-main">
+                        <span class="weather-temp" id="weatherTempCard">--°C</span>
+                        <span class="weather-desc" id="weatherDescCard">Memuat...</span>
+                    </div>
+                    <div class="weather-details">
+                        <span><i class="fas fa-map-marker-alt mr-1"></i> Cimahi</span>
+                        <span><i class="fas fa-tint mr-1"></i> <span id="weatherHumidityCard">--</span>%</span>
+                        <span><i class="fas fa-wind mr-1"></i> <span id="weatherWindCard">--</span> km/h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
     <!-- MOBILE NAV OVERLAY                          -->
     <!-- ============================================ -->
     <div class="mobile-nav-overlay" id="mobileOverlay"></div>
@@ -851,7 +1016,7 @@
     <!-- ============================================ -->
     <!-- MAIN CONTENT                                 -->
     <!-- ============================================ -->
-    <main class="flex-grow mt-0">
+    <main class="flex-grow mt-0 relative">
         @yield('content')
     </main>
 
@@ -1068,9 +1233,86 @@
             if (clockElementMobile) clockElementMobile.textContent = timeString;
         }
 
+        // ============================================
+        // TOGGLE WIDGET CUACA (Logika Panah Diperbaiki)
+        // ============================================
+        function toggleWeatherWidget() {
+            const container = document.getElementById('weatherContainer');
+            const icon = document.getElementById('weatherToggleIcon');
+            
+            container.classList.toggle('collapsed');
+            
+            if (container.classList.contains('collapsed')) {
+                // Jika TERTUTUP: Panah mengarah ke KIRI
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            } else {
+                // Jika TERBUKA: Panah mengarah ke KANAN
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            }
+        }
+
+        // ============================================
+        // FITUR CUACA (Open-Meteo API)
+        // ============================================
+        async function fetchWeather() {
+            const lat = -6.8722;
+            const lon = 107.5424;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Gagal mengambil data cuaca');
+                
+                const data = await response.json();
+                const current = data.current;
+
+                const temp = Math.round(current.temperature_2m);
+                const weatherCode = current.weather_code;
+                const humidity = current.relative_humidity_2m;
+                const windSpeed = current.wind_speed_10m;
+
+                let iconClass = 'fa-cloud';
+                let desc = 'Berawan';
+
+                if (weatherCode === 0) { iconClass = 'fa-sun'; desc = 'Cerah'; }
+                else if (weatherCode === 1 || weatherCode === 2) { iconClass = 'fa-cloud-sun'; desc = 'Cerah Berawan'; }
+                else if (weatherCode === 3) { iconClass = 'fa-cloud'; desc = 'Berawan'; }
+                else if (weatherCode === 45 || weatherCode === 48) { iconClass = 'fa-smog'; desc = 'Berkabut'; }
+                else if (weatherCode >= 51 && weatherCode <= 67) { iconClass = 'fa-cloud-rain'; desc = 'Hujan Ringan'; }
+                else if (weatherCode >= 71 && weatherCode <= 77) { iconClass = 'fa-snowflake'; desc = 'Salju'; }
+                else if (weatherCode >= 80 && weatherCode <= 82) { iconClass = 'fa-cloud-showers-heavy'; desc = 'Hujan Lebat'; }
+                else if (weatherCode >= 95 && weatherCode <= 99) { iconClass = 'fa-bolt'; desc = 'Hujan Petir'; }
+
+                // Update UI Card
+                const iconEl = document.getElementById('weatherIconCard');
+                const tempEl = document.getElementById('weatherTempCard');
+                const descEl = document.getElementById('weatherDescCard');
+                const humEl = document.getElementById('weatherHumidityCard');
+                const windEl = document.getElementById('weatherWindCard');
+
+                if (iconEl) iconEl.className = `fas ${iconClass}`;
+                if (tempEl) tempEl.textContent = `${temp}°C`;
+                if (descEl) descEl.textContent = desc;
+                if (humEl) humEl.textContent = humidity;
+                if (windEl) windEl.textContent = windSpeed;
+
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                const descEl = document.getElementById('weatherDescCard');
+                if (descEl) descEl.textContent = 'Gagal memuat';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateLiveDateTime();
             setInterval(updateLiveDateTime, 1000);
+
+            // Panggil Cuaca
+            fetchWeather();
+            // Update cuaca setiap 15 menit (900000 ms)
+            setInterval(fetchWeather, 900000);
         });
 
         updateLiveDateTime();
