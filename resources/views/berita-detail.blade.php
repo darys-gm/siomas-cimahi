@@ -30,13 +30,50 @@
                 <!-- Header Berita -->
                 <div class="mb-4 sm:mb-6">
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">{{ $berita->judul }}</h1>
-                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
+                    
+                    <!-- Info Meta (Tanggal, Penulis, Views, Status) -->
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                         <span><i class="far fa-calendar-alt mr-1"></i> {{ $berita->published_at ? $berita->published_at->format('d F Y') : $berita->created_at->format('d F Y') }}</span>
                         <span><i class="far fa-user mr-1"></i> {{ $berita->user->name ?? 'Admin' }}</span>
+                        
+                        <!-- TAMPILAN VIEWS -->
+                        <span class="text-red-600 font-medium"><i class="far fa-eye mr-1"></i> {{ number_format($berita->views ?? 0, 0, ',', '.') }} Views</span>
+
                         <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[10px] sm:text-xs font-medium">
                             <i class="fas fa-check-circle mr-1"></i> Published
                         </span>
                     </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- FITUR SHARE MEDIA SOSIAL                     -->
+                <!-- ============================================ -->
+                <div class="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span class="text-xs sm:text-sm font-medium text-gray-600 mr-1">Bagikan:</span>
+                    
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/?text={{ urlencode($berita->judul . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer" 
+                       class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-green-500 text-white hover:bg-green-600 transition shadow-sm text-sm sm:text-base" title="Share via WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer"
+                       class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition shadow-sm text-sm sm:text-base" title="Share via Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+
+                    <!-- X (Twitter) -->
+                    <a href="https://twitter.com/intent/tweet?text={{ urlencode($berita->judul) }}&url={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer"
+                       class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition shadow-sm text-sm sm:text-base" title="Share via X">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+
+                    <!-- Copy Link -->
+                    <button onclick="copyToClipboard()" 
+                            class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-gray-600 transition shadow-sm text-sm sm:text-base" title="Salin Tautan">
+                        <i class="fas fa-link"></i>
+                    </button>
                 </div>
 
                 <!-- Gambar Berita -->
@@ -134,4 +171,18 @@
         margin: 1rem 0;
     }
 </style>
+
+<!-- Script untuk fitur Copy URL -->
+<script>
+    function copyToClipboard() {
+        var currentUrl = window.location.href;
+        
+        navigator.clipboard.writeText(currentUrl).then(function() {
+            alert('Tautan berita berhasil disalin!');
+        }).catch(function(err) {
+            console.error('Gagal menyalin tautan: ', err);
+            alert('Gagal menyalin tautan. Silakan salin secara manual.');
+        });
+    }
+</script>
 @endsection

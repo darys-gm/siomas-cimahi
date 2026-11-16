@@ -55,6 +55,11 @@ class BeritaController extends Controller
             abort(404);
         }
 
+        // ==========================================
+        // TAMBAHKAN LOGIKA INCREMENT VIEWS DISINI
+        // ==========================================
+        $berita->increment('views');
+
         $beritaTerbaru = Berita::where('is_published', true)
             ->where('id', '!=', $berita->id)
             ->orderBy('published_at', 'desc')

@@ -64,6 +64,10 @@
 
                 <form action="{{ route('pelaporan-ormas.store') }}" method="POST" class="p-4 sm:p-6 md:p-8" enctype="multipart/form-data" id="pelaporanForm">
                     @csrf
+                    <!-- Honeypot anti-bot (tersembunyi) -->
+                    <div style="display: none;">
+                        <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+                    </div>
 
                     <!-- Data ORMAS -->
                     <div class="mb-4 sm:mb-6">
@@ -124,8 +128,11 @@
                                 </div>
                                 <select name="jenis_ormas_id" id="jenis_ormas_id" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base @error('jenis_ormas_id') border-red-500 @enderror" required>
                                     <option value="">Pilih Bentuk Ormas</option>
-                                    <option value="yayasan" {{ old('jenis_ormas_id') == 'yayasan' ? 'selected' : '' }}>Yayasan</option>
-                                    <option value="perkumpulan" {{ old('jenis_ormas_id') == 'perkumpulan' ? 'selected' : '' }}>Perkumpulan</option>
+                                    @foreach($jenisOrmas as $jenis)
+                                        <option value="{{ $jenis->id }}" {{ old('jenis_ormas_id') == $jenis->id ? 'selected' : '' }}>
+                                            {{ $jenis->nama }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('jenis_ormas_id')
                                 <p class="text-red-500 text-xs sm:text-sm mt-1">{{ $message }}</p>
@@ -140,18 +147,11 @@
                                 </div>
                                 <select name="bidang_kegiatan_id" id="bidang_kegiatan_id" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base @error('bidang_kegiatan_id') border-red-500 @enderror" required>
                                     <option value="">Pilih Bidang Kegiatan Ormas</option>
-                                    <option value="Keagamaan dan Kepercayaan" {{ old('bidang_kegiatan_id') == 'Keagamaan dan Kepercayaan' ? 'selected' : '' }}>Keagamaan dan Kepercayaan</option>
-                                    <option value="Sosial, Kemanusiaan dan Kemasyarakatan" {{ old('bidang_kegiatan_id') == 'Sosial, Kemanusiaan dan Kemasyarakatan' ? 'selected' : '' }}>Sosial, Kemanusiaan dan Kemasyarakatan</option>
-                                    <option value="Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga" {{ old('bidang_kegiatan_id') == 'Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga' ? 'selected' : '' }}>Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga</option>
-                                    <option value="Kepemudaan, Olahraga dan Seni Budaya" {{ old('bidang_kegiatan_id') == 'Kepemudaan, Olahraga dan Seni Budaya' ? 'selected' : '' }}>Kepemudaan, Olahraga dan Seni Budaya</option>
-                                    <option value="Pendidikan dan Pemberdayaan SDM" {{ old('bidang_kegiatan_id') == 'Pendidikan dan Pemberdayaan SDM' ? 'selected' : '' }}>Pendidikan dan Pemberdayaan SDM</option>
-                                    <option value="Profesi dan Keahlian" {{ old('bidang_kegiatan_id') == 'Profesi dan Keahlian' ? 'selected' : '' }}>Profesi dan Keahlian</option>
-                                    <option value="Lingkungan Hidup dan Kebencanaan" {{ old('bidang_kegiatan_id') == 'Lingkungan Hidup dan Kebencanaan' ? 'selected' : '' }}>Lingkungan Hidup dan Kebencanaan</option>
-                                    <option value="Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat" {{ old('bidang_kegiatan_id') == 'Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat' ? 'selected' : '' }}>Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat</option>
-                                    <option value="Kebangsaan dan Bela Negara" {{ old('bidang_kegiatan_id') == 'Kebangsaan dan Bela Negara' ? 'selected' : '' }}>Kebangsaan dan Bela Negara</option>
-                                    <option value="Hukum, HAM dan Advokasi Publik" {{ old('bidang_kegiatan_id') == 'Hukum, HAM dan Advokasi Publik' ? 'selected' : '' }}>Hukum, HAM dan Advokasi Publik</option>
-                                    <option value="Komunitas, Minat dan Hobi" {{ old('bidang_kegiatan_id') == 'Komunitas, Minat dan Hobi' ? 'selected' : '' }}>Komunitas, Minat dan Hobi</option>
-                                    <option value="Bidang Kegiatan Lainnya" {{ old('bidang_kegiatan_id') == 'Bidang Kegiatan Lainnya' ? 'selected' : '' }}>Bidang Kegiatan Lainnya</option>
+                                    @foreach($bidangKegiatan as $bidang)
+                                        <option value="{{ $bidang->id }}" {{ old('bidang_kegiatan_id') == $bidang->id ? 'selected' : '' }}>
+                                            {{ $bidang->nama }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('bidang_kegiatan_id')
                                 <p class="text-red-500 text-xs sm:text-sm mt-1">{{ $message }}</p>

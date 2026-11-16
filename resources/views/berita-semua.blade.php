@@ -41,6 +41,10 @@
                     <div class="md:w-7/12 p-4 sm:p-6 md:p-8 flex flex-col justify-center">
                         <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
                             <span><i class="far fa-calendar-alt mr-1"></i> {{ $beritaTerbaru->published_at ? $beritaTerbaru->published_at->format('d F Y') : $beritaTerbaru->created_at->format('d F Y') }}</span>
+                            
+                            <!-- TAMPILAN VIEWS FEATURED -->
+                            <span class="text-red-600 font-medium"><i class="far fa-eye mr-1"></i> {{ number_format($beritaTerbaru->views ?? 0) }} Views</span>
+
                             <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-[10px] sm:text-xs font-medium">
                                 <i class="fas fa-star mr-1"></i> Terbaru
                             </span>
@@ -91,8 +95,10 @@
                         @endif
                     </div>
                     <div class="p-3 sm:p-4">
-                        <div class="flex items-center gap-2 text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-2">
+                        <div class="flex items-center justify-between text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-2">
                             <span><i class="far fa-calendar-alt mr-1"></i> {{ $item->published_at ? $item->published_at->format('d/m/Y') : $item->created_at->format('d/m/Y') }}</span>
+                            <!-- TAMPILAN VIEWS GRID -->
+                            <span class="text-red-600"><i class="far fa-eye mr-1"></i> {{ number_format($item->views ?? 0) }}</span>
                         </div>
                         <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition text-sm sm:text-base line-clamp-2">
                             <a href="{{ route('berita.show', $item->slug ?? $item->id) }}">

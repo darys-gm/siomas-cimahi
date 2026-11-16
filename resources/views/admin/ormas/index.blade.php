@@ -143,8 +143,9 @@
                     <div class="relative">
                         <select name="bentuk" id="filterBentuk" class="w-full px-4 py-2.5 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none bg-white">
                             <option value="">Semua Bentuk</option>
-                            <option value="Yayasan" {{ request('bentuk') == 'Yayasan' ? 'selected' : '' }}>Yayasan</option>
-                            <option value="Perkumpulan" {{ request('bentuk') == 'Perkumpulan' ? 'selected' : '' }}>Perkumpulan</option>
+                            @foreach(\App\Models\JenisOrmas::all() as $jenis)
+                                <option value="{{ $jenis->nama }}" {{ request('bentuk') == $jenis->nama ? 'selected' : '' }}>{{ $jenis->nama }}</option>
+                            @endforeach
                         </select>
                         @if(request('bentuk'))
                         <button type="button" onclick="clearFilter('bentuk')" 
@@ -166,18 +167,9 @@
                     <div class="relative">
                         <select name="bidang" id="filterBidang" class="w-full px-4 py-2.5 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none bg-white">
                             <option value="">Semua Bidang</option>
-                            <option value="Keagamaan dan Kepercayaan" {{ request('bidang') == 'Keagamaan dan Kepercayaan' ? 'selected' : '' }}>Keagamaan dan Kepercayaan</option>
-                            <option value="Sosial, Kemanusiaan dan Kemasyarakatan" {{ request('bidang') == 'Sosial, Kemanusiaan dan Kemasyarakatan' ? 'selected' : '' }}>Sosial, Kemanusiaan dan Kemasyarakatan</option>
-                            <option value="Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga" {{ request('bidang') == 'Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga' ? 'selected' : '' }}>Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga</option>
-                            <option value="Kepemudaan, Olahraga dan Seni Budaya" {{ request('bidang') == 'Kepemudaan, Olahraga dan Seni Budaya' ? 'selected' : '' }}>Kepemudaan, Olahraga dan Seni Budaya</option>
-                            <option value="Pendidikan dan Pemberdayaan SDM" {{ request('bidang') == 'Pendidikan dan Pemberdayaan SDM' ? 'selected' : '' }}>Pendidikan dan Pemberdayaan SDM</option>
-                            <option value="Profesi dan Keahlian" {{ request('bidang') == 'Profesi dan Keahlian' ? 'selected' : '' }}>Profesi dan Keahlian</option>
-                            <option value="Lingkungan Hidup dan Kebencanaan" {{ request('bidang') == 'Lingkungan Hidup dan Kebencanaan' ? 'selected' : '' }}>Lingkungan Hidup dan Kebencanaan</option>
-                            <option value="Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat" {{ request('bidang') == 'Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat' ? 'selected' : '' }}>Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat</option>
-                            <option value="Kebangsaan dan Bela Negara" {{ request('bidang') == 'Kebangsaan dan Bela Negara' ? 'selected' : '' }}>Kebangsaan dan Bela Negara</option>
-                            <option value="Hukum, HAM dan Advokasi Publik" {{ request('bidang') == 'Hukum, HAM dan Advokasi Publik' ? 'selected' : '' }}>Hukum, HAM dan Advokasi Publik</option>
-                            <option value="Komunitas, Minat dan Hobi" {{ request('bidang') == 'Komunitas, Minat dan Hobi' ? 'selected' : '' }}>Komunitas, Minat dan Hobi</option>
-                            <option value="Bidang Kegiatan Lainnya" {{ request('bidang') == 'Bidang Kegiatan Lainnya' ? 'selected' : '' }}>Bidang Kegiatan Lainnya</option>
+                            @foreach(\App\Models\BidangKegiatan::all() as $bidang)
+                                <option value="{{ $bidang->nama }}" {{ request('bidang') == $bidang->nama ? 'selected' : '' }}>{{ $bidang->nama }}</option>
+                            @endforeach
                         </select>
                         @if(request('bidang'))
                         <button type="button" onclick="clearFilter('bidang')" 
@@ -475,26 +467,18 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Bentuk Ormas</label>
                                 <select name="jenis_ormas_id" id="jenis_ormas_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="">Pilih Bentuk Ormas</option>
-                                    <option value="Yayasan">Yayasan</option>
-                                    <option value="Perkumpulan">Perkumpulan</option>
+                                    @foreach(\App\Models\JenisOrmas::all() as $jenis)
+                                        <option value="{{ $jenis->id }}">{{ $jenis->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Bidang Kegiatan Ormas</label>
                                 <select name="bidang_kegiatan_id" id="bidang_kegiatan_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="">Pilih Bidang Kegiatan Ormas</option>
-                                    <option value="Keagamaan dan Kepercayaan">Keagamaan dan Kepercayaan</option>
-                                    <option value="Sosial, Kemanusiaan dan Kemasyarakatan">Sosial, Kemanusiaan dan Kemasyarakatan</option>
-                                    <option value="Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga">Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga</option>
-                                    <option value="Kepemudaan, Olahraga dan Seni Budaya">Kepemudaan, Olahraga dan Seni Budaya</option>
-                                    <option value="Pendidikan dan Pemberdayaan SDM">Pendidikan dan Pemberdayaan SDM</option>
-                                    <option value="Profesi dan Keahlian">Profesi dan Keahlian</option>
-                                    <option value="Lingkungan Hidup dan Kebencanaan">Lingkungan Hidup dan Kebencanaan</option>
-                                    <option value="Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat">Ekonomi, Kewirausahaan dan Pemberdayaan Masyarakat</option>
-                                    <option value="Kebangsaan dan Bela Negara">Kebangsaan dan Bela Negara</option>
-                                    <option value="Hukum, HAM dan Advokasi Publik">Hukum, HAM dan Advokasi Publik</option>
-                                    <option value="Komunitas, Minat dan Hobi">Komunitas, Minat dan Hobi</option>
-                                    <option value="Bidang Kegiatan Lainnya">Bidang Kegiatan Lainnya</option>
+                                    @foreach(\App\Models\BidangKegiatan::all() as $bidang)
+                                        <option value="{{ $bidang->id }}">{{ $bidang->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -558,9 +542,9 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
                                 <select name="kecamatan_id" id="kecamatan_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="">Pilih Kecamatan</option>
-                                    <option value="1">Cimahi Selatan</option>
-                                    <option value="2">Cimahi Tengah</option>
-                                    <option value="3">Cimahi Utara</option>
+                                    @foreach(\App\Models\Kecamatan::all() as $kec)
+                                        <option value="{{ $kec->id }}">{{ $kec->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
@@ -985,10 +969,10 @@ function initMap() {
         }
     }
 
-    latitudeInput.addEventListener('change', updateMapFromManualCoords);
-    latitudeInput.addEventListener('blur', updateMapFromManualCoords);
-    longitudeInput.addEventListener('change', updateMapFromManualCoords);
-    longitudeInput.addEventListener('blur', updateMapFromManualCoords);
+    latitudeInput.addEventListener('change', updateMapFromCoords);
+    latitudeInput.addEventListener('blur', updateMapFromCoords);
+    longitudeInput.addEventListener('change', updateMapFromCoords);
+    longitudeInput.addEventListener('blur', updateMapFromCoords);
 
     isMapInitialized = true;
 }
