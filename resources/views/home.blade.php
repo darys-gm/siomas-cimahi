@@ -70,17 +70,8 @@
                 <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white/90 leading-relaxed scroll-animate max-w-1xl mx-auto px-2">
                     Layanan digital resmi Badan Kesatuan Bangsa dan Politik (Bakesbangpol) Kota Cimahi untuk pendataan, transparansi, dan sinergi organisasi kemasyarakatan demi mewujudkan Cimahi yang kolaboratif, kondusif, maju, dan harmonis.
                 </h3>
-
-                <div class="flex flex-wrap gap-3 md:gap-4 mt-4 md:mt-6 justify-center scroll-animate">
-                    <a href="{{ route('pelaporan-ormas.create') }}"
-                       class="px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-red-50 transition shadow-lg hover:shadow-xl text-sm sm:text-base">
-                        <i class="fas fa-file-alt mr-2"></i> Daftar
-                    </a>
-                    <a href="{{ route('alur-pelaporan') }}"
-                       class="px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg font-semibold hover:bg-white/30 transition text-sm sm:text-base">
-                        <i class="fas fa-book mr-2"></i> Panduan
-                    </a>
-                </div>
+                
+                <!-- Tombol Daftar & Panduan DIHAPUS dari sini -->
             </div>
         </div>
     </section>
@@ -244,6 +235,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ============================================ -->
+            <!-- TOMBOL DAFTAR & PANDUAN DIPINDAHKAN KE SINI -->
+            <!-- ============================================ -->
+            <div class="flex flex-wrap gap-3 md:gap-4 mt-10 md:mt-12 justify-center scroll-animate">
+                <a href="{{ route('pelaporan-ormas.create') }}"
+                   class="px-6 py-3 md:px-8 md:py-4 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm sm:text-base md:text-lg flex items-center gap-2">
+                    <i class="fas fa-file-alt"></i> Daftar
+                </a>
+                <a href="{{ route('alur-pelaporan') }}"
+                   class="px-6 py-3 md:px-8 md:py-4 bg-white border-2 border-red-600 text-red-600 rounded-xl font-semibold hover:bg-red-50 transition shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm sm:text-base md:text-lg flex items-center gap-2">
+                    <i class="fas fa-book"></i> Panduan
+                </a>
+            </div>
+
         </div>
     </section>
 
