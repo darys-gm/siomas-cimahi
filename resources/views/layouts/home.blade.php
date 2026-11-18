@@ -53,169 +53,29 @@
         }
 
         /* ============================================ */
-        /* WIDGET CUACA (Fixed di bawah Navbar)         */
+        /* CROSSFADE TEXT DI TOP BAR                    */
         /* ============================================ */
-        .weather-wrapper {
-            position: fixed;
-            /* Posisi top diturunkan agar tidak terlalu mepet navbar */
-            top: calc(var(--topbar-height) + var(--navbar-height) + 35px);
-            right: 30px;
-            z-index: 50; 
-            pointer-events: none; 
-        }
-
-        .weather-float-container {
-            display: flex;
-            align-items: stretch; /* Agar tinggi tombol dan card sama */
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto; 
-        }
-
-        /* Kondisi saat widget disembunyikan */
-        .weather-float-container.collapsed {
-            /* Geser sejauh lebar card (menyisakan tombol panah di kiri) */
-            transform: translateX(calc(100% - 36px)); 
-        }
-
-        /* Desain Card Cuaca Utama */
-        .weather-card {
-            background-color: rgba(153, 27, 27, 0.9); /* bg-red-800 transparan */
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-left: none; /* Menyatu dengan tombol di kiri */
-            border-top-right-radius: 16px;
-            border-bottom-right-radius: 16px;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            color: white;
-        }
-
-        .weather-icon-bg {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .weather-icon-bg i {
-            color: #fcd34d; 
-            font-size: 20px;
-        }
-        .weather-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .weather-main {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-        .weather-temp {
-            font-size: 1.25rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .weather-desc {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #fecaca; 
-        }
-        .weather-details {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.65rem;
-            color: #fca5a5; 
-            margin-top: 2px;
-        }
-        .weather-details i {
-            color: #fcd34d; 
-        }
-
-        /* Tombol Toggle (Card Kecil Menempel di Kiri) */
-        .weather-toggle-btn {
-            background-color: rgba(153, 27, 27, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-right: none; 
-            border-top-left-radius: 16px;
-            border-bottom-left-radius: 16px;
-            width: 36px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            box-shadow: -4px 10px 15px -3px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-        .weather-toggle-btn:hover {
-            background-color: rgba(220, 38, 38, 1);
-            color: #fcd34d;
-        }
-
-        /* Responsive Mobile */
-        @media (max-width: 767px) {
-            .weather-wrapper {
-                top: calc(var(--topbar-height) + var(--navbar-height) + 25px);
-                right: 15px;
-            }
-            .weather-card {
-                padding: 8px 12px;
-                gap: 8px;
-            }
-            .weather-icon-bg { width: 32px; height: 32px; }
-            .weather-icon-bg i { font-size: 16px; }
-            .weather-temp { font-size: 1rem; }
-            .weather-desc { font-size: 0.65rem; }
-            .weather-details { font-size: 0.55rem; }
-            .weather-toggle-btn { width: 32px; }
-            
-            .weather-float-container.collapsed {
-                transform: translateX(calc(100% - 32px));
-            }
-        }
-
-        /* ============================================ */
-        /* ANIMASI FADE IN/OUT (MOBILE)                 */
-        /* ============================================ */
-        .slider-container-mobile {
+        .top-bar-text-container {
             position: relative;
-            height: 1.25rem; 
+            height: 1.25rem;
             width: 100%;
-            overflow: hidden;
         }
-
-        .slider-text-mobile > span {
+        .top-bar-text-item {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 1.25rem; 
-            line-height: 1.25rem; 
+            height: 100%;
             display: flex;
             align-items: center;
-            justify-content: flex-start; 
-            padding-left: 16px; 
             white-space: nowrap;
             opacity: 0;
-            animation: fadeInOut 8s infinite ease-in-out;
+            transition: opacity 0.5s ease-in-out;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-
-        .slider-text-mobile > span:nth-child(1) { animation-delay: 0s; }
-        .slider-text-mobile > span:nth-child(2) { animation-delay: 4s; }
-
-        @keyframes fadeInOut {
-            0%, 10% { opacity: 0; }      
-            15%, 40% { opacity: 1; }     
-            45%, 100% { opacity: 0; }    
+        .top-bar-text-item.active {
+            opacity: 1;
         }
 
         /* ============================================ */
@@ -447,7 +307,6 @@
             visibility: visible;
         }
         
-        /* Panel menu diturunkan tepat di bawah Top Bar */
         .mobile-nav-panel {
             position: fixed;
             top: var(--topbar-height); 
@@ -506,11 +365,16 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0px;
+            gap: 12px;
             text-decoration: none;
             margin-left: 60px;
         }
         .logo-image {
+            height: 65px;
+            width: auto;
+            object-fit: contain;
+        }
+        .logo-cimahi-image {
             height: 65px;
             width: auto;
             object-fit: contain;
@@ -576,20 +440,18 @@
             .logo-container {
                 margin-left: 8px;
             }
-            .logo-image {
+            .logo-image, .logo-cimahi-image {
                 height: 45px;
             }
         }
 
         /* --- Mobile (480px - 767px) --- */
         @media (max-width: 767px) {
-            /* Penyesuaian Top Bar di Mobile */
             .top-info-bar {
                 padding: 0 16px;
                 font-size: 0.65rem;
             }
             
-            /* Sisi Kiri - Animasi Slider */
             .top-bar-left {
                 flex: 1;
                 display: flex;
@@ -600,7 +462,6 @@
                 height: 1.25rem;
             }
 
-            /* Sisi Kanan - Jam Real Time */
             .top-bar-right {
                 flex-shrink: 0;
                 display: flex;
@@ -610,8 +471,9 @@
             
             .logo-container {
                 margin-left: 4px;
+                gap: 8px;
             }
-            .logo-image {
+            .logo-image, .logo-cimahi-image {
                 height: 38px;
             }
             .mobile-nav-panel {
@@ -630,7 +492,6 @@
                 font-size: 0.85rem;
             }
             
-            /* --- PERBESAR MASKOT DI TABLET/MOBILE --- */
             .maskot {
                 bottom: 20px;
                 right: 20px;
@@ -647,8 +508,11 @@
 
         /* --- Small Mobile (below 480px) --- */
         @media (max-width: 480px) {
-            .logo-image {
+            .logo-image, .logo-cimahi-image {
                 height: 32px;
+            }
+            .logo-container {
+                gap: 6px;
             }
             .mobile-nav-panel {
                 width: 240px;
@@ -673,7 +537,6 @@
                 padding: 12px 16px;
             }
             
-            /* --- PERBESAR MASKOT DI SMALL MOBILE --- */
             .maskot {
                 bottom: 15px;
                 right: 15px;
@@ -707,45 +570,63 @@
     <!-- ============================================ -->
     <div class="top-info-bar font-sans sticky top-0 z-[60]">
         
-        <!-- Sisi Kiri: Di Desktop tampil sejajar -->
-        <div class="hidden sm:flex items-center gap-2">
-            <i class="far fa-clock"></i>
-            <span>Jam Pelayanan: Senin - Jumat: 08.00 - 16.00 WIB</span>
-        </div>
-
-        <!-- Jam Real-Time (Tengah) - HANYA UNTUK DESKTOP -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 items-center font-mono font-bold text-sm tracking-widest bg-red-800 px-3 py-0.5 rounded hidden sm:flex">
-            <span id="liveClockDesktop">00:00:00</span>
-        </div>
-
-        <!-- Sisi Kanan Desktop -->
-        <div class="hidden sm:flex items-center gap-2">
-            <i class="far fa-calendar-alt"></i>
-            <span id="liveDateTimeDesktop">Memuat tanggal...</span>
-        </div>
-
-        <!-- Mobile Layout (Kiri: Slider Teks, Kanan: Jam) -->
-        <div class="flex sm:hidden w-full justify-between items-center">
-            
-            <!-- Sisi Kiri: Teks Bergantian (Fade) -->
-            <div class="top-bar-left flex-1 relative overflow-hidden h-[1.25rem]">
-                <div class="slider-text-mobile relative w-full h-full">
-                    <span>
-                        <i class="far fa-clock mr-1"></i> Jam Pelayanan: 08.00 - 16.00 WIB
+        <!-- DESKTOP / TABLET LAYOUT (sm and up) -->
+        <div class="hidden sm:flex items-center justify-between w-full">
+            <!-- Sisi Kiri: Teks Bergantian (Jam Pelayanan & Cuaca) -->
+            <div class="relative overflow-hidden h-[1.25rem] flex-1 min-w-0 mr-4">
+                <div class="top-bar-text-container" id="desktopTopBarText">
+                    <!-- Item 1: Jam Pelayanan -->
+                    <span class="top-bar-text-item active">
+                        <i class="far fa-clock mr-1"></i> Jam Pelayanan: Senin - Jumat: 08.00 - 16.00 WIB
                     </span>
-                    <span>
-                        <i class="far fa-calendar-alt mr-1"></i> <span id="liveDateTimeMobile">Tanggal...</span>
+                    <!-- Item 2: Cuaca -->
+                    <span class="top-bar-text-item">
+                        <i class="fas fa-cloud mr-1" id="desktopWeatherIcon"></i>
+                        <span id="desktopWeatherTemp">--°C</span>
+                        <span class="mx-1" id="desktopWeatherDesc">Memuat...</span>
+                        <span class="ml-2"><i class="fas fa-map-marker-alt mr-1"></i> Cimahi</span>
                     </span>
                 </div>
             </div>
+            <!-- Tengah: Jam Real-Time -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 items-center font-mono font-bold text-sm tracking-widest bg-red-800 px-3 py-0.5 rounded hidden sm:flex">
+                <span id="liveClockDesktop">00:00:00</span>
+            </div>
+            <!-- Sisi Kanan: Tanggal (Statis) -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <i class="far fa-calendar-alt"></i>
+                <span id="liveDateTimeDesktop">Memuat tanggal...</span>
+            </div>
+        </div>
 
+        <!-- MOBILE LAYOUT (below sm) -->
+        <div class="flex sm:hidden w-full justify-between items-center">
+            <!-- Sisi Kiri: Teks Bergantian (3 Item) -->
+            <div class="top-bar-left flex-1 relative overflow-hidden h-[1.25rem]">
+                <div class="top-bar-text-container" id="mobileTopBarText">
+                    <!-- Item 1: Jam Pelayanan -->
+                    <span class="top-bar-text-item active">
+                        <i class="far fa-clock mr-1"></i> Jam Pelayanan: 08.00 - 16.00 WIB
+                    </span>
+                    <!-- Item 2: Tanggal -->
+                    <span class="top-bar-text-item">
+                        <i class="far fa-calendar-alt mr-1"></i> <span id="mobileDateText">Tanggal...</span>
+                    </span>
+                    <!-- Item 3: Cuaca -->
+                    <span class="top-bar-text-item">
+                        <i class="fas fa-cloud mr-1" id="mobileWeatherIcon"></i>
+                        <span id="mobileWeatherTemp">--°C</span>
+                        <span class="mx-1" id="mobileWeatherDesc">Memuat...</span>
+                        <span class="ml-2"><i class="fas fa-map-marker-alt mr-1"></i> Cimahi</span>
+                    </span>
+                </div>
+            </div>
             <!-- Sisi Kanan: Jam Digital Real-time -->
             <div class="top-bar-right flex-shrink-0">
                 <div class="font-mono font-bold tracking-widest bg-red-800 px-2 py-0.5 rounded text-xs mr-2">
                     <span id="liveClockMobile">00:00:00</span>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -755,8 +636,10 @@
     <nav class="bg-white shadow-md sticky top-[var(--topbar-height)] left-0 right-0 z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
-                <!-- Logo SIOMAS -->
+                <!-- Logo SIOMAS & Cimahi -->
                 <a href="{{ route('home') }}" class="logo-container">
+                    <img src="{{ asset('images/lg-link-3.png') }}" alt="Logo Cimahi" class="logo-cimahi-image">
+                    
                     @php
                         $logoPath = public_path('images/logo-siomas.png');
                         $logoUrl = file_exists($logoPath) ? asset('images/logo-siomas.png') : null;
@@ -891,38 +774,6 @@
             </div>
         </div>
     </nav>
-
-    <!-- ============================================ -->
-    <!-- WIDGET CUACA (Fixed di bawah Navbar)         -->
-    <!-- ============================================ -->
-    <div class="weather-wrapper">
-        <div class="weather-float-container" id="weatherContainer">
-            
-            <!-- Tombol Toggle Panah (Menempel di kiri card) -->
-            <button class="weather-toggle-btn" id="weatherToggleBtn" onclick="toggleWeatherWidget()" title="Sembunyikan/Tampilkan Cuaca">
-                <!-- Awalnya terbuka, jadi panah ke kanan -->
-                <i class="fas fa-chevron-right" id="weatherToggleIcon"></i>
-            </button>
-            
-            <!-- Card Cuaca Utama -->
-            <div class="weather-card">
-                <div class="weather-icon-bg">
-                    <i class="fas fa-cloud" id="weatherIconCard"></i>
-                </div>
-                <div class="weather-info">
-                    <div class="weather-main">
-                        <span class="weather-temp" id="weatherTempCard">--°C</span>
-                        <span class="weather-desc" id="weatherDescCard">Memuat...</span>
-                    </div>
-                    <div class="weather-details">
-                        <span><i class="fas fa-map-marker-alt mr-1"></i> Cimahi</span>
-                        <span><i class="fas fa-tint mr-1"></i> <span id="weatherHumidityCard">--</span>%</span>
-                        <span><i class="fas fa-wind mr-1"></i> <span id="weatherWindCard">--</span> km/h</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- ============================================ -->
     <!-- MOBILE NAV OVERLAY                          -->
@@ -1209,6 +1060,9 @@
     <!-- SCRIPTS                                     -->
     <!-- ============================================ -->
     <script>
+        // ============================================
+        // LIVE DATE & TIME
+        // ============================================
         function updateLiveDateTime() {
             const now = new Date();
             
@@ -1218,7 +1072,7 @@
             const dateElementDesktop = document.getElementById('liveDateTimeDesktop');
             if (dateElementDesktop) dateElementDesktop.textContent = formattedDate;
 
-            const dateElementMobile = document.getElementById('liveDateTimeMobile');
+            const dateElementMobile = document.getElementById('mobileDateText');
             if (dateElementMobile) dateElementMobile.textContent = formattedDate;
 
             const hours = String(now.getHours()).padStart(2, '0');
@@ -1234,27 +1088,24 @@
         }
 
         // ============================================
-        // TOGGLE WIDGET CUACA (Logika Panah Diperbaiki)
+        // CROSSFADE TOP BAR
         // ============================================
-        function toggleWeatherWidget() {
-            const container = document.getElementById('weatherContainer');
-            const icon = document.getElementById('weatherToggleIcon');
+        function setupTopBarCrossfade(containerId, interval = 4000) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const items = container.querySelectorAll('.top-bar-text-item');
+            if (items.length <= 1) return;
             
-            container.classList.toggle('collapsed');
-            
-            if (container.classList.contains('collapsed')) {
-                // Jika TERTUTUP: Panah mengarah ke KIRI
-                icon.classList.remove('fa-chevron-right');
-                icon.classList.add('fa-chevron-left');
-            } else {
-                // Jika TERBUKA: Panah mengarah ke KANAN
-                icon.classList.remove('fa-chevron-left');
-                icon.classList.add('fa-chevron-right');
-            }
+            let currentIndex = 0;
+            setInterval(() => {
+                items[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % items.length;
+                items[currentIndex].classList.add('active');
+            }, interval);
         }
 
         // ============================================
-        // FITUR CUACA (Open-Meteo API)
+        // FETCH WEATHER
         // ============================================
         async function fetchWeather() {
             const lat = -6.8722;
@@ -1270,8 +1121,6 @@
 
                 const temp = Math.round(current.temperature_2m);
                 const weatherCode = current.weather_code;
-                const humidity = current.relative_humidity_2m;
-                const windSpeed = current.wind_speed_10m;
 
                 let iconClass = 'fa-cloud';
                 let desc = 'Berawan';
@@ -1285,40 +1134,95 @@
                 else if (weatherCode >= 80 && weatherCode <= 82) { iconClass = 'fa-cloud-showers-heavy'; desc = 'Hujan Lebat'; }
                 else if (weatherCode >= 95 && weatherCode <= 99) { iconClass = 'fa-bolt'; desc = 'Hujan Petir'; }
 
-                // Update UI Card
-                const iconEl = document.getElementById('weatherIconCard');
-                const tempEl = document.getElementById('weatherTempCard');
-                const descEl = document.getElementById('weatherDescCard');
-                const humEl = document.getElementById('weatherHumidityCard');
-                const windEl = document.getElementById('weatherWindCard');
+                // Update Desktop
+                const desktopIcon = document.getElementById('desktopWeatherIcon');
+                const desktopTemp = document.getElementById('desktopWeatherTemp');
+                const desktopDesc = document.getElementById('desktopWeatherDesc');
+                if (desktopIcon) desktopIcon.className = `fas ${iconClass}`;
+                if (desktopTemp) desktopTemp.textContent = `${temp}°C`;
+                if (desktopDesc) desktopDesc.textContent = desc;
 
-                if (iconEl) iconEl.className = `fas ${iconClass}`;
-                if (tempEl) tempEl.textContent = `${temp}°C`;
-                if (descEl) descEl.textContent = desc;
-                if (humEl) humEl.textContent = humidity;
-                if (windEl) windEl.textContent = windSpeed;
+                // Update Mobile
+                const mobileIcon = document.getElementById('mobileWeatherIcon');
+                const mobileTemp = document.getElementById('mobileWeatherTemp');
+                const mobileDesc = document.getElementById('mobileWeatherDesc');
+                if (mobileIcon) mobileIcon.className = `fas ${iconClass}`;
+                if (mobileTemp) mobileTemp.textContent = `${temp}°C`;
+                if (mobileDesc) mobileDesc.textContent = desc;
 
             } catch (error) {
                 console.error('Error fetching weather:', error);
-                const descEl = document.getElementById('weatherDescCard');
-                if (descEl) descEl.textContent = 'Gagal memuat';
+                const desktopDesc = document.getElementById('desktopWeatherDesc');
+                if (desktopDesc) desktopDesc.textContent = 'Gagal memuat';
+                const mobileDesc = document.getElementById('mobileWeatherDesc');
+                if (mobileDesc) mobileDesc.textContent = 'Gagal memuat';
             }
         }
 
+        // ============================================
+        // INIT
+        // ============================================
         document.addEventListener('DOMContentLoaded', function() {
+            // Jam & Tanggal
             updateLiveDateTime();
             setInterval(updateLiveDateTime, 1000);
 
-            // Panggil Cuaca
+            // Cuaca
             fetchWeather();
-            // Update cuaca setiap 15 menit (900000 ms)
-            setInterval(fetchWeather, 900000);
+            setInterval(fetchWeather, 900000); // 15 menit
+
+            // Crossfade Top Bar
+            setupTopBarCrossfade('desktopTopBarText', 5000); // Desktop: 2 item, ganti tiap 5 detik
+            setupTopBarCrossfade('mobileTopBarText', 4000);  // Mobile: 3 item, ganti tiap 4 detik
+
+            // Mobile Nav
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobilePanel = document.getElementById('mobilePanel');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+
+            function openMobileNav() {
+                mobilePanel.classList.add('active');
+                mobileOverlay.classList.add('active');
+                hamburgerBtn.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMobileNav() {
+                mobilePanel.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', function() {
+                    if (mobilePanel.classList.contains('active')) {
+                        closeMobileNav();
+                    } else {
+                        openMobileNav();
+                    }
+                });
+            }
+
+            if (mobileCloseBtn) {
+                mobileCloseBtn.addEventListener('click', closeMobileNav);
+            }
+
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', closeMobileNav);
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobilePanel && mobilePanel.classList.contains('active')) {
+                    closeMobileNav();
+                }
+            });
         });
 
-        updateLiveDateTime();
-        setInterval(updateLiveDateTime, 1000);
-
-
+        // ============================================
+        // POPUP MASKOT
+        // ============================================
         function togglePopup() {
             var overlay = document.getElementById('popupOverlay');
             overlay.classList.toggle('active');
@@ -1330,6 +1234,7 @@
             }
         });
 
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1341,49 +1246,6 @@
                     });
                 }
             });
-        });
-
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mobilePanel = document.getElementById('mobilePanel');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const mobileCloseBtn = document.getElementById('mobileCloseBtn');
-
-        function openMobileNav() {
-            mobilePanel.classList.add('active');
-            mobileOverlay.classList.add('active');
-            hamburgerBtn.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMobileNav() {
-            mobilePanel.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-            hamburgerBtn.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        if (hamburgerBtn) {
-            hamburgerBtn.addEventListener('click', function() {
-                if (mobilePanel.classList.contains('active')) {
-                    closeMobileNav();
-                } else {
-                    openMobileNav();
-                }
-            });
-        }
-
-        if (mobileCloseBtn) {
-            mobileCloseBtn.addEventListener('click', closeMobileNav);
-        }
-
-        if (mobileOverlay) {
-            mobileOverlay.addEventListener('click', closeMobileNav);
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobilePanel && mobilePanel.classList.contains('active')) {
-                closeMobileNav();
-            }
         });
     </script>
 
