@@ -364,7 +364,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
                             <div><span class="text-gray-500">Nama:</span> <span class="font-medium">{{ $item->nama }}</span></div>
                             <div><span class="text-gray-500">Singkatan:</span> <span class="font-medium">{{ $item->singkatan ?? '-' }}</span></div>
-                            <div><span class="text-gray-500">No AHU/SKT:</span> <span class="font-medium">{{ $item->nomor_registrasi ?? '-' }}</span></div>
+                            <div><span class="text-gray-500">No SKT Kesbang:</span> <span class="font-medium">{{ $item->nomor_registrasi ?? '-' }}</span></div>
                             <div><span class="text-gray-500">Bentuk Ormas:</span> <span class="font-medium">{{ $item->jenisOrmas->nama ?? '-' }}</span></div>
                             <div><span class="text-gray-500">Bidang Kegiatan Ormas:</span> <span class="font-medium">{{ $item->bidangKegiatan->nama ?? '-' }}</span></div>
                             <div class="col-span-2"><span class="text-gray-500">Alamat:</span> <span class="font-medium">{{ $item->alamat_kesekretariatan ?? '-' }}</span></div>
@@ -693,7 +693,7 @@
                     <input type="text" name="singkatan" id="ormas_singkatan" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">No AHU/SKT</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No SKT Kesbang</label>
                     <input type="text" name="nomor_registrasi" id="ormas_nomor_registrasi" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <p class="text-xs text-gray-400 mt-1">Kosongkan jika tidak ada</p>
                 </div>

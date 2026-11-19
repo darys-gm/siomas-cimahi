@@ -204,7 +204,7 @@
                         <tr>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama ORMAS</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Singkatan</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Singkat Ormas</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Ketua</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bentuk Ormas</th>
@@ -512,7 +512,7 @@
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 text-sm">
                         <div class="col-span-1 sm:col-span-2"><span class="text-gray-500">Nama:</span> <span class="font-medium" id="det_nama">-</span></div>
-                        <div><span class="text-gray-500">Singkatan:</span> <span class="font-medium" id="det_singkatan">-</span></div>
+                        <div><span class="text-gray-500">Nama Singkat Ormas:</span> <span class="font-medium" id="det_singkatan">-</span></div>
                         <div><span class="text-gray-500">No SKT Kesbang:</span> <span class="font-medium" id="det_nomor_registrasi">-</span></div>
                         <!-- TAMBAHAN: TAHUN DAFTAR DI MODAL -->
                         <div><span class="text-gray-500">Tahun Daftar:</span> <span class="font-medium" id="det_tahun_daftar">-</span></div>

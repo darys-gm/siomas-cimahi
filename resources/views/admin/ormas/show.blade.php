@@ -91,7 +91,7 @@
                     <p class="font-semibold text-gray-800">{{ $ormas->singkatan ?? '-' }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-400 uppercase tracking-wider">No AHU/SKT</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider">No SKT Kesbang</p>
                     <p class="font-semibold text-gray-800">{{ $ormas->nomor_registrasi ?? '-' }}</p>
                 </div>
                 <div>

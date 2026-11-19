@@ -68,7 +68,7 @@
                 </h1>
 
                 <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white/90 leading-relaxed scroll-animate max-w-1xl mx-auto px-2">
-                    Layanan digital resmi Badan Kesatuan Bangsa dan Politik (Bakesbangpol) Kota Cimahi untuk pendataan, transparansi, dan sinergi organisasi kemasyarakatan demi mewujudkan Cimahi yang kolaboratif, kondusif, maju, dan harmonis.
+                    Layanan digital resmi Badan Kesatuan Bangsa dan Politik (Bakesbangpol) Kota Cimahi untuk pendataan, transparansi, dan sinergi organisasi kemasyarakatan demi mewujudkan Cimahi yang kolaboratif, kondusif, maju, agamis, dan harmonis.
                 </h3>
                 
                 <!-- Tombol Daftar & Panduan DIHAPUS dari sini -->
