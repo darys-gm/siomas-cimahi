@@ -8,7 +8,7 @@ use App\Models\Pengurus;
 use App\Models\JenisOrmas;
 use App\Models\BidangKegiatan;
 use App\Models\Kelurahan;
-use App\Models\Kecamatan; // Tambahkan model Kecamatan
+use App\Models\Kecamatan;
 use App\Models\LogAktivitas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,7 +23,6 @@ class UserManagementController extends Controller
     // ============================================================
     public function index(Request $request)
     {
-        // PERBAIKAN: nama tabel di database adalah 'kecamatan' dan 'kelurahan' (tanpa s)
         $validated = $request->validate([
             'search'           => 'nullable|string|max:100',
             'bentuk'           => 'nullable|string|max:100',
@@ -284,11 +283,12 @@ class UserManagementController extends Controller
                 'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
                 'latitude'                         => 'nullable|numeric|between:-90,90',
                 'longitude'                        => 'nullable|numeric|between:-180,180',
-                'kecamatan_id'                     => 'nullable|exists:kecamatan,id', // PERBAIKAN: tanpa s
+                'kecamatan_id'                     => 'nullable|exists:kecamatan,id',
                 'kelurahan_id'                     => 'nullable|string|max:255',
                 'no_telepon'                       => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
                 'email'                            => 'nullable|email|max:255',
                 'pelaporan'                        => 'nullable|in:sudah,belum,tidak_ada',
+                'tahun_daftar'                     => 'nullable|integer|min:1900|max:' . date('Y'), // Validasi Tahun Daftar
             ]);
 
             $jenisOrmasId     = $this->resolveJenisOrmasId($validated['jenis_ormas_id'] ?? null);
@@ -314,6 +314,7 @@ class UserManagementController extends Controller
                 'no_telepon'                       => $validated['no_telepon'] ?? null,
                 'email'                            => $validated['email'] ?? null,
                 'pelaporan'                        => $validated['pelaporan'] ?? 'belum',
+                'tahun_daftar'                     => $validated['tahun_daftar'] ?? null, // Simpan ke kolom baru
             ]);
 
             $this->logAktivitas($request, 'Update ORMAS', "Mengupdate data ORMAS {$ormas->nama}");

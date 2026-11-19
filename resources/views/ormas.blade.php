@@ -241,7 +241,7 @@
                                 @endif
                             </td>
                             <!-- ====================================== -->
-                            <td class="px-3 py-3 text-sm text-gray-500">{{ $item->created_at ? $item->created_at->format('Y') : '-' }}</td>
+                            <td class="px-3 py-3 text-sm text-gray-500">{{ $item->tahun_daftar ?? '-' }}</td>
                             <td class="px-3 py-3 text-sm">
                                 @php
                                     $pelaporanLabels = [
@@ -335,7 +335,7 @@
                         <!-- ========================================== -->
                         <div>
                             <span class="text-gray-500">Tahun Daftar:</span>
-                            <span class="font-medium text-gray-700">{{ $item->created_at ? $item->created_at->format('Y') : '-' }}</span>
+                            <span class="font-medium text-gray-700">{{ $item->tahun_daftar ?? '-' }}</span>
                         </div>
                     </div>
                     
@@ -514,6 +514,8 @@
                         <div class="col-span-1 sm:col-span-2"><span class="text-gray-500">Nama:</span> <span class="font-medium" id="det_nama">-</span></div>
                         <div><span class="text-gray-500">Singkatan:</span> <span class="font-medium" id="det_singkatan">-</span></div>
                         <div><span class="text-gray-500">No AHU/SKT:</span> <span class="font-medium" id="det_nomor_registrasi">-</span></div>
+                        <!-- TAMBAHAN: TAHUN DAFTAR DI MODAL -->
+                        <div><span class="text-gray-500">Tahun Daftar:</span> <span class="font-medium" id="det_tahun_daftar">-</span></div>
                         <div><span class="text-gray-500">Bentuk Ormas:</span> <span class="font-medium" id="det_jenis">-</span></div>
                         <div class="col-span-1 sm:col-span-2"><span class="text-gray-500">Bidang Kegiatan:</span> <span class="font-medium" id="det_bidang">-</span></div>
                         <div><span class="text-gray-500">Status:</span> <span class="font-medium" id="det_status">-</span></div>
@@ -1155,6 +1157,9 @@
         document.getElementById('det_nomor_registrasi').textContent = (nomorReg && nomorReg.trim() !== '') ? 'Ada' : '-';
         // =========================================
         
+        // ===== TAMBAHAN: TAHUN DAFTAR DI MODAL =====
+        document.getElementById('det_tahun_daftar').textContent = data.tahun_daftar || '-';
+
         document.getElementById('det_jenis').textContent = data.jenis_ormas?.nama || '-';
         document.getElementById('det_bidang').textContent = data.bidang_kegiatan?.nama || '-';
         

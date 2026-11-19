@@ -26,11 +26,17 @@ class LaporanController extends Controller
 
     // ============================================================
     // INDEX — Halaman Laporan ORMAS
+    // (sudah mendukung pencarian nama + filter cetak)
     // ============================================================
     public function index(Request $request)
     {
         $validated = $request->validate([
-            'tahun' => 'nullable|integer|min:2000|max:2100',
+            'tahun'           => 'nullable|integer|min:2000|max:2100',
+            'search'          => 'nullable|string|max:255',
+            'cetak_kecamatan' => 'nullable|integer',
+            'cetak_kelurahan' => 'nullable|integer',
+            'cetak_jenis'     => 'nullable|integer',
+            'cetak_bidang'    => 'nullable|integer',
         ]);
 
         $tahun = $validated['tahun'] ?? date('Y');
@@ -46,10 +52,28 @@ class LaporanController extends Controller
             $tahunTersedia = [date('Y')];
         }
 
-        // Data ORMAS dengan pagination
-        $ormas = $this->baseOrmasQuery()
-            ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
+        // Data ORMAS: tahun + pencarian nama + filter
+        $query = $this->baseOrmasQuery()->whereYear('created_at', $tahun);
+
+        if (!empty($validated['search'])) {
+            // escape karakter wildcard agar % dan _ dicari apa adanya
+            $keyword = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], trim($validated['search']));
+            $query->where('nama', 'like', '%' . $keyword . '%');
+        }
+        if (!empty($validated['cetak_kecamatan'])) {
+            $query->where('kecamatan_id', $validated['cetak_kecamatan']);
+        }
+        if (!empty($validated['cetak_kelurahan'])) {
+            $query->where('kelurahan_id', $validated['cetak_kelurahan']);
+        }
+        if (!empty($validated['cetak_jenis'])) {
+            $query->where('jenis_ormas_id', $validated['cetak_jenis']);
+        }
+        if (!empty($validated['cetak_bidang'])) {
+            $query->where('bidang_kegiatan_id', $validated['cetak_bidang']);
+        }
+
+        $ormas = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -63,7 +87,7 @@ class LaporanController extends Controller
         $bidangKegiatan = BidangKegiatan::all();
         $statuses       = self::STATUSES;
 
-        // 🔥 Summary stats — 1 query untuk 4 angka
+        // Summary stats — 1 query untuk 4 angka
         $stats = $this->getSummaryStats($tahun);
 
         return view('admin.laporan.index', array_merge(
@@ -121,7 +145,7 @@ class LaporanController extends Controller
                     ->with('error', 'Tidak ada data ORMAS yang sesuai dengan filter untuk tahun ' . $tahun);
             }
 
-            // 🔥 Preload nama filter dalam 1x query (bukan 4x find)
+            // Preload nama filter
             $filterData = $this->buildFilterData(
                 $tahun,
                 $kecamatanId,
@@ -354,8 +378,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * Bangun filterData untuk PDF dengan minimal query.
-     * Load semua label sekaligus menggunakan find() ke collection.
+     * Bangun filterData untuk PDF.
      */
     private function buildFilterData(
         $tahun,
@@ -374,10 +397,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * ============================================================
-     * 🔥 SUMMARY STATS — 1 QUERY untuk semua status
-     * Menggantikan 5 query terpisah.
-     * ============================================================
+     * SUMMARY STATS — 1 query untuk semua status.
      */
     private function getSummaryStats($tahun): array
     {
@@ -401,14 +421,10 @@ class LaporanController extends Controller
     }
 
     /**
-     * ============================================================
-     * 🔥 GRAFIK BULANAN — 1 QUERY untuk 4 status × 12 bulan
-     * Menggantikan 4 query terpisah.
-     * ============================================================
+     * GRAFIK BULANAN — 1 query untuk 4 status × 12 bulan.
      */
     private function getGrafikBulanan($tahun): array
     {
-        // Single query: ambil bulan, status, dan total sekaligus
         $rows = Ormas::whereYear('created_at', $tahun)
             ->selectRaw('
                 MONTH(created_at) AS bulan,
@@ -418,7 +434,6 @@ class LaporanController extends Controller
             ->groupBy('bulan', 'status')
             ->get();
 
-        // Susun data per status per bulan (default 0)
         $bulanData = [
             'total'     => array_fill(1, 12, 0),
             'disetujui' => array_fill(1, 12, 0),
@@ -430,10 +445,8 @@ class LaporanController extends Controller
             $bulan = (int) $row->bulan;
             $total = (int) $row->total;
 
-            // Total keseluruhan
             $bulanData['total'][$bulan] += $total;
 
-            // Per status
             switch ($row->status) {
                 case 'disetujui':
                     $bulanData['disetujui'][$bulan] += $total;
@@ -447,7 +460,6 @@ class LaporanController extends Controller
             }
         }
 
-        // Format output untuk chart
         $output = [
             'bulan'     => [],
             'total'     => [],

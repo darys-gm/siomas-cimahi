@@ -114,6 +114,7 @@ class OrmasController extends Controller
             'nama'                   => $ormas->nama,
             'singkatan'              => $ormas->singkatan,
             'nomor_registrasi'       => $ormas->nomor_registrasi,
+            'tahun_daftar'           => $ormas->tahun_daftar, // <-- TAMBAHKAN INI
             'jenis_ormas'            => $ormas->jenisOrmas ? ['nama' => $ormas->jenisOrmas->nama] : null,
             'bidang_kegiatan'        => $ormas->bidangKegiatan ? ['nama' => $ormas->bidangKegiatan->nama] : null,
             'alamat_kesekretariatan' => $ormas->alamat_kesekretariatan,

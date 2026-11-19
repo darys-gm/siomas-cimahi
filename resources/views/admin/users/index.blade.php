@@ -374,6 +374,10 @@
                             <div><span class="text-gray-500">Longitude:</span> <span class="font-medium">{{ $item->longitude ?? '-' }}</span></div>
                             <div><span class="text-gray-500">No Telepon:</span> <span class="font-medium">{{ $item->no_telepon ?? '-' }}</span></div>
                             <div><span class="text-gray-500">Email:</span> <span class="font-medium">{{ $item->email ?? '-' }}</span></div>
+                            
+                            <!-- ===== TAMBAHAN: TAHUN DAFTAR ===== -->
+                            <div><span class="text-gray-500">Tahun Daftar:</span> <span class="font-medium">{{ $item->tahun_daftar ?? '-' }}</span></div>
+
                             <div><span class="text-gray-500">Status:</span> 
                                 <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $item->status_active_badge }}">
                                     {{ $item->status_active_text }}
@@ -783,6 +787,15 @@
                         <option value="sudah">Sudah</option>
                         <option value="tidak_ada">Tidak Ada</option>
                     </select>
+                </div>
+
+                <!-- ===== TAMBAHAN: FIELD TAHUN DAFTAR DI FORM EDIT ===== -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Daftar</label>
+                    <input type="number" name="tahun_daftar" id="ormas_tahun_daftar" 
+                           class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           placeholder="Contoh: 2023" min="1900" max="{{ date('Y') }}">
+                    <p class="text-xs text-gray-400 mt-1">Tahun pendaftaran ORMAS</p>
                 </div>
 
                 <!-- ===== DATA KEANGGOTAAN ===== -->
@@ -1705,6 +1718,9 @@ function editOrmas(id) {
             document.getElementById('ormas_anggota_perempuan_rentang_16_30').value = data.anggota_perempuan_rentang_16_30 ?? 0;
             document.getElementById('ormas_jumlah_anggota_laki_laki').value = data.jumlah_anggota_laki_laki ?? 0;
             document.getElementById('ormas_anggota_laki_laki_rentang_16_30').value = data.anggota_laki_laki_rentang_16_30 ?? 0;
+            
+            // TAHUN DAFTAR: Langsung ambil dari data.tahun_daftar
+            document.getElementById('ormas_tahun_daftar').value = data.tahun_daftar || '';
             
             const lat = data.latitude || '';
             const lng = data.longitude || '';

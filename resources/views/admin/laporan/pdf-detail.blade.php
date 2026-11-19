@@ -236,7 +236,7 @@
 <body>
     <!-- HEADER -->
     <div class="header">
-        <h1>DETAIL ORGANISASI MASYARAKAT</h1>
+        <h1>DETAIL ORGANISASI KEMASYARAKATAN</h1>
         <p class="sub-title">KOTA CIMAHI</p>
         <div class="info">
             <span>Tanggal Cetak: <strong>{{ now()->format('d F Y H:i') }}</strong></span>

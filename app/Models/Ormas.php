@@ -18,6 +18,7 @@ class Ormas extends Model
      */
     protected $fillable = [
         'nama',
+        'tahun_daftar', // <-- TAMBAHAN BARU
         'singkatan',
         'nomor_registrasi',
         'nomor_sk',
@@ -57,6 +58,7 @@ class Ormas extends Model
     ];
 
     protected $casts = [
+        'tahun_daftar' => 'integer', // <-- TAMBAHAN BARU
         'tahun_berdiri' => 'integer',
         'verified_at' => 'datetime',
         'is_active' => 'boolean',
