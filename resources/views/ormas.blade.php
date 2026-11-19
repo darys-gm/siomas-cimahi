@@ -209,7 +209,7 @@
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bentuk Ormas</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bidang Kegiatan</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No AHU/SKT</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No SKT Kesbang</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun Daftar</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update/Pelaporan</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -513,7 +513,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 text-sm">
                         <div class="col-span-1 sm:col-span-2"><span class="text-gray-500">Nama:</span> <span class="font-medium" id="det_nama">-</span></div>
                         <div><span class="text-gray-500">Singkatan:</span> <span class="font-medium" id="det_singkatan">-</span></div>
-                        <div><span class="text-gray-500">No AHU/SKT:</span> <span class="font-medium" id="det_nomor_registrasi">-</span></div>
+                        <div><span class="text-gray-500">No SKT Kesbang:</span> <span class="font-medium" id="det_nomor_registrasi">-</span></div>
                         <!-- TAMBAHAN: TAHUN DAFTAR DI MODAL -->
                         <div><span class="text-gray-500">Tahun Daftar:</span> <span class="font-medium" id="det_tahun_daftar">-</span></div>
                         <div><span class="text-gray-500">Bentuk Ormas:</span> <span class="font-medium" id="det_jenis">-</span></div>
