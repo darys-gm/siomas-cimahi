@@ -10,7 +10,6 @@ class OrmasController extends Controller
 {
     /**
      * Halaman daftar ORMAS (publik).
-     * Hanya menampilkan ORMAS dengan status 'disetujui' + 'is_active'.
      */
     public function index(Request $request)
     {
@@ -29,12 +28,11 @@ class OrmasController extends Controller
         $kecamatan = $validated['kecamatan'] ?? null;
         $kelurahan = $validated['kelurahan'] ?? null;
 
-        // ===== QUERY DENGAN SCOPE PUBLIC =====
+        // ===== QUERY (Hanya Saring Status Disetujui, Tampilkan Semua Aktif/Nonaktif) =====
         $query = Ormas::with(['jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan', 'pengurus'])
-            ->publicVisible(); // scope: status='disetujui' AND is_active=true
+            ->where('status', 'disetujui'); 
 
         if ($search) {
-            // Escape wildcard agar user tidak bisa pakai '%' atau '_' untuk scanning
             $search = str_replace(['%', '_'], ['\%', '\_'], $search);
             $query->where('nama', 'like', '%' . $search . '%');
         }
@@ -76,14 +74,9 @@ class OrmasController extends Controller
 
     /**
      * Detail ORMAS via AJAX (PUBLIK).
-     * 
-     * 🔒 KEAMANAN:
-     * - Hanya menampilkan ORMAS dengan status 'disetujui' + 'is_active=true'
-     * - Data yang dikembalikan sudah di-filter (tanpa user_id, catatan_revisi, dll)
      */
     public function detail($id)
     {
-        // Validasi ID harus integer
         if (!is_numeric($id) || (int) $id < 1) {
             return response()->json([
                 'success' => false,
@@ -98,7 +91,7 @@ class OrmasController extends Controller
             'kelurahan',
             'pengurus',
         ])
-            ->publicVisible() // 🔒 SCOPE PENTING: hanya data yang boleh publik
+            ->where('status', 'disetujui') // Hanya status disetujui yang bisa dilihat detailnya
             ->find($id);
 
         if (!$ormas) {
@@ -108,13 +101,12 @@ class OrmasController extends Controller
             ], 404);
         }
 
-        // 🔒 Batasi field yang dikirim ke client (anti information disclosure)
         $safeData = [
             'id'                     => $ormas->id,
             'nama'                   => $ormas->nama,
             'singkatan'              => $ormas->singkatan,
             'nomor_registrasi'       => $ormas->nomor_registrasi,
-            'tahun_daftar'           => $ormas->tahun_daftar, // <-- TAMBAHKAN INI
+            'tahun_daftar'           => $ormas->tahun_daftar,
             'jenis_ormas'            => $ormas->jenisOrmas ? ['nama' => $ormas->jenisOrmas->nama] : null,
             'bidang_kegiatan'        => $ormas->bidangKegiatan ? ['nama' => $ormas->bidangKegiatan->nama] : null,
             'alamat_kesekretariatan' => $ormas->alamat_kesekretariatan,
