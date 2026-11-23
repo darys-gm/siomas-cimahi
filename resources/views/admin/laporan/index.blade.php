@@ -13,7 +13,63 @@
     <!-- ============================================ -->
     <form method="GET" action="{{ route('admin.laporan.index') }}" id="filterForm">
 
-        <!-- Filter Tahun & Cetak -->
+        <!-- Statistik Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-blue-600 font-medium uppercase">Total Pendaftaran</p>
+                        <p class="text-2xl font-bold text-blue-700">{{ $totalOrmas }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-building text-blue-500"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-green-600 font-medium uppercase">Disetujui</p>
+                        <p class="text-2xl font-bold text-green-700">{{ $totalDisetujui }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-red-600 font-medium uppercase">Ditolak</p>
+                        <p class="text-2xl font-bold text-red-700">{{ $totalDitolak }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-500"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-yellow-600 font-medium uppercase">Menunggu Verifikasi</p>
+                        <p class="text-2xl font-bold text-yellow-700">{{ $totalMenunggu }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <i class="fas fa-clock text-yellow-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik Batang -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-4">Grafik Pendaftaran ORMAS per Bulan ({{ $tahun }})</h3>
+            <div class="relative h-72">
+                <canvas id="grafikChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sectin Filter dan Cetak File -->
         <div class="bg-gray-50 rounded-xl p-4 mb-6">
 
             <!-- Pilih Tahun -->
@@ -95,62 +151,6 @@
                         <i class="fas fa-file-excel"></i> Download Excel
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Statistik Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-blue-600 font-medium uppercase">Total Pendaftaran</p>
-                        <p class="text-2xl font-bold text-blue-700">{{ $totalOrmas }}</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <i class="fas fa-building text-blue-500"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-green-600 font-medium uppercase">Disetujui</p>
-                        <p class="text-2xl font-bold text-green-700">{{ $totalDisetujui }}</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <i class="fas fa-check-circle text-green-500"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-red-600 font-medium uppercase">Ditolak</p>
-                        <p class="text-2xl font-bold text-red-700">{{ $totalDitolak }}</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fas fa-times-circle text-red-500"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-yellow-600 font-medium uppercase">Menunggu Verifikasi</p>
-                        <p class="text-2xl font-bold text-yellow-700">{{ $totalMenunggu }}</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                        <i class="fas fa-clock text-yellow-500"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grafik Batang -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-            <h3 class="text-sm font-semibold text-gray-700 mb-4">Grafik Pendaftaran ORMAS per Bulan ({{ $tahun }})</h3>
-            <div class="relative h-72">
-                <canvas id="grafikChart"></canvas>
             </div>
         </div>
 

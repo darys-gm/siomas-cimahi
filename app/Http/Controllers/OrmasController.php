@@ -15,18 +15,20 @@ class OrmasController extends Controller
     {
         // ===== VALIDASI INPUT FILTER =====
         $validated = $request->validate([
-            'search'    => 'nullable|string|max:100',
-            'bentuk'    => 'nullable|string|max:100',
-            'bidang'    => 'nullable|string|max:255',
-            'kecamatan' => 'nullable|integer|exists:kecamatan,id',
-            'kelurahan' => 'nullable|integer|exists:kelurahan,id',
+            'search'       => 'nullable|string|max:100',
+            'bentuk'       => 'nullable|string|max:100',
+            'bidang'       => 'nullable|string|max:255',
+            'kecamatan'    => 'nullable|integer|exists:kecamatan,id',
+            'kelurahan'    => 'nullable|integer|exists:kelurahan,id',
+            'status_aktif' => 'nullable|in:0,1', // Validasi filter status
         ]);
 
-        $search    = $validated['search'] ?? null;
-        $bentuk    = $validated['bentuk'] ?? null;
-        $bidang    = $validated['bidang'] ?? null;
-        $kecamatan = $validated['kecamatan'] ?? null;
-        $kelurahan = $validated['kelurahan'] ?? null;
+        $search       = $validated['search'] ?? null;
+        $bentuk       = $validated['bentuk'] ?? null;
+        $bidang       = $validated['bidang'] ?? null;
+        $kecamatan    = $validated['kecamatan'] ?? null;
+        $kelurahan    = $validated['kelurahan'] ?? null;
+        $status_aktif = $validated['status_aktif'] ?? null;
 
         // ===== QUERY (Hanya Saring Status Disetujui, Tampilkan Semua Aktif/Nonaktif) =====
         $query = Ormas::with(['jenisOrmas', 'bidangKegiatan', 'kecamatan', 'kelurahan', 'pengurus'])
@@ -57,19 +59,24 @@ class OrmasController extends Controller
             });
         }
 
+        if ($status_aktif !== null && $status_aktif !== '') {
+            $query->where('is_active', $status_aktif);
+        }
+
         $ormas = $query->orderBy('nama')->paginate(10);
 
         $ormas->appends([
-            'search'    => $search,
-            'bentuk'    => $bentuk,
-            'bidang'    => $bidang,
-            'kecamatan' => $kecamatan,
-            'kelurahan' => $kelurahan,
+            'search'       => $search,
+            'bentuk'       => $bentuk,
+            'bidang'       => $bidang,
+            'kecamatan'    => $kecamatan,
+            'kelurahan'    => $kelurahan,
+            'status_aktif' => $status_aktif,
         ]);
 
         $jenisOrmas = JenisOrmas::withCount('ormas')->get();
 
-        return view('ormas', compact('ormas', 'jenisOrmas', 'search', 'bentuk', 'bidang', 'kecamatan', 'kelurahan'));
+        return view('ormas', compact('ormas', 'jenisOrmas', 'search', 'bentuk', 'bidang', 'kecamatan', 'kelurahan', 'status_aktif'));
     }
 
     /**
@@ -91,7 +98,7 @@ class OrmasController extends Controller
             'kelurahan',
             'pengurus',
         ])
-            ->where('status', 'disetujui') // Hanya status disetujui yang bisa dilihat detailnya
+            ->where('status', 'disetujui')
             ->find($id);
 
         if (!$ormas) {

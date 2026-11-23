@@ -38,7 +38,7 @@
                 </div>
 
                 <!-- Row 2: Filter Dropdowns - Responsive Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2 sm:gap-3">
                     <!-- Filter Kecamatan -->
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
@@ -152,12 +152,35 @@
                         </div>
                     </div>
 
+                    <!-- ===== TAMBAHAN: FILTER STATUS AKTIF ===== -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status Aktif</label>
+                        <div class="relative">
+                            <select name="status_aktif" id="filterStatusAktif" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm appearance-none bg-white/80">
+                                <option value="">Semua Status</option>
+                                <option value="1" {{ request('status_aktif') === '1' ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ request('status_aktif') === '0' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            @if(request('status_aktif') !== null && request('status_aktif') !== '')
+                            <button type="button" onclick="clearFilter('status_aktif')" 
+                                    class="absolute right-7 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                <i class="fas fa-times-circle text-xs sm:text-sm"></i>
+                            </button>
+                            @endif
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-3 w-3 sm:h-4 sm:w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tombol Cari & Reset -->
                     <div class="flex items-end gap-2">
                         <button type="submit" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-xs sm:text-sm font-medium">
                             <i class="fas fa-search mr-1"></i> Cari
                         </button>
-                        @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan'))
+                        @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan') || request('status_aktif') !== null)
                         <a href="{{ route('ormas') }}" class="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition text-xs sm:text-sm font-medium whitespace-nowrap">
                             <i class="fas fa-times"></i> Reset
                         </a>
@@ -168,7 +191,7 @@
         </div>
 
         <!-- Hasil Pencarian -->
-        @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan'))
+        @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan') || request('status_aktif') !== null)
         <div class="mb-4 text-xs sm:text-sm text-gray-500 break-words">
             Menampilkan hasil untuk: 
             @if(request('search'))
@@ -189,6 +212,10 @@
             @if(request('bidang'))
             @if(request('search') || request('kecamatan') || request('kelurahan') || request('bentuk')) <span class="mx-1">|</span> @endif
             <span class="font-medium text-gray-700">Bidang: {{ request('bidang') }}</span>
+            @endif
+            @if(request('status_aktif') !== null && request('status_aktif') !== '')
+            @if(request('search') || request('kecamatan') || request('kelurahan') || request('bentuk') || request('bidang')) <span class="mx-1">|</span> @endif
+            <span class="font-medium text-gray-700">Status: {{ request('status_aktif') == '1' ? 'Aktif' : 'Nonaktif' }}</span>
             @endif
             <span class="ml-2">({{ $ormas->total() }} ORMAS ditemukan)</span>
         </div>
@@ -468,7 +495,7 @@
         <div class="text-center py-8 sm:py-12 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-100/50">
             <i class="fas fa-building text-3xl sm:text-4xl text-gray-300 block mb-2 sm:mb-3"></i>
             <p class="text-sm sm:text-base text-gray-500">Tidak ada data ORMAS yang ditemukan</p>
-            @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan'))
+            @if(request('search') || request('bentuk') || request('bidang') || request('kecamatan') || request('kelurahan') || request('status_aktif') !== null)
             <a href="{{ route('ormas') }}" class="mt-2 inline-block text-red-600 hover:text-red-800 text-xs sm:text-sm">
                 <i class="fas fa-arrow-left mr-1"></i> Kembali ke semua
             </a>
@@ -944,6 +971,8 @@
             document.getElementById('filterKelurahan').innerHTML = '<option value="">Semua Kelurahan</option>';
         } else if (type === 'kelurahan') {
             document.getElementById('filterKelurahan').value = '';
+        } else if (type === 'status_aktif') {
+            document.getElementById('filterStatusAktif').value = '';
         }
         form.submit();
     }
@@ -993,6 +1022,11 @@
         this.closest('form').submit();
     });
     document.getElementById('filterBidang').addEventListener('change', function() {
+        this.closest('form').submit();
+    });
+    
+    // ===== TAMBAHAN: AUTO SUBMIT FILTER STATUS =====
+    document.getElementById('filterStatusAktif').addEventListener('change', function() {
         this.closest('form').submit();
     });
 
