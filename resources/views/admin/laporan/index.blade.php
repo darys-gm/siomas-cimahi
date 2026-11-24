@@ -69,9 +69,8 @@
             </div>
         </div>
 
-        <!-- Sectin Filter dan Cetak File -->
+        <!-- Section Filter dan Cetak File -->
         <div class="bg-gray-50 rounded-xl p-4 mb-6">
-
             <!-- Pilih Tahun -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Tahun</label>
@@ -102,9 +101,14 @@
                         <label class="block text-xs font-medium text-gray-600 mb-1">Kelurahan</label>
                         <select name="cetak_kelurahan" id="filterKelurahan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                             <option value="">Semua Kelurahan</option>
-                            @foreach($kelurahan as $kel)
-                                <option value="{{ $kel->id }}" {{ request('cetak_kelurahan') == $kel->id ? 'selected' : '' }}>{{ $kel->nama }}</option>
-                            @endforeach
+                            @if(request('cetak_kecamatan'))
+                                @php
+                                    $kelurahans = \App\Models\Kelurahan::where('kecamatan_id', request('cetak_kecamatan'))->orderBy('nama')->get();
+                                @endphp
+                                @foreach($kelurahans as $kel)
+                                    <option value="{{ $kel->id }}" {{ request('cetak_kelurahan') == $kel->id ? 'selected' : '' }}>{{ $kel->nama }}</option>
+                                @endforeach
+                            @endif
                         </select>
                     </div>
 
@@ -144,7 +148,7 @@
 
                     <div class="border-l border-gray-300 mx-2"></div> <!-- Garis Pemisah -->
 
-                    <button type="button" onclick="downloadAllData(event)" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm flex items-center gap-2">
+                    <button type="button" onclick="downloadAllData(event)" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm flex items-center gap-2">
                         <i class="fas fa-file-pdf"></i> Cetak Semua Data
                     </button>
                     <button type="button" onclick="downloadExcel(event)" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-sm flex items-center gap-2">
@@ -154,9 +158,7 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
-        <!-- PENCARIAN NAMA ORMAS (DI BAWAH GRAFIK)       -->
-        <!-- ============================================ -->
+        <!-- Pencarian Nama ORMAS -->
         <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6 shadow-sm">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <h3 class="text-sm font-semibold text-gray-700">Pencarian Data ORMAS</h3>
@@ -245,9 +247,7 @@
                 </table>
             </div>
 
-            <!-- ============================================ -->
-            <!-- PAGINATION CUSTOM                            -->
-            <!-- ============================================ -->
+            <!-- PAGINATION CUSTOM -->
             @if($ormas->hasPages())
             <div class="mt-4 px-2 py-3">
                 <div class="flex flex-col items-center gap-3">
@@ -421,6 +421,57 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // ============================================
+    // DATA KELURAHAN PER KECAMATAN
+    // ============================================
+    const kelurahanData = {
+        @foreach(\App\Models\Kecamatan::all() as $kec)
+            '{{ $kec->id }}': [
+                @foreach($kec->kelurahan as $kel)
+                    { id: '{{ $kel->id }}', nama: '{{ $kel->nama }}' },
+                @endforeach
+            ],
+        @endforeach
+    };
+
+    // ============================================
+    // FUNGSI UPDATE KELURAHAN BERDASARKAN KECAMATAN
+    // ============================================
+    function updateKelurahan() {
+        const kecamatanId = document.getElementById('filterKecamatan').value;
+        const kelurahanSelect = document.getElementById('filterKelurahan');
+        const selectedKelurahan = '{{ request('cetak_kelurahan') }}';
+        
+        kelurahanSelect.innerHTML = '<option value="">Semua Kelurahan</option>';
+        
+        if (kecamatanId && kelurahanData[kecamatanId]) {
+            const sortedKelurahan = [...kelurahanData[kecamatanId]].sort((a, b) => a.nama.localeCompare(b.nama));
+            sortedKelurahan.forEach(function(kelurahan) {
+                const option = document.createElement('option');
+                option.value = kelurahan.id;
+                option.textContent = kelurahan.nama;
+                if (kelurahan.id == selectedKelurahan) {
+                    option.selected = true;
+                }
+                kelurahanSelect.appendChild(option);
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Jalankan saat pertama kali load jika ada filter kecamatan
+        const kecamatanId = document.getElementById('filterKecamatan').value;
+        if (kecamatanId) {
+            updateKelurahan();
+        }
+
+        // Event listener saat Kecamatan diubah
+        document.getElementById('filterKecamatan').addEventListener('change', function() {
+            updateKelurahan();
+            this.closest('form').submit(); // Opsional: Auto submit form
+        });
+    });
+
     // ============================================
     // FUNGSI CLEAR SEARCH
     // ============================================

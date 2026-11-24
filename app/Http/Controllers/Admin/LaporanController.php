@@ -26,7 +26,6 @@ class LaporanController extends Controller
 
     // ============================================================
     // INDEX — Halaman Laporan ORMAS
-    // (sudah mendukung pencarian nama + filter cetak)
     // ============================================================
     public function index(Request $request)
     {
@@ -41,7 +40,6 @@ class LaporanController extends Controller
 
         $tahun = $validated['tahun'] ?? date('Y');
 
-        // Tahun tersedia untuk filter
         $tahunTersedia = Ormas::select(DB::raw('YEAR(created_at) as tahun'))
             ->distinct()
             ->orderBy('tahun', 'desc')
@@ -52,11 +50,9 @@ class LaporanController extends Controller
             $tahunTersedia = [date('Y')];
         }
 
-        // Data ORMAS: tahun + pencarian nama + filter
         $query = $this->baseOrmasQuery()->whereYear('created_at', $tahun);
 
         if (!empty($validated['search'])) {
-            // escape karakter wildcard agar % dan _ dicari apa adanya
             $keyword = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], trim($validated['search']));
             $query->where('nama', 'like', '%' . $keyword . '%');
         }
@@ -77,17 +73,14 @@ class LaporanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Grafik bulanan (1 query)
         $grafikBulanan = $this->getGrafikBulanan($tahun);
 
-        // Master data
         $kecamatan      = Kecamatan::all();
-        $kelurahan      = Kelurahan::all();
+        $kelurahan      = Kelurahan::all(); // Tetap kirim semua data untuk JS, tapi JS akan memfilter
         $jenisOrmas     = JenisOrmas::all();
         $bidangKegiatan = BidangKegiatan::all();
         $statuses       = self::STATUSES;
 
-        // Summary stats — 1 query untuk 4 angka
         $stats = $this->getSummaryStats($tahun);
 
         return view('admin.laporan.index', array_merge(
@@ -117,10 +110,11 @@ class LaporanController extends Controller
     public function downloadAllOrmas(Request $request)
     {
         try {
+            // Validasi parameter dari URL
             $validated = $request->validate([
                 'tahun'              => 'nullable|integer|min:2000|max:2100',
-                'kecamatan_id'       => 'nullable|integer|exists:kecamatans,id',
-                'kelurahan_id'       => 'nullable|integer|exists:kelurahans,id',
+                'kecamatan_id'       => 'nullable|integer|exists:kecamatan,id', 
+                'kelurahan_id'       => 'nullable|integer|exists:kelurahan,id',
                 'jenis_ormas_id'     => 'nullable|integer|exists:jenis_ormas,id',
                 'bidang_kegiatan_id' => 'nullable|integer|exists:bidang_kegiatan,id',
             ]);
@@ -145,7 +139,6 @@ class LaporanController extends Controller
                     ->with('error', 'Tidak ada data ORMAS yang sesuai dengan filter untuk tahun ' . $tahun);
             }
 
-            // Preload nama filter
             $filterData = $this->buildFilterData(
                 $tahun,
                 $kecamatanId,
@@ -171,7 +164,7 @@ class LaporanController extends Controller
             ]);
 
             return redirect()->route('admin.laporan.index')
-                ->with('error', 'Gagal mendownload PDF. Silakan coba lagi.');
+                ->with('error', 'Gagal mendownload PDF. Error: ' . $e->getMessage());
         }
     }
 
@@ -271,7 +264,6 @@ class LaporanController extends Controller
             $query->whereYear('created_at', $request->tahun);
         }
 
-        // Filter dinamis berdasarkan jenis_laporan
         switch ($request->jenis_laporan) {
             case 'kecamatan':
                 if ($request->filled('kecamatan_id')) {
@@ -355,17 +347,11 @@ class LaporanController extends Controller
     // PRIVATE HELPERS
     // ============================================================
 
-    /**
-     * Validasi format ID (angka positif).
-     */
     private function isValidId($id): bool
     {
         return is_numeric($id) && (int) $id > 0;
     }
 
-    /**
-     * Base query ORMAS dengan relasi standar.
-     */
     private function baseOrmasQuery()
     {
         return Ormas::with([
@@ -377,9 +363,6 @@ class LaporanController extends Controller
         ]);
     }
 
-    /**
-     * Bangun filterData untuk PDF.
-     */
     private function buildFilterData(
         $tahun,
         $kecamatanId,
@@ -396,9 +379,6 @@ class LaporanController extends Controller
         ];
     }
 
-    /**
-     * SUMMARY STATS — 1 query untuk semua status.
-     */
     private function getSummaryStats($tahun): array
     {
         $result = Ormas::whereYear('created_at', $tahun)
@@ -420,9 +400,6 @@ class LaporanController extends Controller
         ];
     }
 
-    /**
-     * GRAFIK BULANAN — 1 query untuk 4 status × 12 bulan.
-     */
     private function getGrafikBulanan($tahun): array
     {
         $rows = Ormas::whereYear('created_at', $tahun)

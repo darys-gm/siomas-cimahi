@@ -13,13 +13,73 @@
             width: 100%;
             max-width: 100%;
         }
+
+        /* ============================================ */
+        /* KOP SURAT DENGAN GAMBAR (JPG BASE64)         */
+        /* ============================================ */
+        .kop-surat {
+            width: 100%;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border: none !important; /* Memastikan div pembungkus tidak ada border */
+            margin-right: 20px;
+        }
         
+        .kop-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none !important; /* Menghilangkan border pada tabel */
+        }
+        
+        .kop-table td {
+            vertical-align: middle;
+            border: none !important; /* Menghilangkan border abu-abu pada sel tabel */
+        }
+
+        .kop-logo {
+            width: 15%;
+            text-align: left;
+        }
+        
+        .kop-logo img {
+            height: 80px; 
+            width: auto;
+            display: block;
+            margin-left: 110px;
+        }
+
+        .kop-teks {
+            width: 85%;
+            text-align: center;
+        }
+
+        .kop-surat .pemkot {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+            margin-right: 90px;
+        }
+        .kop-surat .dinas {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            margin-right: 90px;
+        }
+        .kop-surat .alamat {
+            font-size: 11px;
+            line-height: 1.3;
+            margin-right: 90px;
+        }
+
         /* ===== HEADER ===== */
         .header {
             text-align: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #000000;
+            margin-right: 30px;
+            border-bottom: 2px solid #000000; /* Garis pemisah di bawah judul laporan tetap ada */
         }
         .header h1 {
             font-size: 18px;
@@ -44,38 +104,13 @@
             margin: 0 6px;
         }
 
-        /* ===== INFO BOX ===== */
-        .info-box {
-            background: #f5f5f5;
-            padding: 6px 12px;
-            border-radius: 3px;
-            margin-bottom: 10px;
-            border: 1px solid #dddddd;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 9px;
-        }
-        .info-box .item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .info-box .label {
-            color: #555555;
-        }
-        .info-box .value {
-            font-weight: 700;
-            color: #000000;
-        }
-
         /* ===== FILTER INFO ===== */
         .filter-info {
             background: #f9f9f9;
             padding: 5px 10px;
             border-radius: 3px;
             margin-bottom: 10px;
+            margin-right: 30px;
             border-left: 3px solid #000000;
             font-size: 9px;
             color: #333333;
@@ -87,16 +122,16 @@
             color: #666666;
         }
 
-        /* ===== TABEL ===== */
-        table {
-            width: 100%;
+        /* ===== TABEL UTAMA ===== */
+        table.data-table {
+            width: 97.3%;
             border-collapse: collapse;
             margin-top: 8px;
             font-size: 8px;
             page-break-inside: auto;
             table-layout: fixed;
         }
-        table thead th {
+        table.data-table thead th {
             background: #000000;
             color: white;
             padding: 4px 4px;
@@ -107,7 +142,7 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        table tbody td {
+        table.data-table tbody td {
             padding: 3px 4px;
             border: 1px solid #cccccc;
             vertical-align: middle;
@@ -116,22 +151,22 @@
             word-break: break-word;
             overflow-wrap: break-word;
         }
-        table tbody tr:nth-child(even) {
+        table.data-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        table tbody tr:hover {
+        table.data-table tbody tr:hover {
             background-color: #eeeeee;
         }
 
         /* ===== LEBAR KOLOM ===== */
-        table thead th:nth-child(1) { width: 3%; }  /* No */
-        table thead th:nth-child(2) { width: 16%; } /* Nama ORMAS */
-        table thead th:nth-child(3) { width: 12%; } /* No AHU/SKT */
-        table thead th:nth-child(4) { width: 10%; } /* Nama Ketua */
-        table thead th:nth-child(5) { width: 24%; } /* Alamat Lengkap */
-        table thead th:nth-child(6) { width: 15%; } /* Bidang Kegiatan */
-        table thead th:nth-child(7) { width: 10%; } /* Kecamatan */
-        table thead th:nth-child(8) { width: 10%; } /* Kelurahan */
+        table.data-table thead th:nth-child(1) { width: 3%; }  /* No */
+        table.data-table thead th:nth-child(2) { width: 16%; } /* Nama ORMAS */
+        table.data-table thead th:nth-child(3) { width: 12%; } /* No AHU/SKT */
+        table.data-table thead th:nth-child(4) { width: 10%; } /* Nama Ketua */
+        table.data-table thead th:nth-child(5) { width: 24%; } /* Alamat Lengkap */
+        table.data-table thead th:nth-child(6) { width: 15%; } /* Bidang Kegiatan */
+        table.data-table thead th:nth-child(7) { width: 8%; } /* Kecamatan */
+        table.data-table thead th:nth-child(8) { width: 8%; } /* Kelurahan */
 
         /* ===== TEXT WRAP ===== */
         .wrap-text {
@@ -140,12 +175,6 @@
             word-break: break-word;
             overflow-wrap: break-word;
             line-height: 1.2;
-        }
-
-        /* ===== ALAMAT KOSONG ===== */
-        .alamat-kosong {
-            color: #999999;
-            font-style: italic;
         }
 
         /* ===== FOOTER ===== */
@@ -165,17 +194,56 @@
         @media print {
             body { padding: 10px; }
             .no-print { display: none; }
-            table { page-break-inside: auto; }
+            table.data-table { page-break-inside: auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             
-            table tbody td { font-size: 6px; padding: 2px 3px; }
-            table thead th { font-size: 6px; padding: 3px 3px; }
+            table.data-table tbody td { font-size: 6px; padding: 2px 3px; }
+            table.data-table thead th { font-size: 6px; padding: 3px 3px; }
             .wrap-text { font-size: 6px; }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
+    <!-- ============================================ -->
+    <!-- KOP SURAT RESMI (TANPA GARIS BORDER)         -->
+    <!-- ============================================ -->
+    <div class="kop-surat">
+        <table class="kop-table">
+            <tr>
+                <!-- Kolom Kiri: Logo -->
+                <td class="kop-logo">
+                    @php
+                        // Pastikan path ini sesuai dengan lokasi dan ekstensi file JPG Anda
+                        $path = public_path('images/lg-link-3.jpg');
+                        
+                        if (file_exists($path)) {
+                            $type = pathinfo($path, PATHINFO_EXTENSION);
+                            $data = file_get_contents($path);
+                            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        } else {
+                            $base64 = ''; 
+                        }
+                    @endphp
+
+                    @if($base64)
+                        <img src="{{ $base64 }}" alt="Logo Cimahi">
+                    @endif
+                </td>
+                <!-- Kolom Kanan: Teks -->
+                <td class="kop-teks">
+                    <div class="pemkot">PEMERINTAH KOTA CIMAHI</div>
+                    <div class="dinas">BADAN KESATUAN BANGSA DAN POLITIK</div>
+                    <div class="alamat">
+                        Jalan Rd. Demang Hardjakusumah Blok Jati Cihanjuang, Cimahi, Jawa Barat 40513<br>
+                        Telepon (022) 6654274, Faximile (022) 6654274<br>
+                        Laman www.cimahikota.go.id, Pos-el bakesbangpol@cimahikota.go.id
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- HEADER LAPORAN -->
     <div class="header">
         <h1>LAPORAN DATA ORGANISASI MASYARAKAT</h1>
         <p class="sub-title">KOTA CIMAHI</p>
@@ -197,17 +265,8 @@
         <strong>Bidang Kegiatan</strong> {{ $filterData['bidang_kegiatan'] ?? 'Semua' }}
     </div>
 
-    <!-- INFO BOX -->
-    <div class="info-box">
-        <span class="item"><span class="label">Total:</span> <span class="value">{{ $ormas->count() }}</span></span>
-        <span class="item"><span class="label">Disetujui:</span> <span class="value">{{ $ormas->where('status', 'disetujui')->count() }}</span></span>
-        <span class="item"><span class="label">Ditolak:</span> <span class="value">{{ $ormas->where('status', 'ditolak')->count() }}</span></span>
-        <span class="item"><span class="label">Menunggu:</span> <span class="value">{{ $ormas->where('status', 'menunggu_verifikasi')->count() }}</span></span>
-        <span class="item"><span class="label">Revisi:</span> <span class="value">{{ $ormas->where('status', 'revisi')->count() }}</span></span>
-    </div>
-
-    <!-- TABEL -->
-    <table>
+    <!-- TABEL UTAMA -->
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="text-align: center;">No</th>
@@ -237,12 +296,8 @@
                 <td>
                     <span class="wrap-text">
                         @php
-                            // Cari ketua dari relasi pengurus dengan jabatan 'Ketua'
-                            $ketua = $item->pengurus->where('jabatan', 'Ketua')->first();
-                            // Jika tidak ada, ambil pengurus pertama
-                            if (!$ketua) {
-                                $ketua = $item->pengurus->first();
-                            }
+                            // Ambil ketua dari relasi pengurus (jika ada), jika tidak ambil pengurus pertama
+                            $ketua = $item->pengurus->firstWhere('jabatan', 'Ketua') ?? $item->pengurus->first();
                         @endphp
                         {{ $ketua->nama ?? '-' }}
                     </span>
@@ -250,27 +305,13 @@
                 <td>
                     <span class="wrap-text">
                         @php
-                            // Cek berbagai kemungkinan field alamat
-                            $alamat = '';
-                            
-                            // Coba field alamat_sekretariat
-                            if (isset($item->alamat_sekretariat) && !empty($item->alamat_sekretariat)) {
-                                $alamat = $item->alamat_sekretariat;
-                            }
-                            // Coba field alamat_kesekretariatan
-                            elseif (isset($item->alamat_kesekretariatan) && !empty($item->alamat_kesekretariatan)) {
-                                $alamat = $item->alamat_kesekretariatan;
-                            }
-                            // Coba field alamat
-                            elseif (isset($item->alamat) && !empty($item->alamat)) {
-                                $alamat = $item->alamat;
-                            }
-                            // Jika semua kosong, buat dari kelurahan dan kecamatan
-                            else {
-                                $kelurahan = $item->kelurahan->nama ?? '';
-                                $kecamatan = $item->kecamatan->nama ?? '';
-                                if (!empty($kelurahan) && !empty($kecamatan)) {
-                                    $alamat = 'Kec. ' . $kecamatan . ', Kel. ' . $kelurahan . ', Kota Cimahi';
+                            // Gunakan alamat_kesekretariatan, jika kosong gabungkan kecamatan & kelurahan
+                            $alamat = $item->alamat_kesekretariatan;
+                            if (empty($alamat)) {
+                                $kel = $item->kelurahan->nama ?? '';
+                                $kec = $item->kecamatan->nama ?? '';
+                                if ($kel && $kec) {
+                                    $alamat = 'Kel. ' . $kel . ', Kec. ' . $kec;
                                 } else {
                                     $alamat = '-';
                                 }
@@ -308,7 +349,6 @@
     <!-- FOOTER -->
     <div class="footer">
         <p>Dicetak dari <strong>SIOMAS</strong> - Sistem Informasi Organisasi Masyarakat Kota Cimahi</p>
-        <p>Dicetak oleh: {{ Auth::user()->name ?? 'Admin' }} | {{ now()->format('d F Y H:i:s') }}</p>
     </div>
 </body>
 </html>
