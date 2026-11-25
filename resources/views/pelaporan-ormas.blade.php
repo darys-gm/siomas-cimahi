@@ -217,9 +217,9 @@
                                 </div>
                                 <select name="kecamatan_id" id="kecamatan_id" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base @error('kecamatan_id') border-red-500 @enderror" required>
                                     <option value="">Pilih Kecamatan</option>
-                                    <option value="Cimahi Selatan" {{ old('kecamatan_id') == 'Cimahi Selatan' ? 'selected' : '' }}>Cimahi Selatan</option>
-                                    <option value="Cimahi Tengah" {{ old('kecamatan_id') == 'Cimahi Tengah' ? 'selected' : '' }}>Cimahi Tengah</option>
-                                    <option value="Cimahi Utara" {{ old('kecamatan_id') == 'Cimahi Utara' ? 'selected' : '' }}>Cimahi Utara</option>
+                                    @foreach($kecamatan as $kec)
+                                        <option value="{{ $kec->nama }}" {{ old('kecamatan_id') == $kec->nama ? 'selected' : '' }}>{{ $kec->nama }}</option>
+                                    @endforeach
                                 </select>
                                 @error('kecamatan_id')
                                 <p class="text-red-500 text-xs sm:text-sm mt-1">{{ $message }}</p>
@@ -544,7 +544,7 @@
 
 <script>
 // ============================================
-// DATA KELURAHAN
+// DATA KELURAHAN (DINAMIS BERDASARKAN KECAMATAN)
 // ============================================
 document.getElementById('kecamatan_id').addEventListener('change', function() {
     let kelurahanSelect = document.getElementById('kelurahan_id');
@@ -562,6 +562,8 @@ document.getElementById('kecamatan_id').addEventListener('change', function() {
             let option = document.createElement('option');
             option.value = kelurahan;
             option.textContent = kelurahan;
+            
+            // Pilih otomatis jika ada old value
             if ('{{ old("kelurahan_id") }}' === kelurahan) {
                 option.selected = true;
             }
@@ -570,9 +572,14 @@ document.getElementById('kecamatan_id').addEventListener('change', function() {
     }
 });
 
+// Jalankan saat halaman dimuat (untuk menangani old value jika validasi gagal)
 document.addEventListener('DOMContentLoaded', function() {
     let kecamatanSelect = document.getElementById('kecamatan_id');
-    if (kecamatanSelect.value) {
+    let oldKecamatan = '{{ old("kecamatan_id") }}';
+    
+    if (oldKecamatan) {
+        kecamatanSelect.value = oldKecamatan;
+        // Trigger event change agar kelurahan terisi
         kecamatanSelect.dispatchEvent(new Event('change'));
     }
 });

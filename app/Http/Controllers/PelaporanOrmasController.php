@@ -46,6 +46,7 @@ class PelaporanOrmasController extends Controller
                 // Data ORMAS
                 'nama_ormas'                       => 'required|string|max:255',
                 'singkatan'                        => 'nullable|string|max:50',
+                'no_ahu_skt'                       => 'nullable|string|max:255', 
                 'jenis_ormas_id'                   => 'required|integer|exists:jenis_ormas,id',
                 'bidang_kegiatan_id'               => 'required|integer|exists:bidang_kegiatan,id',
                 'alamat_kesekretariatan'           => 'nullable|string|max:1000',
@@ -55,7 +56,7 @@ class PelaporanOrmasController extends Controller
                 'jumlah_anggota_laki_laki'         => 'nullable|integer|min:0|max:1000000',
                 'anggota_laki_laki_rentang_16_30'  => 'nullable|integer|min:0|max:1000000',
                 'no_telepon'                       => 'required|string|max:20',
-                'email'                            => 'nullable|string|max:100',
+                'email'                            => 'nullable|string|max:100', 
                 'kecamatan_id'                     => 'required|string|max:100',
                 'kelurahan_id'                     => 'required|string|max:100',
                 'latitude'                         => 'required|string',
@@ -82,17 +83,31 @@ class PelaporanOrmasController extends Controller
             // ============================================================
             DB::beginTransaction();
 
+            // Cari ID Kecamatan & Kelurahan berdasarkan NAMA yang dikirim dari form
+            $kecamatanData = Kecamatan::where('nama', $validated['kecamatan_id'])->first();
+            
+            // Cari Kelurahan yang sesuai dengan Kecamatan yang dipilih
+            $kelurahanData = Kelurahan::where('nama', $validated['kelurahan_id'])
+                                ->where('kecamatan_id', $kecamatanData->id ?? 0)
+                                ->first();
+
+            if (!$kecamatanData || !$kelurahanData) {
+                throw new \Exception("Data Kecamatan/Kelurahan tidak ditemukan di database. Pastikan nama kecamatan/kelurahan sesuai.");
+            }
+
+            // 1. SIMPAN ORMAS (Tanpa status & is_active karena $guarded)
             $ormas = Ormas::create([
-                'user_id'                          => null, // Karena ini pelaporan publik
+                'user_id'                          => null, 
                 'nama'                             => $validated['nama_ormas'],
                 'singkatan'                        => $validated['singkatan'],
+                'nomor_registrasi'                 => $validated['no_ahu_skt'], 
                 'jenis_ormas_id'                   => $validated['jenis_ormas_id'],
                 'bidang_kegiatan_id'               => $validated['bidang_kegiatan_id'],
                 'alamat_kesekretariatan'           => $validated['alamat_kesekretariatan'],
-                'kecamatan_id'                     => $validated['kecamatan_id'],
-                'kelurahan_id'                     => $validated['kelurahan_id'],
+                'kecamatan_id'                     => $kecamatanData->id, 
+                'kelurahan_id'                     => $kelurahanData->id, 
                 'no_telepon'                       => $validated['no_telepon'],
-                'email'                            => $validated['email'],
+                'email'                            => ($validated['email'] === '-') ? null : $validated['email'], 
                 'latitude'                         => $validated['latitude'],
                 'longitude'                        => $validated['longitude'],
                 'jumlah_anggota'                   => $validated['jumlah_anggota'] ?? 0,
@@ -100,17 +115,20 @@ class PelaporanOrmasController extends Controller
                 'anggota_perempuan_rentang_16_30'  => $validated['anggota_perempuan_rentang_16_30'] ?? 0,
                 'jumlah_anggota_laki_laki'         => $validated['jumlah_anggota_laki_laki'] ?? 0,
                 'anggota_laki_laki_rentang_16_30'  => $validated['anggota_laki_laki_rentang_16_30'] ?? 0,
-                'status'                           => 'menunggu_verifikasi',
                 'pelaporan'                        => 'sudah',
-                'is_active'                        => true,
             ]);
+
+            // 2. SET STATUS SECARA MANUAL (Bypass $guarded)
+            $ormas->status = 'menunggu_verifikasi';
+            $ormas->is_active = true;
+            $ormas->save();
 
             // Simpan Pengurus (Ketua)
             Pengurus::create([
                 'ormas_id' => $ormas->id,
                 'nama'     => $validated['ketua_nama'],
                 'jabatan'  => 'Ketua',
-                'alamat'   => $validated['ketua_alamat'],
+                'alamat'   => $validated['ketua_alamat'] ?? '-',
                 'no_hp'    => $validated['ketua_no_hp'],
             ]);
 
@@ -120,8 +138,8 @@ class PelaporanOrmasController extends Controller
                     'ormas_id' => $ormas->id,
                     'nama'     => $validated['sekretaris_nama'],
                     'jabatan'  => 'Sekretaris',
-                    'alamat'   => $validated['sekretaris_alamat'],
-                    'no_hp'    => $validated['sekretaris_no_hp'],
+                    'alamat'   => $validated['sekretaris_alamat'] ?? '-',
+                    'no_hp'    => $validated['sekretaris_no_hp'] ?? '-',
                 ]);
             }
 
@@ -131,8 +149,8 @@ class PelaporanOrmasController extends Controller
                     'ormas_id' => $ormas->id,
                     'nama'     => $validated['bendahara_nama'],
                     'jabatan'  => 'Bendahara',
-                    'alamat'   => $validated['bendahara_alamat'],
-                    'no_hp'    => $validated['bendahara_no_hp'],
+                    'alamat'   => $validated['bendahara_alamat'] ?? '-',
+                    'no_hp'    => $validated['bendahara_no_hp'] ?? '-',
                 ]);
             }
 
@@ -151,7 +169,8 @@ class PelaporanOrmasController extends Controller
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
             ]);
-            return back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.')->withInput();
+            
+            return back()->with('error', 'Terjadi kesalahan sistem. ' . $e->getMessage())->withInput();
         }
     }
 }

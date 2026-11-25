@@ -57,25 +57,29 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                     Tanggal <span class="text-red-500">*</span>
                 </label>
-                <input type="date" name="tanggal" value="{{ old('tanggal', $agenda->tanggal) }}" required
-                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal') border-red-500 @enderror">
+                <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', $agenda->tanggal) }}" required
+                       min="{{ date('Y-m-d') }}"
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal') border-red-500 @enderror"
+                       onchange="checkDate()">
                 @error('tanggal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                <p class="text-xs text-gray-400 mt-1">
-                    <i class="fas fa-calendar-alt mr-1"></i>
-                    Tanggal saat ini: <strong>{{ $agenda->tanggal ? \Carbon\Carbon::parse($agenda->tanggal)->format('d F Y') : '-' }}</strong>
+                
+                {{-- Peringatan jika tanggal terlewat --}}
+                <div id="date-warning" class="hidden mt-1 text-xs text-red-600 font-medium">
+                    <i class="fas fa-exclamation-triangle"></i> Tanggal sudah terlewat! Harap pilih hari ini atau setelahnya.
+                </div>
+                <p id="date-help" class="text-xs text-gray-400 mt-1">
+                    <i class="fas fa-calendar-alt mr-1"></i> Minimal hari ini
                 </p>
             </div>
 
-            {{-- Waktu --}}
+            {{-- Waktu (Hanya Jam Mulai) --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
-                <input type="text" name="waktu" value="{{ old('waktu', $agenda->waktu) }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('waktu') border-red-500 @enderror"
-                       placeholder="Contoh: 09:00 - 12:00">
-                @error('waktu') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label class="block text-sm font-medium text-gray-700 mb-1">Waktu (Jam Mulai)</label>
+                <input type="time" name="waktu_mulai" value="{{ old('waktu_mulai', $agenda->waktu) }}"
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('waktu_mulai') border-red-500 @enderror">
+                @error('waktu_mulai') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 <p class="text-xs text-gray-400 mt-1">
-                    <i class="fas fa-clock mr-1"></i>
-                    Opsional, format bebas
+                    <i class="fas fa-clock mr-1"></i> Opsional
                 </p>
             </div>
 
@@ -119,7 +123,7 @@
         </div>
 
         <div class="mt-6 flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <button type="submit" id="submitBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                 <i class="fas fa-save"></i> Update
             </button>
             <a href="{{ route('admin.agenda.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
@@ -143,8 +147,34 @@
         }
     }
 
+    function checkDate() {
+        const dateInput = document.getElementById('tanggal').value;
+        const warning = document.getElementById('date-warning');
+        const help = document.getElementById('date-help');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        if (dateInput && dateInput < todayStr) {
+            warning.classList.remove('hidden');
+            help.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            warning.classList.add('hidden');
+            help.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         updateStatusPreview();
+        checkDate(); // Cek saat pertama kali dimuat
     });
 </script>
 @endsection

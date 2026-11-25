@@ -37,21 +37,24 @@ class AgendaController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validasi: tanggal harus hari ini atau setelahnya
             $validated = $request->validate([
-                'judul'     => 'required|string|max:255',
-                'deskripsi' => 'nullable|string|max:5000',
-                'tanggal'   => 'required|date',
-                'waktu'     => 'nullable|string|max:50',
-                'tempat'    => 'nullable|string|max:255',
-                'is_active' => 'nullable|boolean',
+                'judul'       => 'required|string|max:255',
+                'deskripsi'   => 'nullable|string|max:5000',
+                'tanggal'     => 'required|date|after_or_equal:today', // Validasi tanggal
+                'waktu_mulai' => 'nullable|date_format:H:i', // Hanya jam mulai
+                'tempat'      => 'nullable|string|max:255',
+                'is_active'   => 'nullable|boolean',
+            ], [
+                'tanggal.after_or_equal' => 'Tanggal agenda tidak boleh di masa lalu (harus hari ini atau setelahnya).',
             ]);
 
-            // Explicit assign (tanpa user_id)
+            // Explicit assign
             $agenda = new Agenda();
             $agenda->judul     = $validated['judul'];
             $agenda->deskripsi = $validated['deskripsi'] ?? null;
             $agenda->tanggal   = $validated['tanggal'];
-            $agenda->waktu     = $validated['waktu'] ?? null;
+            $agenda->waktu     = $validated['waktu_mulai'] ?? null;
             $agenda->tempat    = $validated['tempat'] ?? null;
             $agenda->is_active = $request->has('is_active') ? 1 : 0;
             $agenda->save();
@@ -105,19 +108,20 @@ class AgendaController extends Controller
             $agenda = Agenda::findOrFail($id);
 
             $validated = $request->validate([
-                'judul'     => 'required|string|max:255',
-                'deskripsi' => 'nullable|string|max:5000',
-                'tanggal'   => 'required|date',
-                'waktu'     => 'nullable|string|max:50',
-                'tempat'    => 'nullable|string|max:255',
-                'is_active' => 'nullable|boolean',
+                'judul'       => 'required|string|max:255',
+                'deskripsi'   => 'nullable|string|max:5000',
+                'tanggal'     => 'required|date|after_or_equal:today',
+                'waktu_mulai' => 'nullable|date_format:H:i',
+                'tempat'      => 'nullable|string|max:255',
+                'is_active'   => 'nullable|boolean',
+            ], [
+                'tanggal.after_or_equal' => 'Tanggal agenda tidak boleh di masa lalu (harus hari ini atau setelahnya).',
             ]);
 
-            // Explicit assign (tanpa user_id)
             $agenda->judul     = $validated['judul'];
             $agenda->deskripsi = $validated['deskripsi'] ?? null;
             $agenda->tanggal   = $validated['tanggal'];
-            $agenda->waktu     = $validated['waktu'] ?? null;
+            $agenda->waktu     = $validated['waktu_mulai'] ?? null;
             $agenda->tempat    = $validated['tempat'] ?? null;
             $agenda->is_active = $request->has('is_active') ? 1 : 0;
             $agenda->save();
@@ -152,11 +156,6 @@ class AgendaController extends Controller
     // ============================================================
     // DESTROY — Hapus Agenda
     // ============================================================
-    /**
-     * Menangani 2 skenario:
-     * 1. Request AJAX/fetch → kembalikan JSON
-     * 2. Request form biasa → redirect dengan flash message
-     */
     public function destroy($id)
     {
         try {
@@ -171,7 +170,6 @@ class AgendaController extends Controller
                 "Menghapus agenda '{$judul}'"
             );
 
-            // Response JSON untuk AJAX, redirect untuk form
             if (request()->wantsJson()) {
                 return response()->json([
                     'success' => true,
@@ -245,20 +243,11 @@ class AgendaController extends Controller
     // ============================================================
     // PRIVATE HELPERS
     // ============================================================
-
-    /**
-     * Validasi format ID (angka positif).
-     */
     private function isValidId($id): bool
     {
         return is_numeric($id) && (int) $id > 0;
     }
 
-    /**
-     * Helper log aktivitas — supaya tidak duplikasi.
-     * CATATAN: user_id di sini untuk tabel log_aktivitas,
-     *          BUKAN untuk tabel agendas.
-     */
     private function logAktivitas(Request $request, string $aktivitas, string $deskripsi): void
     {
         LogAktivitas::create([
